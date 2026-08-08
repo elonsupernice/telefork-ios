@@ -1,0 +1,514 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+		BD3414D09AA902FA2FF55EEA /* AppRootView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/AppRootView.swift"; sourceTree = "<group>";
+		};
+		DFD62E1F25BDEAC36B3BDAF4 /* AppRootView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = BD3414D09AA902FA2FF55EEA /* AppRootView.swift */;
+		};
+		7363778109848BBB4B77CA71 /* TaleForkApp.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/TaleForkApp.swift"; sourceTree = "<group>";
+		};
+		154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 7363778109848BBB4B77CA71 /* TaleForkApp.swift */;
+		};
+		CE3954CF99627E8EA2640A7D /* ProgressStore.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/ProgressStore.swift"; sourceTree = "<group>";
+		};
+		E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = CE3954CF99627E8EA2640A7D /* ProgressStore.swift */;
+		};
+		A621BFFC989453FF46654FF5 /* StoryLibrary.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/StoryLibrary.swift"; sourceTree = "<group>";
+		};
+		05AF981385C6ECB6C0AE438F /* StoryLibrary.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = A621BFFC989453FF46654FF5 /* StoryLibrary.swift */;
+		};
+		E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem/TaleForkTheme.swift"; sourceTree = "<group>";
+		};
+		ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */;
+		};
+		96EE854EFA00467EFA3C51C2 /* StoryModels.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Domain/StoryModels.swift"; sourceTree = "<group>";
+		};
+		D833CE94DDA52FE06E2D3EB1 /* StoryModels.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 96EE854EFA00467EFA3C51C2 /* StoryModels.swift */;
+		};
+		F3D2EDFAAAD62DB68477633C /* ExploreView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Explore/ExploreView.swift"; sourceTree = "<group>";
+		};
+		79FEC9A89FE73BDD66544F34 /* ExploreView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = F3D2EDFAAAD62DB68477633C /* ExploreView.swift */;
+		};
+		E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Onboarding/OnboardingView.swift"; sourceTree = "<group>";
+		};
+		5DB3EDB4F61EFBB401949366 /* OnboardingView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */;
+		};
+		52FC7CEEC395C1E647A5EF69 /* PathsView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Paths/PathsView.swift"; sourceTree = "<group>";
+		};
+		CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 52FC7CEEC395C1E647A5EF69 /* PathsView.swift */;
+		};
+		D4FE881DE7B006022379BEF2 /* StoryReaderView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/StoryReaderView.swift"; sourceTree = "<group>";
+		};
+		C64BBE3F398D1BD3C7C6D3C8 /* StoryReaderView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = D4FE881DE7B006022379BEF2 /* StoryReaderView.swift */;
+		};
+		553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Settings/SettingsView.swift"; sourceTree = "<group>";
+		};
+		6FAE91EA579340D6F6648B55 /* SettingsView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */;
+		};
+		6164121C02F4CAE187E30A2C /* VaultView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Vault/VaultView.swift"; sourceTree = "<group>";
+		};
+		1BC2C00DA2A8106873A85661 /* VaultView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 6164121C02F4CAE187E30A2C /* VaultView.swift */;
+		};
+		F8CDC5ACAA6FF833610AC59D /* Haptics.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shared/Haptics.swift"; sourceTree = "<group>";
+		};
+		5C4905705A75DAE7AFC0D4F0 /* Haptics.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = F8CDC5ACAA6FF833610AC59D /* Haptics.swift */;
+		};
+		AE584561513FA1BF3DE38360 /* LocalLegalView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shared/LocalLegalView.swift"; sourceTree = "<group>";
+		};
+		112C51C314A43F839EFF6896 /* LocalLegalView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = AE584561513FA1BF3DE38360 /* LocalLegalView.swift */;
+		};
+		754EB8E03B23E43092DFB63C /* TaleForkTests.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaleForkTests.swift"; sourceTree = "<group>";
+		};
+		70D49FDEACAF25592C2AED71 /* TaleForkTests.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 754EB8E03B23E43092DFB63C /* TaleForkTests.swift */;
+		};
+		60E0818503A7590D6EDF1D7E /* Assets.xcassets */ = {
+			isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Resources/Assets.xcassets"; sourceTree = "<group>";
+		};
+		26000CE808D0C33EB6F8054E /* Assets.xcassets in Resources */ = {
+			isa = PBXBuildFile; fileRef = 60E0818503A7590D6EDF1D7E /* Assets.xcassets */;
+		};
+		1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */ = {
+			isa = PBXFileReference; lastKnownFileType = text.xml; path = "Resources/PrivacyInfo.xcprivacy"; sourceTree = "<group>";
+		};
+		5107D93F8D9D781F5FAED86D /* PrivacyInfo.xcprivacy in Resources */ = {
+			isa = PBXBuildFile; fileRef = 1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */;
+		};
+		2EE611779289671749418A19 /* privacy-policy.html */ = {
+			isa = PBXFileReference; lastKnownFileType = text.html; path = "Resources/Legal/privacy-policy.html"; sourceTree = "<group>";
+		};
+		F02C45815237D8895AEEB5DE /* privacy-policy.html in Resources */ = {
+			isa = PBXBuildFile; fileRef = 2EE611779289671749418A19 /* privacy-policy.html */;
+		};
+		C34C88A08FD8558D2EE86688 /* terms-of-use.html */ = {
+			isa = PBXFileReference; lastKnownFileType = text.html; path = "Resources/Legal/terms-of-use.html"; sourceTree = "<group>";
+		};
+		D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */ = {
+			isa = PBXBuildFile; fileRef = C34C88A08FD8558D2EE86688 /* terms-of-use.html */;
+		};
+		DC2505CE620F9BC667AD417B /* en */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en"; path = "en.lproj/Localizable.strings"; sourceTree = "<group>";
+		};
+		B6AD7300C4DA1FEF78605FA7 /* ja */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ja"; path = "ja.lproj/Localizable.strings"; sourceTree = "<group>";
+		};
+		452BAD5CC59329D90D6A150F /* zh-Hant */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>";
+		};
+		A8FD4563F21D3A036510C5B2 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DC2505CE620F9BC667AD417B /* en */,
+				B6AD7300C4DA1FEF78605FA7 /* ja */,
+				452BAD5CC59329D90D6A150F /* zh-Hant */,
+			);
+			name = "Localizable.strings";
+			sourceTree = "<group>";
+		};
+		F11FAFAF4C3CDA40D56539B7 /* Localizable.strings in Resources */ = {
+			isa = PBXBuildFile; fileRef = A8FD4563F21D3A036510C5B2 /* Localizable.strings */;
+		};
+		0502F30168C230F6F9A02D92 /* en */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en"; path = "en.lproj/InfoPlist.strings"; sourceTree = "<group>";
+		};
+		85F6F88716E295D560262520 /* ja */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ja"; path = "ja.lproj/InfoPlist.strings"; sourceTree = "<group>";
+		};
+		F8A1037FBC891A927E5F11AC /* zh-Hant */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>";
+		};
+		13C1EE714EF191109C9F9731 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0502F30168C230F6F9A02D92 /* en */,
+				85F6F88716E295D560262520 /* ja */,
+				F8A1037FBC891A927E5F11AC /* zh-Hant */,
+			);
+			name = "InfoPlist.strings";
+			sourceTree = "<group>";
+		};
+		42ABAC958588B4B7E4AAF410 /* InfoPlist.strings in Resources */ = {
+			isa = PBXBuildFile; fileRef = 13C1EE714EF191109C9F9731 /* InfoPlist.strings */;
+		};
+		845F65209D19F1E91A3C573D /* TaleFork.app */ = {
+			isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaleFork.app; sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9FEED0499F36FF4A8531E2EC /* TaleForkTests.xctest */ = {
+			isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaleForkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C8A1E76B6CA46DDC89E29CCD /* TaleFork */ = {
+			isa = PBXGroup;
+			children = (
+				BD3414D09AA902FA2FF55EEA /* AppRootView.swift */,
+				7363778109848BBB4B77CA71 /* TaleForkApp.swift */,
+				CE3954CF99627E8EA2640A7D /* ProgressStore.swift */,
+				A621BFFC989453FF46654FF5 /* StoryLibrary.swift */,
+				E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */,
+				96EE854EFA00467EFA3C51C2 /* StoryModels.swift */,
+				F3D2EDFAAAD62DB68477633C /* ExploreView.swift */,
+				E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */,
+				52FC7CEEC395C1E647A5EF69 /* PathsView.swift */,
+				D4FE881DE7B006022379BEF2 /* StoryReaderView.swift */,
+				553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */,
+				6164121C02F4CAE187E30A2C /* VaultView.swift */,
+				F8CDC5ACAA6FF833610AC59D /* Haptics.swift */,
+				AE584561513FA1BF3DE38360 /* LocalLegalView.swift */,
+				60E0818503A7590D6EDF1D7E /* Assets.xcassets */,
+				1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */,
+				2EE611779289671749418A19 /* privacy-policy.html */,
+				C34C88A08FD8558D2EE86688 /* terms-of-use.html */,
+				DE31DD00C5CDDD7FAB35B978 /* Localizations */,
+			);
+			path = TaleFork;
+			sourceTree = "<group>";
+		};
+		DE31DD00C5CDDD7FAB35B978 /* Localizations */ = {
+			isa = PBXGroup;
+			children = (
+				A8FD4563F21D3A036510C5B2 /* Localizable.strings */,
+				13C1EE714EF191109C9F9731 /* InfoPlist.strings */,
+			);
+			path = Resources/Localizations;
+			sourceTree = "<group>";
+		};
+		8C35799A97AD3FA99FA2EDFE /* TaleForkTests */ = {
+			isa = PBXGroup;
+			children = (
+				754EB8E03B23E43092DFB63C /* TaleForkTests.swift */,
+			);
+			path = TaleForkTests;
+			sourceTree = "<group>";
+		};
+		692092DE1C1C8624E142B71D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				845F65209D19F1E91A3C573D /* TaleFork.app */,
+				9FEED0499F36FF4A8531E2EC /* TaleForkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AB48CFA305015276AB5620D4 /* Main Group */ = {
+			isa = PBXGroup;
+			children = (
+				C8A1E76B6CA46DDC89E29CCD /* TaleFork */,
+				8C35799A97AD3FA99FA2EDFE /* TaleForkTests */,
+				692092DE1C1C8624E142B71D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		68794D95D50DF8ED5158D413 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DFD62E1F25BDEAC36B3BDAF4 /* AppRootView.swift in Sources */,
+				154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */,
+				E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */,
+				05AF981385C6ECB6C0AE438F /* StoryLibrary.swift in Sources */,
+				ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */,
+				D833CE94DDA52FE06E2D3EB1 /* StoryModels.swift in Sources */,
+				79FEC9A89FE73BDD66544F34 /* ExploreView.swift in Sources */,
+				5DB3EDB4F61EFBB401949366 /* OnboardingView.swift in Sources */,
+				CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */,
+				C64BBE3F398D1BD3C7C6D3C8 /* StoryReaderView.swift in Sources */,
+				6FAE91EA579340D6F6648B55 /* SettingsView.swift in Sources */,
+				1BC2C00DA2A8106873A85661 /* VaultView.swift in Sources */,
+				5C4905705A75DAE7AFC0D4F0 /* Haptics.swift in Sources */,
+				112C51C314A43F839EFF6896 /* LocalLegalView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		253694B87BCB5FB6ECA0DC84 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26000CE808D0C33EB6F8054E /* Assets.xcassets in Resources */,
+				5107D93F8D9D781F5FAED86D /* PrivacyInfo.xcprivacy in Resources */,
+				F02C45815237D8895AEEB5DE /* privacy-policy.html in Resources */,
+				D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */,
+				F11FAFAF4C3CDA40D56539B7 /* Localizable.strings in Resources */,
+				42ABAC958588B4B7E4AAF410 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF8D21E9E84F4DF4F2CFEE1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FCE40ED97F11DB24B3D493D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70D49FDEACAF25592C2AED71 /* TaleForkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A52B986283183FE44E9F2634 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B600A77575E0C26C2541FEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		880523A3CD97806381440697 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B902F7C2327297FC583709E1;
+			remoteInfo = TaleFork;
+		};
+		A15D30F2F86CC9882352B259 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B902F7C2327297FC583709E1 /* TaleFork */;
+			targetProxy = 880523A3CD97806381440697 /* PBXContainerItemProxy */;
+		};
+		B902F7C2327297FC583709E1 /* TaleFork */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A60603318F4F2D479103030 /* Build configuration list for PBXNativeTarget "TaleFork" */;
+			buildPhases = (
+				68794D95D50DF8ED5158D413 /* Sources */,
+				BF8D21E9E84F4DF4F2CFEE1E /* Frameworks */,
+				253694B87BCB5FB6ECA0DC84 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = TaleFork;
+			productName = TaleFork;
+			productReference = 845F65209D19F1E91A3C573D /* TaleFork.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6A1E24F1D627678E5C8106C0 /* TaleForkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C210B295701AD5D084AF162 /* Build configuration list for PBXNativeTarget "TaleForkTests" */;
+			buildPhases = (
+				4FCE40ED97F11DB24B3D493D /* Sources */,
+				4B600A77575E0C26C2541FEE /* Frameworks */,
+				A52B986283183FE44E9F2634 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				A15D30F2F86CC9882352B259 /* PBXTargetDependency */,
+			);
+			name = TaleForkTests;
+			productName = TaleForkTests;
+			productReference = 9FEED0499F36FF4A8531E2EC /* TaleForkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					B902F7C2327297FC583709E1 = { CreatedOnToolsVersion = 26.6; };
+					6A1E24F1D627678E5C8106C0 = { CreatedOnToolsVersion = 26.6; TestTargetID = B902F7C2327297FC583709E1; };
+				};
+			};
+			buildConfigurationList = 99DE79F146C1665D0B462638 /* Build configuration list for PBXProject "TaleFork" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, ja, "zh-Hant", Base);
+			mainGroup = AB48CFA305015276AB5620D4;
+			productRefGroup = 692092DE1C1C8624E142B71D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B902F7C2327297FC583709E1 /* TaleFork */,
+				6A1E24F1D627678E5C8106C0 /* TaleForkTests */,
+			);
+		};
+		41F4B1CEEACC5CF5F3860887 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		96B9C483016A0F8F6F2C8217 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8931D22D5340A79AD672B19B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TaleFork/Resources/Info.plist;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FCF409BC55A1B31258718FD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TaleFork/Resources/Info.plist;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		6649D2CEEA1D031C9DAC60DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TaleFork.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaleFork";
+			};
+			name = Debug;
+		};
+		322E770679E22DCE997AB5EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TaleFork.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaleFork";
+			};
+			name = Release;
+		};
+		99DE79F146C1665D0B462638 /* Build configuration list for PBXProject "TaleFork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41F4B1CEEACC5CF5F3860887 /* Debug */,
+				96B9C483016A0F8F6F2C8217 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A60603318F4F2D479103030 /* Build configuration list for PBXNativeTarget "TaleFork" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8931D22D5340A79AD672B19B /* Debug */,
+				FCF409BC55A1B31258718FD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7C210B295701AD5D084AF162 /* Build configuration list for PBXNativeTarget "TaleForkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6649D2CEEA1D031C9DAC60DC /* Debug */,
+				322E770679E22DCE997AB5EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+	};
+	rootObject = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+}

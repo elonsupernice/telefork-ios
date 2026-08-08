@@ -1,0 +1,16 @@
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcarchive
+*.ipa
+*.dSYM
+*.xcresult
+
+# macOS
+.DS_Store
+
+# Generated delivery artifacts
+Delivery/
+Screenshots/
