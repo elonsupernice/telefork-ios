@@ -28,6 +28,12 @@
 		E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = CE3954CF99627E8EA2640A7D /* ProgressStore.swift */;
 		};
+		CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/TaleForkService.swift"; sourceTree = "<group>";
+		};
+		8655129C5D68C61621AEB893 /* TaleForkService.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */;
+		};
 		E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem/TaleForkTheme.swift"; sourceTree = "<group>";
 		};
@@ -241,6 +247,7 @@
 				7363778109848BBB4B77CA71 /* TaleForkApp.swift */,
 				8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */,
 				CE3954CF99627E8EA2640A7D /* ProgressStore.swift */,
+				CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */,
 				E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */,
 				375457AA304F5B45943FB65D /* DramaModels.swift */,
 				F3D2EDFAAAD62DB68477633C /* ExploreView.swift */,
@@ -314,6 +321,7 @@
 				154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */,
 				6F7B6637474CA6D4F784041F /* DramaLibrary.swift in Sources */,
 				E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */,
+				8655129C5D68C61621AEB893 /* TaleForkService.swift in Sources */,
 				ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */,
 				5C46CD24189C39CD595A2D89 /* DramaModels.swift in Sources */,
 				79FEC9A89FE73BDD66544F34 /* ExploreView.swift in Sources */,

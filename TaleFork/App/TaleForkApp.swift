@@ -3,11 +3,13 @@ import SwiftUI
 @main
 struct TaleForkApp: App {
     @State private var store = ProgressStore()
+    @State private var catalog = CatalogStore()
 
     var body: some Scene {
         WindowGroup {
             AppRootView()
                 .environment(store)
+                .environment(catalog)
                 .preferredColorScheme(preferredScheme)
         }
     }
@@ -20,4 +22,3 @@ struct TaleForkApp: App {
         }
     }
 }
-

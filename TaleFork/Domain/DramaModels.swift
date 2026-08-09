@@ -11,6 +11,10 @@ struct LocalizedCopy: Codable, Hashable, Sendable {
         if language == "zh" { return zhHant }
         return en
     }
+
+    static func server(_ value: String) -> LocalizedCopy {
+        LocalizedCopy(zhHant: value, en: value, ja: value)
+    }
 }
 
 enum DramaAvailability: String, Codable, Hashable, Sendable {
@@ -27,6 +31,7 @@ struct Drama: Identifiable, Codable, Hashable, Sendable {
     let tags: [LocalizedCopy]
     let year: Int
     let posterImageName: String
+    var coverURL: URL? = nil
     let accentHex: String
     let availability: DramaAvailability
     let entryEpisodeID: String
@@ -46,6 +51,7 @@ struct DramaEpisode: Identifiable, Codable, Hashable, Sendable {
     let title: LocalizedCopy
     let sceneCaption: LocalizedCopy
     let clipName: String
+    var videoURL: URL? = nil
     let durationSeconds: Int
     let choices: [DramaChoice]
     let ending: DramaEnding?

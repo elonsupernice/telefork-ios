@@ -58,6 +58,12 @@ struct DramaPlayerView: View {
                     guard currentEpisodeID == drama.entryEpisodeID else { return }
                     selectChoice(onlyChoice)
                 }
+            } else if let nextEpisode, episode?.choices.isEmpty == true, store.preferences.autoplayEnabled {
+                controlsVisible = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.65) {
+                    guard currentEpisodeID != nextEpisode.id else { return }
+                    selectEpisode(nextEpisode.id)
+                }
             } else {
                 withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) { showDecision = true; controlsVisible = true }
             }
@@ -66,6 +72,12 @@ struct DramaPlayerView: View {
     }
 
     private var episode: DramaEpisode? { drama.episode(id: currentEpisodeID) }
+
+    private var nextEpisode: DramaEpisode? {
+        guard let episode, let index = drama.episodes.firstIndex(where: { $0.id == episode.id }) else { return nil }
+        let nextIndex = drama.episodes.index(after: index)
+        return drama.episodes.indices.contains(nextIndex) ? drama.episodes[nextIndex] : nil
+    }
 
     private var controlOverlay: some View {
         VStack(spacing: 0) {
@@ -145,7 +157,7 @@ struct DramaPlayerView: View {
                         store.restart(drama); currentEpisodeID = drama.entryEpisodeID; showDecision = false; loadCurrentEpisode()
                     } label: { Label("player.replay", systemImage: "arrow.counterclockwise").primaryPlayerButton() }
                     Button { dismiss() } label: { Text("common.done").foregroundStyle(.white.opacity(0.8)).frame(minHeight: 44) }
-                } else {
+                } else if !((episode?.choices ?? []).isEmpty) {
                     Text("player.choice.eyebrow").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
                     Text("player.choice.title").font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
                     ForEach(episode?.choices ?? []) { choice in
@@ -165,6 +177,19 @@ struct DramaPlayerView: View {
                     Button { showDecision = false; player.seek(to: .zero); player.play() } label: {
                         Label("player.rewatch", systemImage: "gobackward").font(.subheadline).foregroundStyle(.white.opacity(0.72)).frame(minHeight: 44)
                     }
+                } else if let nextEpisode {
+                    Image(systemName: "forward.end.fill").font(.system(size: 42)).foregroundStyle(TaleForkTheme.coral)
+                    Text(nextEpisode.title.resolved).font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
+                    Button { selectEpisode(nextEpisode.id) } label: {
+                        Label("player.next", systemImage: "play.fill").primaryPlayerButton()
+                    }
+                    Button { showDecision = false; player.seek(to: .zero); player.play() } label: {
+                        Label("player.rewatch", systemImage: "gobackward").font(.subheadline).foregroundStyle(.white.opacity(0.72)).frame(minHeight: 44)
+                    }
+                } else {
+                    Image(systemName: "checkmark.seal.fill").font(.system(size: 44)).foregroundStyle(TaleForkTheme.coral)
+                    Text("player.series.complete").font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
+                    Button { dismiss() } label: { Text("common.done").primaryPlayerButton() }
                 }
                 Spacer().frame(height: 20)
             }.padding(.horizontal, 22).frame(maxWidth: 520)
@@ -186,14 +211,32 @@ struct DramaPlayerView: View {
     }
 
     private func loadCurrentEpisode() {
-        guard let episode, let url = Bundle.main.url(forResource: episode.clipName, withExtension: "mp4") else { playbackFailed = true; return }
+        guard let episode else { playbackFailed = true; return }
+        let bundledURL = Bundle.main.url(forResource: episode.clipName, withExtension: "mp4")
+        guard let url = episode.videoURL ?? bundledURL else { playbackFailed = true; return }
         showDecision = false
         playbackFailed = false
         playbackSeconds = 0
         durationSeconds = Double(max(episode.durationSeconds, 1))
         lastPersistedSecond = -1
         let savedPosition = store.run(for: drama).playbackSeconds[episode.id] ?? 0
-        player.replaceCurrentItem(with: AVPlayerItem(url: url))
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .moviePlayback)
+            try audioSession.setActive(true)
+        } catch {
+            playbackFailed = true
+            isPlaying = false
+            return
+        }
+        player.automaticallyWaitsToMinimizeStalling = false
+        let asset = AVURLAsset(
+            url: url,
+            options: [AVURLAssetPreferPreciseDurationAndTimingKey: false]
+        )
+        let item = AVPlayerItem(asset: asset)
+        item.preferredForwardBufferDuration = 2
+        player.replaceCurrentItem(with: item)
         store.watch(drama: drama, episodeID: episode.id, position: savedPosition)
         if savedPosition > 0, savedPosition < durationSeconds - 0.75 {
             playbackSeconds = savedPosition
@@ -238,6 +281,9 @@ struct DramaPlayerView: View {
             playbackFailed = true
             isPlaying = false
             return
+        }
+        if let itemDuration = player.currentItem?.duration.seconds, itemDuration.isFinite, itemDuration > 0 {
+            durationSeconds = itemDuration
         }
         let time = player.currentTime().seconds
         if time.isFinite { playbackSeconds = min(max(time, 0), durationSeconds) }

@@ -95,7 +95,7 @@ struct DramaPoster: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                BundleImage(name: drama.posterImageName)
+                BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL)
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: height)
                     .clipped()
@@ -133,13 +133,29 @@ struct DramaPoster: View {
 
 struct BundleImage: View {
     let name: String
+    var remoteURL: URL? = nil
 
+    @ViewBuilder
     var body: some View {
-        if let url = Bundle.main.url(forResource: name, withExtension: nil), let image = UIImage(contentsOfFile: url.path) {
+        if let remoteURL {
+            AsyncImage(url: remoteURL, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
+                switch phase {
+                case let .success(image): image.resizable()
+                case .failure: artworkFallback
+                case .empty: artworkFallback.overlay { ProgressView().tint(.white) }
+                @unknown default: artworkFallback
+                }
+            }
+        } else if let url = Bundle.main.url(forResource: name, withExtension: nil), let image = UIImage(contentsOfFile: url.path) {
             Image(uiImage: image).resizable()
         } else {
-            Rectangle().fill(LinearGradient(colors: [TaleForkTheme.ink, TaleForkTheme.violet], startPoint: .topLeading, endPoint: .bottomTrailing))
+            artworkFallback
         }
+    }
+
+    private var artworkFallback: some View {
+        Rectangle().fill(LinearGradient(colors: [TaleForkTheme.ink, TaleForkTheme.violet], startPoint: .topLeading, endPoint: .bottomTrailing))
+            .overlay { Image(systemName: "play.rectangle.fill").font(.largeTitle).foregroundStyle(.white.opacity(0.35)) }
     }
 }
 

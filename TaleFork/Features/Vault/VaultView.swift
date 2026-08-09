@@ -2,6 +2,7 @@ import SwiftUI
 
 struct VaultView: View {
     @Environment(ProgressStore.self) private var store
+    @Environment(CatalogStore.self) private var catalog
     @State private var selection = 0
 
     var body: some View {
@@ -27,7 +28,7 @@ struct VaultView: View {
         else {
             LazyVStack(spacing: 14) {
                 ForEach(store.history) { entry in
-                    if let drama = DramaLibrary.drama(id: entry.dramaID) {
+                    if let drama = catalog.drama(id: entry.dramaID) {
                         NavigationLink(value: drama) { libraryRow(drama: drama, entry: entry) }.buttonStyle(.plain)
                     }
                 }
@@ -36,7 +37,8 @@ struct VaultView: View {
     }
 
     @ViewBuilder private var favoriteContent: some View {
-        let dramas = DramaLibrary.dramas.filter { store.favoriteDramaIDs.contains($0.id) }
+        let source = catalog.dramas.isEmpty ? DramaLibrary.dramas : catalog.dramas
+        let dramas = source.filter { store.favoriteDramaIDs.contains($0.id) }
         if dramas.isEmpty { emptyState("heart", "vault.favorites.empty.title", "vault.favorites.empty.body") }
         else {
             LazyVStack(spacing: 14) {
@@ -49,7 +51,7 @@ struct VaultView: View {
 
     private func libraryRow(drama: Drama, entry: WatchHistoryEntry?) -> some View {
         HStack(spacing: 14) {
-            BundleImage(name: drama.posterImageName).scaledToFill().frame(width: 84, height: 112).clipped().clipShape(RoundedRectangle(cornerRadius: 14))
+            BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(width: 84, height: 112).clipped().clipShape(RoundedRectangle(cornerRadius: 14))
             VStack(alignment: .leading, spacing: 6) {
                 Text(drama.title.resolved).font(.headline)
                 Text(drama.genre.resolved).font(.caption).foregroundStyle(TaleForkTheme.coral)
