@@ -32,6 +32,12 @@ resources = [
     ("terms-of-use.html", "Resources/Legal/terms-of-use.html", "text.html"),
 ]
 
+for path in sorted((ROOT / "TaleFork/Resources/DramaImages").glob("*.png")):
+    resources.append((path.name, path.relative_to(ROOT / "TaleFork").as_posix(), "image.png"))
+
+for path in sorted((ROOT / "TaleFork/Resources/Videos").glob("*.mp4")):
+    resources.append((path.name, path.relative_to(ROOT / "TaleFork").as_posix(), "video.mp4"))
+
 languages = ["en", "ja", "zh-Hant"]
 variant_names = ["Localizable.strings", "InfoPlist.strings"]
 

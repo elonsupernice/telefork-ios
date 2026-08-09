@@ -12,7 +12,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     settingsHeader
 
-                    SettingsCard(title: "settings.reading", symbol: "text.book.closed") {
+                    SettingsCard(title: "settings.playback", symbol: "play.rectangle") {
                         Picker("settings.appearance", selection: $store.preferences.appearance) {
                             Text("settings.appearance.system").tag(AppPreferences.Appearance.system)
                             Text("settings.appearance.light").tag(AppPreferences.Appearance.light)
@@ -25,6 +25,9 @@ struct SettingsView: View {
                             .tint(TaleForkTheme.coral)
                         Divider()
                         Toggle("settings.reduce.motion", isOn: $store.preferences.reduceDecorativeMotion)
+                            .tint(TaleForkTheme.coral)
+                        Divider()
+                        Toggle("settings.autoplay", isOn: $store.preferences.autoplayEnabled)
                             .tint(TaleForkTheme.coral)
                     }
 
@@ -159,4 +162,3 @@ private struct SettingsCard<Content: View>: View {
         .background(.background.opacity(0.78), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
     }
 }
-

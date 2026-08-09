@@ -72,7 +72,7 @@ struct OnboardingView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                Image(systemName: "arrow.triangle.branch")
+                Image(systemName: "play.rectangle.on.rectangle.fill")
                     .font(.system(size: 92, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
             }
@@ -169,7 +169,7 @@ private struct RoutePreview: View {
                     path.move(to: CGPoint(x: proxy.size.width * 0.5, y: proxy.size.height * 0.52))
                     path.addLine(to: CGPoint(x: proxy.size.width * 0.76, y: proxy.size.height * 0.25))
                 }
-                .stroke(TaleForkTheme.mint, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                .stroke(TaleForkTheme.coral, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                 ForEach(Array([
                     CGPoint(x: 0.5, y: 0.78), CGPoint(x: 0.5, y: 0.52),
                     CGPoint(x: 0.25, y: 0.25), CGPoint(x: 0.76, y: 0.25)

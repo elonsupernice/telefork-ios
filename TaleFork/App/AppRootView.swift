@@ -14,9 +14,8 @@ struct AppRootView: View {
     @ViewBuilder
     private var appContent: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "reader",
-           let story = StoryLibrary.stories.first {
-            StoryReaderView(story: story)
+        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "player" {
+            DramaPlayerView(drama: DramaLibrary.beforeRainStops)
         } else {
             regularContent
         }
@@ -47,11 +46,11 @@ struct AppShellView: View {
                 .tag(AppTab.discover)
 
             NavigationStack { PathsView() }
-                .tabItem { Label("tab.paths", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+                .tabItem { Label("tab.paths", systemImage: "arrow.triangle.branch") }
                 .tag(AppTab.paths)
 
             NavigationStack { VaultView() }
-                .tabItem { Label("tab.vault", systemImage: "bookmark.square") }
+                .tabItem { Label("tab.vault", systemImage: "heart.text.square") }
                 .tag(AppTab.vault)
 
             NavigationStack { SettingsView() }

@@ -16,17 +16,17 @@
 		154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 7363778109848BBB4B77CA71 /* TaleForkApp.swift */;
 		};
+		8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/DramaLibrary.swift"; sourceTree = "<group>";
+		};
+		6F7B6637474CA6D4F784041F /* DramaLibrary.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */;
+		};
 		CE3954CF99627E8EA2640A7D /* ProgressStore.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/ProgressStore.swift"; sourceTree = "<group>";
 		};
 		E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = CE3954CF99627E8EA2640A7D /* ProgressStore.swift */;
-		};
-		A621BFFC989453FF46654FF5 /* StoryLibrary.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/StoryLibrary.swift"; sourceTree = "<group>";
-		};
-		05AF981385C6ECB6C0AE438F /* StoryLibrary.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = A621BFFC989453FF46654FF5 /* StoryLibrary.swift */;
 		};
 		E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem/TaleForkTheme.swift"; sourceTree = "<group>";
@@ -34,11 +34,11 @@
 		ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */;
 		};
-		96EE854EFA00467EFA3C51C2 /* StoryModels.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Domain/StoryModels.swift"; sourceTree = "<group>";
+		375457AA304F5B45943FB65D /* DramaModels.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Domain/DramaModels.swift"; sourceTree = "<group>";
 		};
-		D833CE94DDA52FE06E2D3EB1 /* StoryModels.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = 96EE854EFA00467EFA3C51C2 /* StoryModels.swift */;
+		5C46CD24189C39CD595A2D89 /* DramaModels.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 375457AA304F5B45943FB65D /* DramaModels.swift */;
 		};
 		F3D2EDFAAAD62DB68477633C /* ExploreView.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Explore/ExploreView.swift"; sourceTree = "<group>";
@@ -58,11 +58,11 @@
 		CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 52FC7CEEC395C1E647A5EF69 /* PathsView.swift */;
 		};
-		D4FE881DE7B006022379BEF2 /* StoryReaderView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/StoryReaderView.swift"; sourceTree = "<group>";
+		08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Player/DramaPlayerView.swift"; sourceTree = "<group>";
 		};
-		C64BBE3F398D1BD3C7C6D3C8 /* StoryReaderView.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = D4FE881DE7B006022379BEF2 /* StoryReaderView.swift */;
+		5C68009E3734E43129010334 /* DramaPlayerView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */;
 		};
 		553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Settings/SettingsView.swift"; sourceTree = "<group>";
@@ -117,6 +117,72 @@
 		};
 		D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */ = {
 			isa = PBXBuildFile; fileRef = C34C88A08FD8558D2EE86688 /* terms-of-use.html */;
+		};
+		CB66C861D348F4047FC13D9C /* rain-stop-arrival.png */ = {
+			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-arrival.png"; sourceTree = "<group>";
+		};
+		55B9C78F4A7F424720352254 /* rain-stop-arrival.png in Resources */ = {
+			isa = PBXBuildFile; fileRef = CB66C861D348F4047FC13D9C /* rain-stop-arrival.png */;
+		};
+		C82DF04FBBF5283F95591864 /* rain-stop-call.png */ = {
+			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-call.png"; sourceTree = "<group>";
+		};
+		27453C8EAB6A9C0DF6A70D4D /* rain-stop-call.png in Resources */ = {
+			isa = PBXBuildFile; fileRef = C82DF04FBBF5283F95591864 /* rain-stop-call.png */;
+		};
+		7BCB4467565BCA95F72ABC4E /* rain-stop-dawn.png */ = {
+			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-dawn.png"; sourceTree = "<group>";
+		};
+		0250C5C6842A4902E82A4DFF /* rain-stop-dawn.png in Resources */ = {
+			isa = PBXBuildFile; fileRef = 7BCB4467565BCA95F72ABC4E /* rain-stop-dawn.png */;
+		};
+		DD14776BAE87385965224050 /* rain-stop-meeting.png */ = {
+			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-meeting.png"; sourceTree = "<group>";
+		};
+		09BF6F3FD78E567E8047A8E6 /* rain-stop-meeting.png in Resources */ = {
+			isa = PBXBuildFile; fileRef = DD14776BAE87385965224050 /* rain-stop-meeting.png */;
+		};
+		7862F4CA0DA6EDF6493189A8 /* rain-stop-phone.png */ = {
+			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-phone.png"; sourceTree = "<group>";
+		};
+		3B4A8C20FECC0775B302624B /* rain-stop-phone.png in Resources */ = {
+			isa = PBXBuildFile; fileRef = 7862F4CA0DA6EDF6493189A8 /* rain-stop-phone.png */;
+		};
+		446C4610A7B5868F88E8D87D /* rain-01-arrival.mp4 */ = {
+			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-01-arrival.mp4"; sourceTree = "<group>";
+		};
+		07F1CDE42E36B1A5339DDFB0 /* rain-01-arrival.mp4 in Resources */ = {
+			isa = PBXBuildFile; fileRef = 446C4610A7B5868F88E8D87D /* rain-01-arrival.mp4 */;
+		};
+		962A254C1D41A3C6BA4FDAB3 /* rain-02-letter.mp4 */ = {
+			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-02-letter.mp4"; sourceTree = "<group>";
+		};
+		A1895B9DBB32524E52000D99 /* rain-02-letter.mp4 in Resources */ = {
+			isa = PBXBuildFile; fileRef = 962A254C1D41A3C6BA4FDAB3 /* rain-02-letter.mp4 */;
+		};
+		A0E4CAF888FC5C3197019790 /* rain-03-meeting.mp4 */ = {
+			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-03-meeting.mp4"; sourceTree = "<group>";
+		};
+		09A67F086F033807ED212D62 /* rain-03-meeting.mp4 in Resources */ = {
+			isa = PBXBuildFile; fileRef = A0E4CAF888FC5C3197019790 /* rain-03-meeting.mp4 */;
+		};
+		08C4A897943BD5F8020E1CB0 /* rain-04-answer.mp4 */ = {
+			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-04-answer.mp4"; sourceTree = "<group>";
+		};
+		4323A36EC11086238B7EBC5F /* rain-04-answer.mp4 in Resources */ = {
+			isa = PBXBuildFile; fileRef = 08C4A897943BD5F8020E1CB0 /* rain-04-answer.mp4 */;
+		};
+		A581A28EA07382114CFDFCEC /* rain-05-dawn.mp4 */ = {
+			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-05-dawn.mp4"; sourceTree = "<group>";
+		};
+		34D7D53944EF4A518273B75C /* rain-05-dawn.mp4 in Resources */ = {
+			isa = PBXBuildFile; fileRef = A581A28EA07382114CFDFCEC /* rain-05-dawn.mp4 */;
+		};
+		A951AE7937823474CECC1625 /* rain-06-call.mp4 */ = {
+			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-06-call.mp4"; sourceTree = "<group>";
+		};
+		9498C84DCFC15A42901EC216 /* rain-06-call.mp4 in Resources */ = {
+			isa = PBXBuildFile; fileRef = A951AE7937823474CECC1625 /* rain-06-call.mp4 */;
 		};
 		DC2505CE620F9BC667AD417B /* en */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en"; path = "en.lproj/Localizable.strings"; sourceTree = "<group>";
@@ -173,14 +239,14 @@
 			children = (
 				BD3414D09AA902FA2FF55EEA /* AppRootView.swift */,
 				7363778109848BBB4B77CA71 /* TaleForkApp.swift */,
+				8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */,
 				CE3954CF99627E8EA2640A7D /* ProgressStore.swift */,
-				A621BFFC989453FF46654FF5 /* StoryLibrary.swift */,
 				E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */,
-				96EE854EFA00467EFA3C51C2 /* StoryModels.swift */,
+				375457AA304F5B45943FB65D /* DramaModels.swift */,
 				F3D2EDFAAAD62DB68477633C /* ExploreView.swift */,
 				E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */,
 				52FC7CEEC395C1E647A5EF69 /* PathsView.swift */,
-				D4FE881DE7B006022379BEF2 /* StoryReaderView.swift */,
+				08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */,
 				553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */,
 				6164121C02F4CAE187E30A2C /* VaultView.swift */,
 				F8CDC5ACAA6FF833610AC59D /* Haptics.swift */,
@@ -189,6 +255,17 @@
 				1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */,
 				2EE611779289671749418A19 /* privacy-policy.html */,
 				C34C88A08FD8558D2EE86688 /* terms-of-use.html */,
+				CB66C861D348F4047FC13D9C /* rain-stop-arrival.png */,
+				C82DF04FBBF5283F95591864 /* rain-stop-call.png */,
+				7BCB4467565BCA95F72ABC4E /* rain-stop-dawn.png */,
+				DD14776BAE87385965224050 /* rain-stop-meeting.png */,
+				7862F4CA0DA6EDF6493189A8 /* rain-stop-phone.png */,
+				446C4610A7B5868F88E8D87D /* rain-01-arrival.mp4 */,
+				962A254C1D41A3C6BA4FDAB3 /* rain-02-letter.mp4 */,
+				A0E4CAF888FC5C3197019790 /* rain-03-meeting.mp4 */,
+				08C4A897943BD5F8020E1CB0 /* rain-04-answer.mp4 */,
+				A581A28EA07382114CFDFCEC /* rain-05-dawn.mp4 */,
+				A951AE7937823474CECC1625 /* rain-06-call.mp4 */,
 				DE31DD00C5CDDD7FAB35B978 /* Localizations */,
 			);
 			path = TaleFork;
@@ -235,14 +312,14 @@
 			files = (
 				DFD62E1F25BDEAC36B3BDAF4 /* AppRootView.swift in Sources */,
 				154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */,
+				6F7B6637474CA6D4F784041F /* DramaLibrary.swift in Sources */,
 				E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */,
-				05AF981385C6ECB6C0AE438F /* StoryLibrary.swift in Sources */,
 				ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */,
-				D833CE94DDA52FE06E2D3EB1 /* StoryModels.swift in Sources */,
+				5C46CD24189C39CD595A2D89 /* DramaModels.swift in Sources */,
 				79FEC9A89FE73BDD66544F34 /* ExploreView.swift in Sources */,
 				5DB3EDB4F61EFBB401949366 /* OnboardingView.swift in Sources */,
 				CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */,
-				C64BBE3F398D1BD3C7C6D3C8 /* StoryReaderView.swift in Sources */,
+				5C68009E3734E43129010334 /* DramaPlayerView.swift in Sources */,
 				6FAE91EA579340D6F6648B55 /* SettingsView.swift in Sources */,
 				1BC2C00DA2A8106873A85661 /* VaultView.swift in Sources */,
 				5C4905705A75DAE7AFC0D4F0 /* Haptics.swift in Sources */,
@@ -258,6 +335,17 @@
 				5107D93F8D9D781F5FAED86D /* PrivacyInfo.xcprivacy in Resources */,
 				F02C45815237D8895AEEB5DE /* privacy-policy.html in Resources */,
 				D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */,
+				55B9C78F4A7F424720352254 /* rain-stop-arrival.png in Resources */,
+				27453C8EAB6A9C0DF6A70D4D /* rain-stop-call.png in Resources */,
+				0250C5C6842A4902E82A4DFF /* rain-stop-dawn.png in Resources */,
+				09BF6F3FD78E567E8047A8E6 /* rain-stop-meeting.png in Resources */,
+				3B4A8C20FECC0775B302624B /* rain-stop-phone.png in Resources */,
+				07F1CDE42E36B1A5339DDFB0 /* rain-01-arrival.mp4 in Resources */,
+				A1895B9DBB32524E52000D99 /* rain-02-letter.mp4 in Resources */,
+				09A67F086F033807ED212D62 /* rain-03-meeting.mp4 in Resources */,
+				4323A36EC11086238B7EBC5F /* rain-04-answer.mp4 in Resources */,
+				34D7D53944EF4A518273B75C /* rain-05-dawn.mp4 in Resources */,
+				9498C84DCFC15A42901EC216 /* rain-06-call.mp4 in Resources */,
 				F11FAFAF4C3CDA40D56539B7 /* Localizable.strings in Resources */,
 				42ABAC958588B4B7E4AAF410 /* InfoPlist.strings in Resources */,
 			);

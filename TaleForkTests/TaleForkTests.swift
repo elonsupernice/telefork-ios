@@ -1,44 +1,34 @@
 import XCTest
 @testable import TaleFork
 
-final class StoryLibraryTests: XCTestCase {
-    func testLibraryContainsOriginalBranchingStories() {
-        XCTAssertGreaterThanOrEqual(StoryLibrary.stories.count, 3)
+final class DramaLibraryTests: XCTestCase {
+    func testCatalogContainsPlayableInteractiveShortDrama() throws {
+        XCTAssertGreaterThanOrEqual(DramaLibrary.dramas.count, 3)
+        let drama = DramaLibrary.beforeRainStops
+        XCTAssertEqual(drama.availability, .available)
+        XCTAssertGreaterThanOrEqual(drama.episodes.count, 6)
+        XCTAssertGreaterThanOrEqual(drama.endings.count, 2)
+        XCTAssertNotNil(drama.episode(id: drama.entryEpisodeID))
 
-        for story in StoryLibrary.stories {
-            XCTAssertFalse(story.title.zhHant.isEmpty)
-            XCTAssertFalse(story.title.en.isEmpty)
-            XCTAssertFalse(story.title.ja.isEmpty)
-            XCTAssertNotNil(story.scene(id: story.entrySceneID))
-            XCTAssertGreaterThanOrEqual(story.endings.count, 2)
-
-            let sceneIDs = story.scenes.map(\.id)
-            XCTAssertEqual(Set(sceneIDs).count, sceneIDs.count, "Duplicate scene ID in \(story.id)")
-
-            for scene in story.scenes {
-                if scene.ending == nil {
-                    XCTAssertFalse(scene.choices.isEmpty, "Non-ending scene \(scene.id) has no choice")
-                }
-                for choice in scene.choices {
-                    XCTAssertNotNil(
-                        story.scene(id: choice.destinationSceneID),
-                        "Choice \(choice.id) points to a missing scene"
-                    )
-                }
-            }
+        let ids = drama.episodes.map(\.id)
+        XCTAssertEqual(Set(ids).count, ids.count)
+        for episode in drama.episodes {
+            if episode.ending == nil { XCTAssertFalse(episode.choices.isEmpty) }
+            for choice in episode.choices { XCTAssertNotNil(drama.episode(id: choice.destinationEpisodeID)) }
+            XCTAssertNotNil(Bundle.main.url(forResource: episode.clipName, withExtension: "mp4"), "Missing video \(episode.clipName)")
         }
+        XCTAssertNotNil(Bundle.main.url(forResource: drama.posterImageName, withExtension: nil))
     }
 
-    func testEverySceneIsReachableFromEntry() {
-        for story in StoryLibrary.stories {
-            var pending = [story.entrySceneID]
-            var reached = Set<String>()
-            while let sceneID = pending.popLast() {
-                guard reached.insert(sceneID).inserted, let scene = story.scene(id: sceneID) else { continue }
-                pending.append(contentsOf: scene.choices.map(\.destinationSceneID))
-            }
-            XCTAssertEqual(reached, Set(story.scenes.map(\.id)), "Unreachable scene in \(story.id)")
+    func testEveryPlayableEpisodeIsReachable() {
+        let drama = DramaLibrary.beforeRainStops
+        var pending = [drama.entryEpisodeID]
+        var reached = Set<String>()
+        while let id = pending.popLast() {
+            guard reached.insert(id).inserted, let episode = drama.episode(id: id) else { continue }
+            pending.append(contentsOf: episode.choices.map(\.destinationEpisodeID))
         }
+        XCTAssertEqual(reached, Set(drama.episodes.map(\.id)))
     }
 
     func testLocalizationKeySetsMatch() throws {
@@ -48,78 +38,58 @@ final class StoryLibraryTests: XCTestCase {
             let path = URL(fileURLWithPath: lproj).appendingPathComponent("Localizable.strings").path
             let dictionary = try XCTUnwrap(NSDictionary(contentsOfFile: path) as? [String: String])
             let keys = Set(dictionary.keys)
-            XCTAssertGreaterThan(keys.count, 40)
-            if let baseline {
-                XCTAssertEqual(keys, baseline, "Localization keys differ for \(language)")
-            } else {
-                baseline = keys
-            }
+            XCTAssertGreaterThan(keys.count, 70)
+            if let baseline { XCTAssertEqual(keys, baseline) } else { baseline = keys }
         }
     }
 }
 
 @MainActor
 final class ProgressStoreTests: XCTestCase {
-    func testChoiceProgressAndPersistenceRoundTrip() throws {
-        let (suiteName, defaults) = makeDefaults()
-        defer { defaults.removePersistentDomain(forName: suiteName) }
-        let story = try XCTUnwrap(StoryLibrary.stories.first)
-        let firstScene = try XCTUnwrap(story.scene(id: story.entrySceneID))
-        let choice = try XCTUnwrap(firstScene.choices.first)
+    func testChoiceProgressFavoritesAndPersistence() throws {
+        let (suite, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let drama = DramaLibrary.beforeRainStops
+        let entry = try XCTUnwrap(drama.episode(id: drama.entryEpisodeID))
+        let choice = try XCTUnwrap(entry.choices.first)
         let store = ProgressStore(defaults: defaults)
 
-        store.start(story)
-        store.choose(choice, in: story)
+        store.start(drama)
+        store.watch(drama: drama, episodeID: entry.id, position: 3.5)
+        store.choose(choice, in: drama)
+        store.toggleFavorite(drama)
 
-        XCTAssertEqual(store.run(for: story).currentSceneID, choice.destinationSceneID)
-        XCTAssertEqual(store.run(for: story).visitedSceneIDs.count, 2)
+        XCTAssertEqual(store.run(for: drama).currentEpisodeID, choice.destinationEpisodeID)
+        XCTAssertTrue(store.isFavorite(drama))
+        XCTAssertEqual(store.history.first?.dramaID, drama.id)
+        XCTAssertEqual(store.run(for: drama).playbackSeconds[entry.id], 3.5)
 
         let restored = ProgressStore(defaults: defaults)
-        XCTAssertEqual(restored.run(for: story), store.run(for: story))
+        XCTAssertEqual(restored.run(for: drama), store.run(for: drama))
+        XCTAssertTrue(restored.isFavorite(drama))
     }
 
     func testRestartKeepsUnlockedEndings() throws {
-        let story = try XCTUnwrap(StoryLibrary.stories.first)
-        var run = StoryRun(story: story)
+        let drama = DramaLibrary.beforeRainStops
+        var run = DramaRun(drama: drama)
         var safety = 0
-        while story.scene(id: run.currentSceneID)?.ending == nil, safety < 20 {
-            let scene = try XCTUnwrap(story.scene(id: run.currentSceneID))
-            run.choose(try XCTUnwrap(scene.choices.first), in: story)
+        while drama.episode(id: run.currentEpisodeID)?.ending == nil, safety < 20 {
+            let episode = try XCTUnwrap(drama.episode(id: run.currentEpisodeID))
+            run.choose(try XCTUnwrap(episode.choices.first), in: drama)
             safety += 1
         }
         XCTAssertFalse(run.completedEndingIDs.isEmpty)
         let endings = run.completedEndingIDs
-
-        run.restart(with: story)
-        XCTAssertEqual(run.currentSceneID, story.entrySceneID)
-        XCTAssertEqual(run.visitedSceneIDs, [story.entrySceneID])
+        run.restart(with: drama)
+        XCTAssertEqual(run.currentEpisodeID, drama.entryEpisodeID)
+        XCTAssertTrue(run.watchedEpisodeIDs.isEmpty)
         XCTAssertEqual(run.completedEndingIDs, endings)
     }
 
-    func testQuoteToggleAndReset() throws {
-        let (suiteName, defaults) = makeDefaults()
-        defer { defaults.removePersistentDomain(forName: suiteName) }
-        let story = try XCTUnwrap(StoryLibrary.stories.first)
-        let scene = try XCTUnwrap(story.scenes.first)
-        let store = ProgressStore(defaults: defaults)
-
-        store.toggleQuote(storyID: story.id, sceneID: scene.id, text: "A saved line")
-        XCTAssertTrue(store.isQuoteSaved(storyID: story.id, sceneID: scene.id))
-        XCTAssertEqual(store.savedQuotes.count, 1)
-
-        store.toggleQuote(storyID: story.id, sceneID: scene.id, text: "A saved line")
-        XCTAssertFalse(store.isQuoteSaved(storyID: story.id, sceneID: scene.id))
-
-        store.start(story)
-        store.resetAllProgress()
-        XCTAssertTrue(store.runs.isEmpty)
-        XCTAssertTrue(store.savedQuotes.isEmpty)
-    }
-
     private func makeDefaults() -> (String, UserDefaults) {
-        let suiteName = "TaleForkTests.\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
-        defaults.removePersistentDomain(forName: suiteName)
-        return (suiteName, defaults)
+        let suite = "TaleForkTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        return (suite, defaults)
     }
 }

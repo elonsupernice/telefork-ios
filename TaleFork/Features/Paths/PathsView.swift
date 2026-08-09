@@ -2,179 +2,92 @@ import SwiftUI
 
 struct PathsView: View {
     @Environment(ProgressStore.self) private var store
+    @State private var showPlayer = false
 
     var body: some View {
         GeometryReader { proxy in
-            let margin = TaleForkTheme.horizontalMargin(for: proxy.size.width)
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     SectionHeading(eyebrow: "paths.eyebrow", title: "paths.title")
-                    Text("paths.subtitle")
-                        .foregroundStyle(.secondary)
+                    Text("paths.subtitle").foregroundStyle(.secondary)
 
-                    ForEach(StoryLibrary.stories) { story in
-                        let run = store.run(for: story)
-                        NavigationLink {
-                            StoryRouteDetailView(story: story)
-                        } label: {
-                            PathSummaryCard(story: story, run: run, hasStarted: store.runs[story.id] != nil)
-                        }
-                        .buttonStyle(.plain)
+                    routeMap
+                    endingCollection
+
+                    Button {
+                        store.start(DramaLibrary.beforeRainStops); showPlayer = true
+                    } label: {
+                        Label(store.runs[DramaLibrary.beforeRainStops.id] == nil ? "drama.start" : "drama.continue", systemImage: "play.fill")
+                            .font(.headline).foregroundStyle(TaleForkTheme.ink).frame(maxWidth: .infinity, minHeight: 54)
+                            .background(TaleForkTheme.coral, in: RoundedRectangle(cornerRadius: 18))
                     }
                 }
-                .padding(.horizontal, margin)
-                .padding(.top, 20)
-                .padding(.bottom, 34)
-                .frame(maxWidth: 760)
-                .frame(maxWidth: .infinity)
-            }
-            .background(PaperBackground())
+                .padding(.horizontal, TaleForkTheme.horizontalMargin(for: proxy.size.width)).padding(.vertical, 20)
+                .frame(maxWidth: 720).frame(maxWidth: .infinity)
+            }.background(PaperBackground())
         }
-        .navigationTitle("tab.paths")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("tab.paths").navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(isPresented: $showPlayer) { DramaPlayerView(drama: DramaLibrary.beforeRainStops) }
     }
-}
 
-private struct PathSummaryCard: View {
-    let story: Story
-    let run: StoryRun
-    let hasStarted: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(spacing: 14) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color(hex: story.palette.startHex), Color(hex: story.palette.endHex)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                    Image(systemName: story.symbol)
-                        .foregroundStyle(.white)
-                        .font(.title2.weight(.semibold))
-                }
-                .frame(width: 58, height: 58)
-
+    private var routeMap: some View {
+        let drama = DramaLibrary.beforeRainStops
+        let run = store.run(for: drama)
+        return VStack(alignment: .leading, spacing: 18) {
+            HStack {
+                BundleImage(name: drama.posterImageName).scaledToFill().frame(width: 58, height: 74).clipped().clipShape(RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(story.title.resolved)
-                        .font(.headline)
-                    Text(hasStarted ? "paths.explored" : "paths.not.started")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Text(drama.title.resolved).font(.headline)
+                    Text(String(format: String(localized: "paths.progress.format"), run.watchedEpisodeIDs.count, drama.episodes.count)).font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.tertiary)
+                Image(systemName: "arrow.triangle.branch").font(.title2).foregroundStyle(TaleForkTheme.coral)
             }
 
-            HStack(spacing: 0) {
-                stat(value: hasStarted ? "\(Set(run.visitedSceneIDs).count)" : "0", label: "paths.nodes")
-                Divider().frame(height: 36)
-                stat(value: "\(run.completedEndingIDs.count)/\(story.endings.count)", label: "story.endings")
-                Divider().frame(height: 36)
-                stat(value: "\(progress)%", label: "paths.progress")
+            routeRow(episode: drama.episodes[0], depth: 0, run: run)
+            routeConnector(split: true)
+            HStack(alignment: .top, spacing: 12) {
+                VStack { routeRow(episode: drama.episodes[2], depth: 1, run: run); routeConnector(split: false); routeRow(episode: drama.episodes[4], depth: 2, run: run) }
+                VStack { routeRow(episode: drama.episodes[3], depth: 1, run: run); routeConnector(split: false); routeRow(episode: drama.episodes[5], depth: 2, run: run) }
             }
-
-            ProgressView(value: Double(progress), total: 100)
-                .tint(Color(hex: story.palette.accentHex))
-        }
-        .padding(18)
-        .foregroundStyle(.primary)
-        .background(.background.opacity(0.78), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        }.padding(18).background(.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 24))
     }
 
-    private var progress: Int {
-        guard hasStarted else { return 0 }
-        return Int((Double(Set(run.visitedSceneIDs).count) / Double(story.scenes.count) * 100).rounded())
+    private func routeRow(episode: DramaEpisode, depth: Int, run: DramaRun) -> some View {
+        let unlocked = run.watchedEpisodeIDs.contains(episode.id) || run.currentEpisodeID == episode.id
+        return VStack(spacing: 6) {
+            ZStack {
+                Circle().fill(unlocked ? TaleForkTheme.mint : TaleForkTheme.mist).frame(width: 32, height: 32)
+                Image(systemName: unlocked ? (episode.ending == nil ? "play.fill" : "seal.fill") : "lock.fill")
+                    .font(.caption).foregroundStyle(unlocked ? TaleForkTheme.ink : .secondary)
+            }
+            Text(unlocked ? episode.title.resolved : String(localized: "paths.unknown.node"))
+                .font(.caption.weight(.semibold)).multilineTextAlignment(.center).lineLimit(2)
+        }.frame(maxWidth: .infinity)
     }
 
-    private func stat(value: String, label: LocalizedStringKey) -> some View {
-        VStack(spacing: 3) {
-            Text(value).font(.headline.monospacedDigit())
-            Text(label).font(.caption2).foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity)
+    private func routeConnector(split: Bool) -> some View {
+        Image(systemName: split ? "arrow.triangle.branch" : "arrow.down")
+            .foregroundStyle(TaleForkTheme.coral.opacity(0.7)).frame(maxWidth: .infinity)
     }
-}
 
-private struct StoryRouteDetailView: View {
-    @Environment(ProgressStore.self) private var store
-    let story: Story
-    @State private var isReading = false
-
-    var body: some View {
-        let run = store.run(for: story)
-        ScrollView {
-            VStack(spacing: 20) {
-                RouteMapView(story: story, run: run)
-                Button {
-                    store.start(story)
-                    isReading = true
-                } label: {
-                    Label(store.runs[story.id] == nil ? "story.start" : "story.continue", systemImage: "book.pages")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, minHeight: 52)
+    private var endingCollection: some View {
+        let drama = DramaLibrary.beforeRainStops
+        let unlocked = store.run(for: drama).completedEndingIDs
+        return VStack(alignment: .leading, spacing: 14) {
+            Text("paths.endings.title").font(.title3.bold())
+            HStack(spacing: 12) {
+                ForEach(drama.endings) { episode in
+                    let isUnlocked = unlocked.contains(episode.id)
+                    VStack(spacing: 8) {
+                        Image(systemName: isUnlocked ? (episode.ending?.symbol ?? "seal.fill") : "questionmark")
+                            .font(.title2).foregroundStyle(isUnlocked ? TaleForkTheme.coral : .secondary)
+                        Text(isUnlocked ? (episode.ending?.title.resolved ?? "") : String(localized: "paths.locked.ending"))
+                            .font(.caption.weight(.semibold)).multilineTextAlignment(.center)
+                    }.frame(maxWidth: .infinity, minHeight: 110)
+                        .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 18))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(TaleForkTheme.coral)
             }
-            .padding(20)
-            .frame(maxWidth: 700)
-            .frame(maxWidth: .infinity)
-        }
-        .background(PaperBackground())
-        .navigationTitle(story.title.resolved)
-        .navigationBarTitleDisplayMode(.inline)
-        .fullScreenCover(isPresented: $isReading) {
-            StoryReaderView(story: story)
         }
     }
 }
-
-struct RouteMapView: View {
-    let story: Story
-    let run: StoryRun
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(story.scenes.enumerated()), id: \.element.id) { index, scene in
-                let visited = run.visitedSceneIDs.contains(scene.id)
-                let current = run.currentSceneID == scene.id
-                HStack(alignment: .top, spacing: 16) {
-                    VStack(spacing: 0) {
-                        RouteDot(isVisited: visited, isCurrent: current)
-                            .padding(.top, 5)
-                        if index < story.scenes.count - 1 {
-                            Rectangle()
-                                .fill(visited ? TaleForkTheme.mint.opacity(0.45) : TaleForkTheme.mist)
-                                .frame(width: 2, height: 54)
-                        }
-                    }
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(visited ? scene.heading.resolved : String(localized: "paths.unknown.node"))
-                                .font(.headline)
-                                .foregroundStyle(visited ? .primary : .secondary)
-                            Spacer()
-                            if scene.ending != nil {
-                                Image(systemName: run.completedEndingIDs.contains(scene.id) ? "seal.fill" : "seal")
-                                    .foregroundStyle(run.completedEndingIDs.contains(scene.id) ? TaleForkTheme.coral : .secondary)
-                            }
-                        }
-                        Text(String(format: String(localized: "reader.chapter.format"), scene.chapter))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.bottom, 28)
-                }
-                .accessibilityElement(children: .combine)
-            }
-        }
-        .padding(20)
-        .background(.background.opacity(0.78), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-    }
-}
-

@@ -1,12 +1,13 @@
 import SwiftUI
+import UIKit
 
 enum TaleForkTheme {
-    static let ink = Color(hex: "17152B")
-    static let paper = Color(hex: "F7F3EA")
-    static let coral = Color(hex: "FF6B5E")
-    static let mint = Color(hex: "55D6BE")
-    static let violet = Color(hex: "7868E6")
-    static let mist = Color(hex: "E8E4F2")
+    static let ink = Color(hex: "091018")
+    static let paper = Color(hex: "F4F1EA")
+    static let coral = Color(hex: "E6A84C")
+    static let mint = Color(hex: "59C4BE")
+    static let violet = Color(hex: "6570C5")
+    static let mist = Color(hex: "DEE6E9")
 
     static let cardRadius: CGFloat = 24
 
@@ -77,66 +78,49 @@ struct BrandMark: View {
                     RoundedRectangle(cornerRadius: size * 0.32, style: .continuous)
                         .stroke(.white.opacity(colorScheme == .dark ? 0.14 : 0), lineWidth: 1)
                 }
-            Path { path in
-                path.move(to: CGPoint(x: size * 0.5, y: size * 0.78))
-                path.addLine(to: CGPoint(x: size * 0.5, y: size * 0.44))
-                path.addLine(to: CGPoint(x: size * 0.28, y: size * 0.22))
-                path.move(to: CGPoint(x: size * 0.5, y: size * 0.44))
-                path.addLine(to: CGPoint(x: size * 0.72, y: size * 0.22))
-            }
-            .stroke(TaleForkTheme.coral, style: StrokeStyle(lineWidth: size * 0.105, lineCap: .round, lineJoin: .round))
-            Circle()
-                .fill(TaleForkTheme.mint)
-                .frame(width: size * 0.14, height: size * 0.14)
-                .offset(y: size * 0.28)
+            Image(systemName: "play.fill")
+                .font(.system(size: size * 0.34, weight: .bold))
+                .foregroundStyle(TaleForkTheme.coral)
+                .offset(x: size * 0.02)
         }
         .frame(width: size, height: size)
         .accessibilityLabel(Text("TaleFork"))
     }
 }
 
-struct StoryArtwork: View {
-    let story: Story
+struct DramaPoster: View {
+    let drama: Drama
     var height: CGFloat = 220
 
     var body: some View {
         GeometryReader { proxy in
-            let width = proxy.size.width
             ZStack {
-                LinearGradient(
-                    colors: [Color(hex: story.palette.startHex), Color(hex: story.palette.endHex)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                Circle()
-                    .stroke(.white.opacity(0.2), lineWidth: max(width * 0.03, 8))
-                    .frame(width: width * 0.72)
-                    .offset(x: width * 0.3, y: -height * 0.25)
-                Path { path in
-                    path.move(to: CGPoint(x: width * 0.18, y: height * 0.82))
-                    path.addCurve(
-                        to: CGPoint(x: width * 0.78, y: height * 0.18),
-                        control1: CGPoint(x: width * 0.34, y: height * 0.55),
-                        control2: CGPoint(x: width * 0.58, y: height * 0.56)
-                    )
-                }
-                .stroke(Color(hex: story.palette.accentHex).opacity(0.85), style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                Image(systemName: story.symbol)
-                    .font(.system(size: min(width * 0.23, 74), weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .symbolRenderingMode(.hierarchical)
-                    .shadow(color: .black.opacity(0.18), radius: 18, y: 10)
+                BundleImage(name: drama.posterImageName)
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: height)
+                    .clipped()
+                LinearGradient(colors: [.clear, .black.opacity(0.78)], startPoint: .center, endPoint: .bottom)
                 VStack {
                     HStack {
                         Spacer()
-                        Text("\(story.estimatedMinutes) MIN")
+                        Text(drama.availability == .available ? String(format: String(localized: "drama.episodes.format"), drama.episodes.count) : String(localized: "drama.coming.soon"))
                             .font(.caption2.weight(.bold).monospaced())
-                            .foregroundStyle(.white.opacity(0.84))
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 11)
                             .padding(.vertical, 7)
                             .background(.black.opacity(0.22), in: Capsule())
                     }
                     Spacer()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(drama.genre.resolved.uppercased())
+                            .font(.caption2.weight(.bold).monospaced())
+                            .foregroundStyle(Color(hex: drama.accentHex))
+                        Text(drama.title.resolved)
+                            .font(.system(.title2, design: .rounded, weight: .black))
+                            .foregroundStyle(.white)
+                            .lineLimit(2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(16)
             }
@@ -144,6 +128,18 @@ struct StoryArtwork: View {
         .frame(height: height)
         .clipShape(RoundedRectangle(cornerRadius: TaleForkTheme.cardRadius, style: .continuous))
         .accessibilityHidden(true)
+    }
+}
+
+struct BundleImage: View {
+    let name: String
+
+    var body: some View {
+        if let url = Bundle.main.url(forResource: name, withExtension: nil), let image = UIImage(contentsOfFile: url.path) {
+            Image(uiImage: image).resizable()
+        } else {
+            Rectangle().fill(LinearGradient(colors: [TaleForkTheme.ink, TaleForkTheme.violet], startPoint: .topLeading, endPoint: .bottomTrailing))
+        }
     }
 }
 
