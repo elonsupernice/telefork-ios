@@ -6,6 +6,7 @@
 "common.done" = "完了";
 "common.cancel" = "キャンセル";
 "common.retry" = "再試行";
+"common.back" = "戻る";
 "onboarding.title" = "ショートドラマに、もう一つの結末を";
 "onboarding.subtitle" = "オリジナル縦型ドラマを見て、物語の分岐を選びましょう。";
 "onboarding.path.title" = "選択が次のエピソードを変える";
@@ -51,6 +52,12 @@
 "player.rewatch" = "この回を見直す";
 "player.error.title" = "動画を再生できません";
 "player.error.body" = "もう一度お試しください。進捗は保持されています。";
+"player.loading" = "動画を読み込み中…";
+"player.rewind" = "10秒戻る";
+"player.forward" = "10秒進む";
+"player.mute" = "ミュート";
+"player.unmute" = "ミュート解除";
+"player.restart.first" = "第1話から再生";
 "paths.eyebrow" = "STORY ROUTES";
 "paths.title" = "あなたの物語ルート";
 "paths.subtitle" = "光るノードは視聴済みの場面。選択によって別の結末へ進みます。";

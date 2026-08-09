@@ -1,9 +1,10 @@
-import AVKit
+import AVFoundation
 import SwiftUI
 
 struct DramaPlayerView: View {
     @Environment(ProgressStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     let drama: Drama
 
     @State private var player = AVPlayer()
@@ -12,7 +13,9 @@ struct DramaPlayerView: View {
     @State private var showEpisodePicker = false
     @State private var controlsVisible = true
     @State private var playbackFailed = false
+    @State private var isBuffering = true
     @State private var isPlaying = false
+    @State private var isMuted = false
     @State private var playbackSeconds = 0.0
     @State private var durationSeconds = 1.0
     @State private var lastPersistedSecond = -1
@@ -27,11 +30,12 @@ struct DramaPlayerView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            VideoPlayer(player: player)
+            PortraitVideoCanvas(player: player)
                 .ignoresSafeArea()
-                .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { controlsVisible.toggle() } }
+                .contentShape(Rectangle())
+                .onTapGesture { toggleControls() }
 
-            if controlsVisible && !showDecision { controlOverlay.transition(.opacity) }
+            if controlsVisible && !showDecision && !playbackFailed { controlOverlay.transition(.opacity) }
             if playbackFailed { failureOverlay }
             if showDecision { decisionOverlay.transition(.move(edge: .bottom).combined(with: .opacity)) }
         }
@@ -45,6 +49,13 @@ struct DramaPlayerView: View {
         .onDisappear {
             persistPlaybackPosition()
             player.pause()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase != .active else { return }
+            player.pause()
+            isPlaying = false
+            controlsVisible = true
+            persistPlaybackPosition()
         }
         .onReceive(playbackClock) { _ in refreshPlaybackState() }
         .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)) { notification in
@@ -82,21 +93,27 @@ struct DramaPlayerView: View {
     private var controlOverlay: some View {
         VStack(spacing: 0) {
             LinearGradient(colors: [.black.opacity(0.72), .clear], startPoint: .top, endPoint: .bottom)
-                .frame(height: 160).overlay(alignment: .top) {
-                    HStack {
-                        circleButton("xmark") { dismiss() }
-                        Spacer()
+                .frame(height: 150).overlay(alignment: .top) {
+                    ZStack(alignment: .top) {
+                        HStack {
+                            backButton
+                            Spacer()
+                            circleButton("rectangle.stack", accessibilityLabel: "player.episodes") { showEpisodePicker = true }
+                        }
                         VStack(spacing: 2) {
-                            Text(drama.title.resolved).font(.headline).foregroundStyle(.white)
+                            Text(drama.title.resolved).font(.headline).foregroundStyle(.white).lineLimit(1)
                             Text(String(format: String(localized: "player.episode.format"), episode?.number ?? 1)).font(.caption).foregroundStyle(.white.opacity(0.7))
                         }
-                        Spacer()
-                        circleButton("rectangle.stack") { showEpisodePicker = true }
-                    }.padding(.horizontal, 16).padding(.top, 10)
+                        .padding(.horizontal, 108)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
                 }
             Spacer()
+            centerPlaybackControls
+            Spacer()
             LinearGradient(colors: [.clear, .black.opacity(0.88)], startPoint: .top, endPoint: .bottom)
-                .frame(height: 280).overlay(alignment: .bottomLeading) {
+                .frame(height: 300).overlay(alignment: .bottomLeading) {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 8) {
                             Text("player.interactive.short").font(.caption2.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
@@ -127,13 +144,76 @@ struct DramaPlayerView: View {
                                 Label(store.isFavorite(drama) ? "player.saved" : "player.save", systemImage: store.isFavorite(drama) ? "heart.fill" : "heart")
                             }
                             Button { showEpisodePicker = true } label: { Label("player.episodes", systemImage: "list.number") }
+                            Spacer(minLength: 0)
+                            Button { toggleMute() } label: {
+                                Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                                    .frame(width: 44, height: 44)
+                            }
+                            .accessibilityLabel(Text(isMuted ? "player.unmute" : "player.mute"))
                         }
                         .font(.subheadline.weight(.semibold)).foregroundStyle(.white)
-                    }.padding(.horizontal, 20).padding(.bottom, 24)
+                    }.padding(.horizontal, 20).padding(.bottom, 18)
                 }
         }
-        .ignoresSafeArea()
+        .safeAreaPadding(.top, 2)
+        .safeAreaPadding(.bottom, 2)
         .allowsHitTesting(true)
+    }
+
+    @ViewBuilder
+    private var centerPlaybackControls: some View {
+        if isBuffering {
+            VStack(spacing: 10) {
+                ProgressView().controlSize(.large).tint(.white)
+                Text("player.loading").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.8))
+            }
+            .padding(20)
+            .background(.black.opacity(0.38), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        } else {
+            HStack(spacing: 28) {
+                transportButton("gobackward.10", label: "player.rewind") { seekRelative(-10) }
+                Button { togglePlayback() } label: {
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 30, weight: .bold))
+                        .frame(width: 72, height: 72)
+                        .foregroundStyle(.white)
+                        .background(TaleForkTheme.coral.opacity(0.92), in: Circle())
+                        .shadow(color: .black.opacity(0.35), radius: 14, y: 6)
+                }
+                .accessibilityLabel(Text(isPlaying ? "player.pause" : "player.play"))
+                transportButton("goforward.10", label: "player.forward") { seekRelative(10) }
+            }
+        }
+    }
+
+    private func transportButton(_ symbol: String, label: LocalizedStringKey, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 25, weight: .semibold))
+                .frame(width: 54, height: 54)
+                .foregroundStyle(.white)
+                .background(.black.opacity(0.42), in: Circle())
+        }
+        .accessibilityLabel(Text(label))
+    }
+
+    private var backButton: some View {
+        Button {
+            persistPlaybackPosition()
+            player.pause()
+            dismiss()
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "chevron.left")
+                Text("common.back")
+            }
+            .font(.subheadline.weight(.bold))
+            .padding(.horizontal, 13)
+            .frame(minHeight: 44)
+            .background(.black.opacity(0.42), in: Capsule())
+        }
+        .foregroundStyle(.white)
+        .accessibilityLabel(Text("common.back"))
     }
 
     private var decisionOverlay: some View {
@@ -141,9 +221,9 @@ struct DramaPlayerView: View {
             Color.black.opacity(0.9).ignoresSafeArea()
             VStack(spacing: 18) {
                 HStack {
-                    circleButton("xmark") { dismiss() }
+                    backButton
                     Spacer()
-                    circleButton("rectangle.stack") { showEpisodePicker = true }
+                    circleButton("rectangle.stack", accessibilityLabel: "player.episodes") { showEpisodePicker = true }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
@@ -197,25 +277,56 @@ struct DramaPlayerView: View {
     }
 
     private var failureOverlay: some View {
-        VStack(spacing: 14) {
-            Image(systemName: "exclamationmark.triangle.fill").font(.largeTitle).foregroundStyle(TaleForkTheme.coral)
-            Text("player.error.title").font(.headline)
-            Text("player.error.body").font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            Button("common.retry") { playbackFailed = false; loadCurrentEpisode() }.buttonStyle(.borderedProminent).tint(TaleForkTheme.coral)
-        }.padding(24).background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24)).padding(24)
+        ZStack {
+            Color.black.opacity(0.92).ignoresSafeArea()
+            VStack(spacing: 18) {
+                HStack {
+                    backButton
+                    Spacer()
+                    circleButton("rectangle.stack", accessibilityLabel: "player.episodes") { showEpisodePicker = true }
+                }
+                Spacer()
+                VStack(spacing: 14) {
+                    Image(systemName: "exclamationmark.triangle.fill").font(.largeTitle).foregroundStyle(TaleForkTheme.coral)
+                    Text("player.error.title").font(.headline).foregroundStyle(.white)
+                    Text("player.error.body").font(.subheadline).foregroundStyle(.white.opacity(0.7)).multilineTextAlignment(.center)
+                    Button("common.retry") { playbackFailed = false; loadCurrentEpisode() }
+                        .buttonStyle(.borderedProminent).tint(TaleForkTheme.coral)
+                    if currentEpisodeID != drama.entryEpisodeID {
+                        Button("player.restart.first") { selectEpisode(drama.entryEpisodeID) }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .frame(minHeight: 44)
+                    }
+                }
+                .padding(24)
+                .background(.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .safeAreaPadding(.top, 8)
+            .safeAreaPadding(.bottom, 8)
+        }
     }
 
-    private func circleButton(_ symbol: String, action: @escaping () -> Void) -> some View {
+    private func circleButton(
+        _ symbol: String,
+        accessibilityLabel: LocalizedStringKey,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) { Image(systemName: symbol).font(.headline).frame(width: 44, height: 44).background(.black.opacity(0.34), in: Circle()) }
             .foregroundStyle(.white)
+            .accessibilityLabel(Text(accessibilityLabel))
     }
 
     private func loadCurrentEpisode() {
-        guard let episode else { playbackFailed = true; return }
+        guard let episode else { playbackFailed = true; isBuffering = false; return }
         let bundledURL = Bundle.main.url(forResource: episode.clipName, withExtension: "mp4")
-        guard let url = episode.videoURL ?? bundledURL else { playbackFailed = true; return }
+        guard let url = episode.videoURL ?? bundledURL else { playbackFailed = true; isBuffering = false; return }
         showDecision = false
         playbackFailed = false
+        isBuffering = true
+        controlsVisible = true
         playbackSeconds = 0
         durationSeconds = Double(max(episode.durationSeconds, 1))
         lastPersistedSecond = -1
@@ -225,7 +336,11 @@ struct DramaPlayerView: View {
             try audioSession.setCategory(.playback, mode: .moviePlayback)
             try audioSession.setActive(true)
         } catch {
+#if DEBUG
+            print("TaleFork player audio session failed: \(error.localizedDescription)")
+#endif
             playbackFailed = true
+            isBuffering = false
             isPlaying = false
             return
         }
@@ -237,6 +352,7 @@ struct DramaPlayerView: View {
         let item = AVPlayerItem(asset: asset)
         item.preferredForwardBufferDuration = 2
         player.replaceCurrentItem(with: item)
+        player.isMuted = isMuted
         store.watch(drama: drama, episodeID: episode.id, position: savedPosition)
         if savedPosition > 0, savedPosition < durationSeconds - 0.75 {
             playbackSeconds = savedPosition
@@ -263,10 +379,26 @@ struct DramaPlayerView: View {
         if isPlaying {
             player.pause()
             persistPlaybackPosition()
+            controlsVisible = true
         } else {
             player.play()
         }
         isPlaying.toggle()
+    }
+
+    private func toggleControls() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            controlsVisible.toggle()
+        }
+    }
+
+    private func toggleMute() {
+        isMuted.toggle()
+        player.isMuted = isMuted
+    }
+
+    private func seekRelative(_ offset: Double) {
+        seek(to: playbackSeconds + offset)
     }
 
     private func seek(to seconds: Double) {
@@ -278,8 +410,15 @@ struct DramaPlayerView: View {
 
     private func refreshPlaybackState() {
         if player.currentItem?.status == .failed {
+#if DEBUG
+            let itemError = player.currentItem?.error?.localizedDescription ?? "unknown player item error"
+            let eventError = player.currentItem?.errorLog()?.events.last?.errorComment ?? "no media error comment"
+            print("TaleFork player item failed: \(itemError); \(eventError)")
+#endif
             playbackFailed = true
+            isBuffering = false
             isPlaying = false
+            controlsVisible = true
             return
         }
         if let itemDuration = player.currentItem?.duration.seconds, itemDuration.isFinite, itemDuration > 0 {
@@ -288,6 +427,8 @@ struct DramaPlayerView: View {
         let time = player.currentTime().seconds
         if time.isFinite { playbackSeconds = min(max(time, 0), durationSeconds) }
         isPlaying = player.timeControlStatus == .playing
+        isBuffering = player.currentItem?.status == .unknown
+            || player.timeControlStatus == .waitingToPlayAtSpecifiedRate
 
         let wholeSecond = Int(playbackSeconds)
         if wholeSecond != lastPersistedSecond, wholeSecond.isMultiple(of: 2) {

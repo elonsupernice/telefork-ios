@@ -6,6 +6,7 @@
 "common.done" = "完成";
 "common.cancel" = "取消";
 "common.retry" = "重試";
+"common.back" = "返回";
 "onboarding.title" = "短劇，不只一種結局";
 "onboarding.subtitle" = "觀看原創竪屏短劇，在關鍵時刻替角色作出選擇。";
 "onboarding.path.title" = "每個選擇都會改變下一集";
@@ -51,6 +52,12 @@
 "player.rewatch" = "重看本集";
 "player.error.title" = "影片暫時無法播放";
 "player.error.body" = "請重試；你的觀看進度不會遺失。";
+"player.loading" = "正在加載影片…";
+"player.rewind" = "快退 10 秒";
+"player.forward" = "快進 10 秒";
+"player.mute" = "靜音";
+"player.unmute" = "恢復聲音";
+"player.restart.first" = "改從第 1 集播放";
 "paths.eyebrow" = "STORY ROUTES";
 "paths.title" = "你的劇情線路";
 "paths.subtitle" = "亮起的節點代表你已看過的劇情；不同選擇會通往不同結局。";

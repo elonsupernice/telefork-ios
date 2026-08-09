@@ -70,6 +70,12 @@
 		5C68009E3734E43129010334 /* DramaPlayerView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */;
 		};
+		69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Player/PortraitVideoCanvas.swift"; sourceTree = "<group>";
+		};
+		10E88C001910F9983A6E0092 /* PortraitVideoCanvas.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */;
+		};
 		553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Settings/SettingsView.swift"; sourceTree = "<group>";
 		};
@@ -254,6 +260,7 @@
 				E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */,
 				52FC7CEEC395C1E647A5EF69 /* PathsView.swift */,
 				08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */,
+				69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */,
 				553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */,
 				6164121C02F4CAE187E30A2C /* VaultView.swift */,
 				F8CDC5ACAA6FF833610AC59D /* Haptics.swift */,
@@ -328,6 +335,7 @@
 				5DB3EDB4F61EFBB401949366 /* OnboardingView.swift in Sources */,
 				CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */,
 				5C68009E3734E43129010334 /* DramaPlayerView.swift in Sources */,
+				10E88C001910F9983A6E0092 /* PortraitVideoCanvas.swift in Sources */,
 				6FAE91EA579340D6F6648B55 /* SettingsView.swift in Sources */,
 				1BC2C00DA2A8106873A85661 /* VaultView.swift in Sources */,
 				5C4905705A75DAE7AFC0D4F0 /* Haptics.swift in Sources */,

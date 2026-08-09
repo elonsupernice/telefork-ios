@@ -6,6 +6,7 @@
 "common.done" = "Done";
 "common.cancel" = "Cancel";
 "common.retry" = "Retry";
+"common.back" = "Back";
 "onboarding.title" = "Short dramas, more than one ending";
 "onboarding.subtitle" = "Watch original vertical shorts and choose for the characters at pivotal moments.";
 "onboarding.path.title" = "Every choice changes the next episode";
@@ -51,6 +52,12 @@
 "player.rewatch" = "Replay Episode";
 "player.error.title" = "Video is unavailable";
 "player.error.body" = "Please try again. Your progress is safe.";
+"player.loading" = "Loading video…";
+"player.rewind" = "Back 10 seconds";
+"player.forward" = "Forward 10 seconds";
+"player.mute" = "Mute";
+"player.unmute" = "Unmute";
+"player.restart.first" = "Play from Episode 1";
 "paths.eyebrow" = "STORY ROUTES";
 "paths.title" = "Your story route";
 "paths.subtitle" = "Lit nodes are scenes you have watched. Different choices lead to different endings.";
