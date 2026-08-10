@@ -1,51 +1,64 @@
 import SwiftUI
-import WebKit
+import UIKit
 
 struct LocalLegalView: View {
     enum Document {
         case privacy
         case terms
 
-        var title: LocalizedStringKey {
-            switch self {
-            case .privacy: "settings.privacy"
-            case .terms: "settings.terms"
-            }
+        var navigationTitle: LocalizedStringKey {
+            self == .privacy ? "settings.privacy" : "settings.terms"
         }
 
-        var fileName: String {
-            switch self {
-            case .privacy: "privacy-policy"
-            case .terms: "terms-of-use"
-            }
+        var bundledResource: String {
+            self == .privacy ? "privacy-policy" : "terms-of-use"
         }
     }
 
     let document: Document
+    @State private var content = AttributedString()
+    @State private var didFail = false
 
     var body: some View {
-        LegalWebView(fileName: document.fileName)
-            .navigationTitle(document.title)
-            .navigationBarTitleDisplayMode(.inline)
+        ScrollView {
+            if didFail {
+                ContentUnavailableView(
+                    "legal.unavailable.title",
+                    systemImage: "doc.badge.ellipsis",
+                    description: Text("legal.unavailable.body")
+                )
+                .frame(maxWidth: .infinity, minHeight: 360)
+            } else {
+                Text(content)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: 760, alignment: .leading)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 22)
+                    .padding(.vertical, 28)
+            }
+        }
+        .background(PaperBackground())
+        .navigationTitle(document.navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .task(id: document.bundledResource) { loadDocument() }
+    }
+
+    @MainActor
+    private func loadDocument() {
+        guard let file = Bundle.main.url(forResource: document.bundledResource, withExtension: "html"),
+              let data = try? Data(contentsOf: file),
+              let richText = try? NSAttributedString(
+                data: data,
+                options: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue,
+                ],
+                documentAttributes: nil
+              ) else {
+            didFail = true
+            return
+        }
+        content = AttributedString(richText)
+        didFail = false
     }
 }
-
-private struct LegalWebView: UIViewRepresentable {
-    let fileName: String
-
-    func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .nonPersistent()
-        let view = WKWebView(frame: .zero, configuration: configuration)
-        view.isOpaque = false
-        view.backgroundColor = .clear
-        view.scrollView.backgroundColor = .clear
-        return view
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        guard let url = Bundle.main.url(forResource: fileName, withExtension: "html") else { return }
-        webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-    }
-}
-

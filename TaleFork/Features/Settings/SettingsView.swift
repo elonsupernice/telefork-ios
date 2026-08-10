@@ -2,7 +2,9 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(ProgressStore.self) private var store
+    @Environment(CatalogStore.self) private var catalog
     @State private var showResetConfirmation = false
+    @State private var showAccountDeletionConfirmation = false
 
     var body: some View {
         @Bindable var store = store
@@ -11,6 +13,27 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     settingsHeader
+
+                    SettingsCard(title: "settings.account", symbol: "person.crop.circle") {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 12) {
+                                Label("settings.user.id", systemImage: "number")
+                                Spacer(minLength: 12)
+                                userIDText
+                            }
+                            VStack(alignment: .leading, spacing: 10) {
+                                Label("settings.user.id", systemImage: "number")
+                                userIDText
+                            }
+                        }
+                        Divider()
+                        Button(role: .destructive) {
+                            showAccountDeletionConfirmation = true
+                        } label: {
+                            Label("settings.delete.account", systemImage: "person.crop.circle.badge.minus")
+                                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        }
+                    }
 
                     SettingsCard(title: "settings.playback", symbol: "play.rectangle") {
                         Picker("settings.appearance", selection: $store.preferences.appearance) {
@@ -21,7 +44,7 @@ struct SettingsView: View {
                         .pickerStyle(.menu)
 
                         Divider()
-                        Toggle("settings.haptics", isOn: $store.preferences.hapticsEnabled)
+                        Toggle("settings.haptics", isOn: $store.preferences.tactileFeedbackEnabled)
                             .tint(TaleForkTheme.coral)
                         Divider()
                         Toggle("settings.reduce.motion", isOn: $store.preferences.reduceDecorativeMotion)
@@ -78,7 +101,7 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, margin)
                 .padding(.top, 18)
-                .padding(.bottom, 34)
+                .padding(.bottom, 112)
                 .frame(maxWidth: 720)
                 .frame(maxWidth: .infinity)
             }
@@ -94,6 +117,17 @@ struct SettingsView: View {
         } message: {
             Text("settings.reset.message")
         }
+        .alert("settings.delete.account.title", isPresented: $showAccountDeletionConfirmation) {
+            Button("common.cancel", role: .cancel) {}
+            Button("settings.delete.account.confirm", role: .destructive) {
+                TactileFeedback.success(enabled: store.preferences.tactileFeedbackEnabled)
+                catalog.deleteLocalAccount()
+                store.deleteLocalAccount()
+            }
+        } message: {
+            Text("settings.delete.account.message")
+        }
+        .task { await catalog.load() }
     }
 
     private var settingsHeader: some View {
@@ -117,6 +151,7 @@ struct SettingsView: View {
             ),
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
+        .dynamicTypeSize(.xSmall ... .xxxLarge)
     }
 
     private func settingsRow(_ title: LocalizedStringKey, symbol: String) -> some View {
@@ -135,6 +170,20 @@ struct SettingsView: View {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
         return "\(version) (\(build))"
+    }
+
+    private var userIDLabel: String {
+        if !catalog.currentUserID.isEmpty { return catalog.currentUserID }
+        return catalog.isLoading ? String(localized: "settings.user.loading") : String(localized: "settings.user.unavailable")
+    }
+
+    private var userIDText: some View {
+        Text(userIDLabel)
+            .font(.subheadline.monospacedDigit())
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.55)
+            .textSelection(.enabled)
     }
 }
 
@@ -155,6 +204,7 @@ private struct SettingsCard<Content: View>: View {
                 .font(.caption.weight(.bold).monospaced())
                 .foregroundStyle(TaleForkTheme.violet)
                 .textCase(.uppercase)
+                .dynamicTypeSize(.xSmall ... .xxxLarge)
             content
         }
         .padding(18)

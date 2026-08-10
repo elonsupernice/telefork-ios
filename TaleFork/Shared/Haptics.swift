@@ -1,14 +1,14 @@
 import UIKit
 
-enum Haptics {
+enum TactileFeedback {
     @MainActor
-    static func choice(enabled: Bool) {
+    static func tap(enabled: Bool) {
         guard enabled else { return }
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
     }
 
     @MainActor
-    static func completion(enabled: Bool) {
+    static func success(enabled: Bool) {
         guard enabled else { return }
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }

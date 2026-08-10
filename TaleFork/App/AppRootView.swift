@@ -17,8 +17,6 @@ struct AppRootView: View {
 #if DEBUG
         if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "remote-player" {
             RemotePlaybackCheckView()
-        } else if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "player" {
-            DramaPlayerView(drama: DramaLibrary.beforeRainStops)
         } else {
             regularContent
         }
@@ -59,7 +57,20 @@ private struct RemotePlaybackCheckView: View {
 #endif
 
 struct AppShellView: View {
-    @State private var selection: AppTab = .discover
+    @State private var selection: AppTab
+
+    init() {
+        var initialTab = AppTab.discover
+#if DEBUG
+        switch ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] {
+        case "paths": initialTab = .paths
+        case "vault": initialTab = .vault
+        case "settings": initialTab = .settings
+        default: break
+        }
+#endif
+        _selection = State(initialValue: initialTab)
+    }
 
     var body: some View {
         TabView(selection: $selection) {
@@ -68,7 +79,7 @@ struct AppShellView: View {
                 .tag(AppTab.discover)
 
             NavigationStack { PathsView() }
-                .tabItem { Label("tab.paths", systemImage: "arrow.triangle.branch") }
+                .tabItem { Label("tab.paths", systemImage: "clock.arrow.circlepath") }
                 .tag(AppTab.paths)
 
             NavigationStack { VaultView() }

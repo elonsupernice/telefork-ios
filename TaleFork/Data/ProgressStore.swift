@@ -11,7 +11,7 @@ final class ProgressStore {
     var hasCompletedOnboarding = false { didSet { persist() } }
 
     private let defaults: UserDefaults
-    private let storageKey = "talefork.drama-state.v2"
+    private let storageKey = "talefork.drama-state.v3"
     private var isRestoring = false
 
     init(defaults: UserDefaults = .standard) {
@@ -30,26 +30,24 @@ final class ProgressStore {
         recordWatch(drama: drama, episodeID: run(for: drama).currentEpisodeID)
     }
 
-    func watch(drama: Drama, episodeID: String, position: Double = 0) {
+    func selectEpisode(drama: Drama, episodeID: String) {
         guard drama.episode(id: episodeID) != nil else { return }
         var run = run(for: drama)
-        run.watch(episodeID: episodeID, position: position)
+        run.watch(
+            episodeID: episodeID,
+            position: run.playbackSeconds[episodeID] ?? 0,
+            markWatched: false
+        )
         runs[drama.id] = run
         recordWatch(drama: drama, episodeID: episodeID)
     }
 
-    func choose(_ choice: DramaChoice, in drama: Drama) {
+    func watch(drama: Drama, episodeID: String, position: Double = 0, completed: Bool = false) {
+        guard drama.episode(id: episodeID) != nil else { return }
         var run = run(for: drama)
-        run.choose(choice, in: drama)
+        run.watch(episodeID: episodeID, position: position, markWatched: completed || position >= 3)
         runs[drama.id] = run
-        recordWatch(drama: drama, episodeID: choice.destinationEpisodeID)
-    }
-
-    func restart(_ drama: Drama) {
-        var run = run(for: drama)
-        run.restart(with: drama)
-        runs[drama.id] = run
-        recordWatch(drama: drama, episodeID: drama.entryEpisodeID)
+        recordWatch(drama: drama, episodeID: episodeID)
     }
 
     func toggleFavorite(_ drama: Drama) {
@@ -65,6 +63,17 @@ final class ProgressStore {
         favoriteDramaIDs = []
         history = []
         persist()
+    }
+
+    func deleteLocalAccount() {
+        isRestoring = true
+        runs = [:]
+        favoriteDramaIDs = []
+        history = []
+        preferences = AppPreferences()
+        hasCompletedOnboarding = false
+        isRestoring = false
+        defaults.removeObject(forKey: storageKey)
     }
 
     private func recordWatch(drama: Drama, episodeID: String) {

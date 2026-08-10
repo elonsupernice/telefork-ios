@@ -32,12 +32,6 @@ resources = [
     ("terms-of-use.html", "Resources/Legal/terms-of-use.html", "text.html"),
 ]
 
-for path in sorted((ROOT / "TaleFork/Resources/DramaImages").glob("*.png")):
-    resources.append((path.name, path.relative_to(ROOT / "TaleFork").as_posix(), "image.png"))
-
-for path in sorted((ROOT / "TaleFork/Resources/Videos").glob("*.mp4")):
-    resources.append((path.name, path.relative_to(ROOT / "TaleFork").as_posix(), "video.mp4"))
-
 languages = ["en", "ja", "zh-Hant"]
 variant_names = ["Localizable.strings", "InfoPlist.strings"]
 
@@ -213,7 +207,7 @@ project_common = [
     ("CLANG_ENABLE_OBJC_ARC", "YES"),
     ("ENABLE_STRICT_OBJC_MSGSEND", "YES"),
     ("GCC_C_LANGUAGE_STANDARD", "gnu17"),
-    ("IPHONEOS_DEPLOYMENT_TARGET", "17.0"),
+    ("IPHONEOS_DEPLOYMENT_TARGET", "18.0"),
     ("SDKROOT", "iphoneos"),
     ("SWIFT_VERSION", "6.0"),
 ]
@@ -232,6 +226,7 @@ target_common = [
     ("PRODUCT_NAME", quote("$(TARGET_NAME)")),
     ("SUPPORTED_PLATFORMS", quote("iphoneos iphonesimulator")),
     ("SUPPORTS_MACCATALYST", "NO"),
+    ("SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD", "NO"),
     ("SWIFT_EMIT_LOC_STRINGS", "YES"),
     ("SWIFT_VERSION", "6.0"),
     ("TARGETED_DEVICE_FAMILY", "1"),
@@ -243,7 +238,7 @@ tests_common = [
     ("CURRENT_PROJECT_VERSION", "1"),
     ("DEVELOPMENT_TEAM", quote("")),
     ("GENERATE_INFOPLIST_FILE", "YES"),
-    ("IPHONEOS_DEPLOYMENT_TARGET", "17.0"),
+    ("IPHONEOS_DEPLOYMENT_TARGET", "18.0"),
     ("MARKETING_VERSION", "1.0.0"),
     ("PRODUCT_BUNDLE_IDENTIFIER", "com.talefork.storypaths.tests"),
     ("PRODUCT_NAME", quote("$(TARGET_NAME)")),

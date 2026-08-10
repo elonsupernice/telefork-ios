@@ -3,7 +3,6 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(ProgressStore.self) private var store
     @State private var page = 0
-    @State private var selectedGenres: Set<String> = []
 
     var body: some View {
         GeometryReader { proxy in
@@ -14,7 +13,7 @@ struct OnboardingView: View {
                     Text("TaleFork")
                         .font(.system(.title2, design: .rounded, weight: .black))
                     Spacer()
-                    Text("\(page + 1) / 3")
+                    Text("\(page + 1) / 2")
                         .font(.caption.weight(.bold).monospacedDigit())
                         .foregroundStyle(.secondary)
                 }
@@ -24,27 +23,25 @@ struct OnboardingView: View {
                 TabView(selection: $page) {
                     introPage.tag(0)
                     pathPage.tag(1)
-                    preferencePage.tag(2)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
                 HStack(spacing: 8) {
-                    ForEach(0..<3, id: \.self) { index in
+                    ForEach(0..<2, id: \.self) { index in
                         Capsule()
                             .fill(index == page ? TaleForkTheme.coral : TaleForkTheme.mist)
                             .frame(width: index == page ? 28 : 8, height: 8)
                     }
                     Spacer()
                     Button {
-                        if page < 2 {
+                        if page < 1 {
                             page += 1
                         } else {
-                            store.preferences.preferredGenres = selectedGenres
                             store.hasCompletedOnboarding = true
                         }
                     } label: {
                         HStack(spacing: 8) {
-                            Text(page == 2 ? "onboarding.begin" : "common.next")
+                            Text(page == 1 ? "onboarding.begin" : "common.next")
                             Image(systemName: "arrow.right")
                         }
                         .font(.headline)
@@ -95,7 +92,7 @@ struct OnboardingView: View {
     private var pathPage: some View {
         VStack(alignment: .leading, spacing: 24) {
             Spacer()
-            RoutePreview()
+            ProgressPreview()
                 .frame(height: 290)
             Text("onboarding.path.title")
                 .font(.system(.largeTitle, design: .rounded, weight: .black))
@@ -111,76 +108,39 @@ struct OnboardingView: View {
         .padding(.horizontal, 24)
     }
 
-    private var preferencePage: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            Spacer()
-            Text("onboarding.genre.title")
-                .font(.system(.largeTitle, design: .rounded, weight: .black))
-                .lineLimit(2)
-                .minimumScaleFactor(0.86)
-                .fixedSize(horizontal: false, vertical: true)
-            Text("onboarding.genre.body")
-                .foregroundStyle(.secondary)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 138), spacing: 12)], spacing: 12) {
-                genreChip(id: "mystery", title: "genre.mystery", symbol: "moon.stars")
-                genreChip(id: "speculative", title: "genre.speculative", symbol: "sparkles")
-                genreChip(id: "emotional", title: "genre.emotional", symbol: "heart.text.square")
-                genreChip(id: "coastal", title: "genre.coastal", symbol: "water.waves")
-            }
-            Spacer()
-        }
-        .padding(.horizontal, 24)
-    }
-
-    private func genreChip(id: String, title: LocalizedStringKey, symbol: String) -> some View {
-        let selected = selectedGenres.contains(id)
-        return Button {
-            if selected { selectedGenres.remove(id) } else { selectedGenres.insert(id) }
-        } label: {
-            VStack(alignment: .leading, spacing: 16) {
-                Image(systemName: symbol)
-                    .font(.title2)
-                Text(title)
-                    .font(.headline)
-                HStack {
-                    Spacer()
-                    Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                }
-            }
-            .foregroundStyle(selected ? .white : .primary)
-            .padding(18)
-            .frame(maxWidth: .infinity, minHeight: 128, alignment: .leading)
-            .background(selected ? TaleForkTheme.violet : TaleForkTheme.mist.opacity(0.55), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        }
-        .buttonStyle(.plain)
-    }
 }
 
-private struct RoutePreview: View {
+private struct ProgressPreview: View {
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(TaleForkTheme.ink)
-                Path { path in
-                    path.move(to: CGPoint(x: proxy.size.width * 0.5, y: proxy.size.height * 0.78))
-                    path.addLine(to: CGPoint(x: proxy.size.width * 0.5, y: proxy.size.height * 0.52))
-                    path.addLine(to: CGPoint(x: proxy.size.width * 0.25, y: proxy.size.height * 0.25))
-                    path.move(to: CGPoint(x: proxy.size.width * 0.5, y: proxy.size.height * 0.52))
-                    path.addLine(to: CGPoint(x: proxy.size.width * 0.76, y: proxy.size.height * 0.25))
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(1...4, id: \.self) { number in
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(number <= 2 ? TaleForkTheme.coral : TaleForkTheme.mist.opacity(0.42))
+                            .frame(width: 36, height: 36)
+                        Image(systemName: number < 2 ? "checkmark" : (number == 2 ? "play.fill" : "lock.fill"))
+                            .font(.caption.bold())
+                            .foregroundStyle(number <= 2 ? TaleForkTheme.ink : TaleForkTheme.paper.opacity(0.55))
+                    }
+                    Text(String(format: String(localized: "player.episode.format"), number))
+                        .font(.headline)
+                        .foregroundStyle(TaleForkTheme.paper)
+                    Spacer()
+                    if number == 2 {
+                        Text("discover.continue")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(TaleForkTheme.coral)
+                    }
                 }
-                .stroke(TaleForkTheme.coral, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                ForEach(Array([
-                    CGPoint(x: 0.5, y: 0.78), CGPoint(x: 0.5, y: 0.52),
-                    CGPoint(x: 0.25, y: 0.25), CGPoint(x: 0.76, y: 0.25)
-                ].enumerated()), id: \.offset) { _, point in
-                    Circle()
-                        .fill(point.x == 0.76 ? TaleForkTheme.coral : TaleForkTheme.paper)
-                        .frame(width: 22, height: 22)
-                        .position(x: proxy.size.width * point.x, y: proxy.size.height * point.y)
+                .frame(maxHeight: .infinity)
+                if number < 4 {
+                    Divider().overlay(TaleForkTheme.paper.opacity(0.12))
                 }
             }
         }
+        .padding(24)
+        .background(TaleForkTheme.ink, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
         .accessibilityHidden(true)
     }
 }

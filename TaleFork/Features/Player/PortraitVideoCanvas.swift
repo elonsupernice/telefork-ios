@@ -1,46 +1,28 @@
-import AVFoundation
+import AVKit
 import SwiftUI
-import UIKit
 
-/// Draws video only. All interaction stays in TaleFork's SwiftUI control layer,
-/// preventing AVKit controls from appearing on top of the app controls.
-struct PortraitVideoCanvas: UIViewRepresentable {
+/// A system playback viewport with TaleFork's controls supplied entirely by SwiftUI.
+struct PortraitVideoCanvas: UIViewControllerRepresentable {
     let player: AVPlayer
 
-    func makeUIView(context: Context) -> VideoLayerHostView {
-        let view = VideoLayerHostView()
-        view.attachedPlayer = player
-        return view
+    func makeUIViewController(context: Context) -> AVPlayerViewController {
+        let controller = AVPlayerViewController()
+        controller.showsPlaybackControls = false
+        controller.videoGravity = .resizeAspectFill
+        controller.allowsPictureInPicturePlayback = false
+        controller.updatesNowPlayingInfoCenter = false
+        controller.view.backgroundColor = .black
+        controller.player = player
+        return controller
     }
 
-    func updateUIView(_ view: VideoLayerHostView, context: Context) {
-        view.attachedPlayer = player
+    func updateUIViewController(_ controller: AVPlayerViewController, context: Context) {
+        if controller.player !== player {
+            controller.player = player
+        }
     }
 
-    static func dismantleUIView(_ view: VideoLayerHostView, coordinator: Void) {
-        view.attachedPlayer = nil
-    }
-}
-
-final class VideoLayerHostView: UIView {
-    override class var layerClass: AnyClass { AVPlayerLayer.self }
-
-    private var videoLayer: AVPlayerLayer { layer as! AVPlayerLayer }
-
-    var attachedPlayer: AVPlayer? {
-        get { videoLayer.player }
-        set { videoLayer.player = newValue }
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .black
-        videoLayer.backgroundColor = UIColor.black.cgColor
-        videoLayer.videoGravity = .resizeAspectFill
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    static func dismantleUIViewController(_ controller: AVPlayerViewController, coordinator: Void) {
+        controller.player = nil
     }
 }

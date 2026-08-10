@@ -4,7 +4,7 @@ struct ExploreView: View {
     @Environment(ProgressStore.self) private var store
     @Environment(CatalogStore.self) private var catalog
     @State private var query = ""
-    @State private var selectedGenre = "all"
+    @State private var playerDrama: Drama?
 
     var body: some View {
         GeometryReader { proxy in
@@ -15,9 +15,8 @@ struct ExploreView: View {
                     searchField
 
                     if query.isEmpty {
-                        featuredDrama
+                        featuredDrama(height: min(420, max(360, proxy.size.height * 0.58)))
                         continueWatching
-                        genreRail
                     }
 
                     if catalog.isLoading {
@@ -39,13 +38,16 @@ struct ExploreView: View {
                 }
                 .padding(.horizontal, margin)
                 .padding(.top, 12)
-                .padding(.bottom, 36)
+                .padding(.bottom, 112)
             }
             .scrollIndicators(.hidden)
             .background(PaperBackground())
         }
         .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(for: Drama.self) { DramaDetailView(drama: $0) }
+        .fullScreenCover(item: $playerDrama) { drama in
+            DramaPlayerView(drama: drama)
+        }
         .task { await catalog.load() }
         .task(id: query) {
             if !query.isEmpty { try? await Task.sleep(for: .milliseconds(320)) }
@@ -68,6 +70,7 @@ struct ExploreView: View {
                 .padding(.horizontal, 10).padding(.vertical, 7)
                 .background(TaleForkTheme.coral, in: Capsule())
         }
+        .dynamicTypeSize(.xSmall ... .xxLarge)
     }
 
     private var searchField: some View {
@@ -83,38 +86,45 @@ struct ExploreView: View {
         .background(.background.opacity(0.86), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
-    private var featuredDrama: some View {
-        NavigationLink(value: featured) {
-            ZStack(alignment: .bottomLeading) {
-                BundleImage(name: featured.posterImageName, remoteURL: featured.coverURL)
-                    .scaledToFill().frame(height: 420).clipped()
-                LinearGradient(colors: [.clear, .black.opacity(0.9)], startPoint: .center, endPoint: .bottom)
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("discover.featured").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
-                    Text(featured.title.resolved)
-                        .font(.system(.largeTitle, design: .rounded, weight: .black)).foregroundStyle(.white)
-                    Text(featured.subtitle.resolved)
-                        .font(.subheadline).foregroundStyle(.white.opacity(0.82)).lineLimit(2)
-                    HStack {
-                        Label(String(format: String(localized: "drama.episodes.format"), featured.episodes.count), systemImage: "play.rectangle.on.rectangle")
-                        Spacer()
-                        Image(systemName: "play.fill")
-                            .foregroundStyle(TaleForkTheme.ink).frame(width: 48, height: 48)
-                            .background(TaleForkTheme.coral, in: Circle())
+    @ViewBuilder
+    private func featuredDrama(height: CGFloat) -> some View {
+        if let featured = catalog.featured {
+            NavigationLink(value: featured) {
+                ZStack(alignment: .bottomLeading) {
+                    BundleImage(name: featured.posterImageName, remoteURL: featured.coverURL)
+                        .scaledToFill().frame(height: height).clipped()
+                    LinearGradient(colors: [.clear, .black.opacity(0.9)], startPoint: .center, endPoint: .bottom)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("discover.featured").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
+                        Text(featured.title.resolved)
+                            .font(.system(.largeTitle, design: .rounded, weight: .black)).foregroundStyle(.white)
+                        Text(featured.subtitle.resolved)
+                            .font(.subheadline).foregroundStyle(.white.opacity(0.82)).lineLimit(2)
+                        HStack {
+                            Label(String(format: String(localized: "drama.episodes.format"), featured.episodes.count), systemImage: "play.rectangle.on.rectangle")
+                            Spacer()
+                            Image(systemName: "play.fill")
+                                .foregroundStyle(TaleForkTheme.ink).frame(width: 48, height: 48)
+                                .background(TaleForkTheme.coral, in: Circle())
+                        }
+                        .font(.caption.weight(.semibold)).foregroundStyle(.white)
                     }
-                    .font(.caption.weight(.semibold)).foregroundStyle(.white)
+                    .padding(20)
+                    .dynamicTypeSize(.xSmall ... .xxxLarge)
                 }
-                .padding(20)
+                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
             }
-            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
     }
 
     @ViewBuilder private var continueWatching: some View {
         if let drama = continuingDrama {
             let run = store.run(for: drama)
-            NavigationLink(value: drama) {
+            Button {
+                store.start(drama)
+                playerDrama = drama
+            } label: {
                 HStack(spacing: 15) {
                     BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(width: 78, height: 96).clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -130,27 +140,10 @@ struct ExploreView: View {
                 }
                 .padding(14).foregroundStyle(.primary)
                 .background(.background.opacity(0.84), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-            }.buttonStyle(.plain)
-        }
-    }
-
-    private var genreRail: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 10) {
-                genreChip("all", String(localized: "genre.all"))
-                ForEach(genreOptions, id: \.self) { genre in
-                    genreChip(genre, genre)
-                }
             }
-        }.scrollIndicators(.hidden)
-    }
-
-    private func genreChip(_ id: String, _ title: String) -> some View {
-        Button { selectedGenre = id } label: {
-            Text(title).font(.subheadline.weight(.semibold)).padding(.horizontal, 16).frame(minHeight: 40)
-                .foregroundStyle(selectedGenre == id ? TaleForkTheme.paper : .primary)
-                .background(selectedGenre == id ? TaleForkTheme.ink : Color.primary.opacity(0.07), in: Capsule())
-        }.buttonStyle(.plain)
+            .buttonStyle(.plain)
+            .accessibilityHint(Text("discover.continue.hint"))
+        }
     }
 
     private func dramaGrid(width: CGFloat) -> some View {
@@ -161,40 +154,15 @@ struct ExploreView: View {
         }
     }
 
-    private var originalNotice: some View {
-        HStack(alignment: .top, spacing: 13) {
-            Image(systemName: "checkmark.seal.fill").font(.title2).foregroundStyle(TaleForkTheme.mint)
-            VStack(alignment: .leading, spacing: 5) {
-                Text("discover.original.title").font(.headline)
-                Text("discover.original.body").font(.subheadline).foregroundStyle(.secondary)
-            }
-        }
-        .padding(18).background(TaleForkTheme.ink.opacity(0.06), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-    }
-
     private var continuingDrama: Drama? {
         store.history.compactMap { catalog.drama(id: $0.dramaID) }.first
     }
 
     private var filteredDramas: [Drama] {
-        let source = query.isEmpty ? availableDramas : catalog.searchResults
+        let source = query.isEmpty ? catalog.dramas : catalog.searchResults
         return source.filter { drama in
-            let matchesQuery = query.isEmpty || drama.title.resolved.localizedCaseInsensitiveContains(query) || drama.genre.resolved.localizedCaseInsensitiveContains(query)
-            let matchesGenre = selectedGenre == "all" || drama.genre.resolved == selectedGenre
-            return matchesQuery && matchesGenre
+            query.isEmpty || drama.title.resolved.localizedCaseInsensitiveContains(query)
         }
-    }
-
-    private var featured: Drama {
-        catalog.featured ?? DramaLibrary.beforeRainStops
-    }
-
-    private var availableDramas: [Drama] {
-        catalog.dramas.isEmpty ? DramaLibrary.dramas : catalog.dramas
-    }
-
-    private var genreOptions: [String] {
-        Array(Set(availableDramas.map { $0.genre.resolved }.filter { !$0.isEmpty })).sorted().prefix(8).map { $0 }
     }
 }
 
@@ -210,19 +178,16 @@ struct DramaDetailView: View {
                     BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(height: 440).clipped()
                     LinearGradient(colors: [.clear, .black.opacity(0.88)], startPoint: .center, endPoint: .bottom)
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(drama.genre.resolved.uppercased()).font(.caption.weight(.black).monospaced()).foregroundStyle(Color(hex: drama.accentHex))
                         Text(drama.title.resolved).font(.system(.largeTitle, design: .rounded, weight: .black)).foregroundStyle(.white)
                         Text(drama.subtitle.resolved).font(.subheadline).foregroundStyle(.white.opacity(0.8))
                     }.padding(20)
+                    .dynamicTypeSize(.xSmall ... .xxxLarge)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
 
                 HStack(spacing: 10) {
-                    Text("\(drama.year)")
-                    Text(drama.genre.resolved)
                     if drama.availability == .available {
-                        Text(String(format: String(localized: "drama.episodes.format"), drama.episodes.count))
-                        Text(String(format: String(localized: "drama.endings.format"), drama.endings.count))
+                    Text(String(format: String(localized: "drama.episodes.format"), drama.episodes.count))
                     }
                 }.font(.caption.weight(.semibold)).foregroundStyle(.secondary)
 
@@ -237,7 +202,10 @@ struct DramaDetailView: View {
                                 .font(.headline).foregroundStyle(TaleForkTheme.ink).frame(maxWidth: .infinity, minHeight: 54)
                                 .background(TaleForkTheme.coral, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                         }
-                        Button { store.toggleFavorite(drama) } label: {
+                        Button {
+                            TactileFeedback.tap(enabled: store.preferences.tactileFeedbackEnabled)
+                            store.toggleFavorite(drama)
+                        } label: {
                             Image(systemName: store.isFavorite(drama) ? "heart.fill" : "heart")
                                 .font(.title3).foregroundStyle(store.isFavorite(drama) ? .red : .primary)
                                 .frame(width: 54, height: 54).background(Color.primary.opacity(0.07), in: RoundedRectangle(cornerRadius: 16))
@@ -250,7 +218,10 @@ struct DramaDetailView: View {
                         .background(Color.primary.opacity(0.07), in: RoundedRectangle(cornerRadius: 18))
                 }
             }
-            .padding(18).frame(maxWidth: 720).frame(maxWidth: .infinity)
+            .padding(.horizontal, 18)
+            .padding(.top, 18)
+            .padding(.bottom, 112)
+            .frame(maxWidth: 720).frame(maxWidth: .infinity)
         }
         .background(PaperBackground()).navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $showPlayer) { DramaPlayerView(drama: drama) }
@@ -261,13 +232,15 @@ struct DramaDetailView: View {
             Text("drama.episodes.title").font(.title3.bold())
             ForEach(drama.episodes) { episode in
                 Button {
-                    store.watch(drama: drama, episodeID: episode.id); showPlayer = true
+                    TactileFeedback.tap(enabled: store.preferences.tactileFeedbackEnabled)
+                    store.selectEpisode(drama: drama, episodeID: episode.id)
+                    showPlayer = true
                 } label: {
                     HStack(spacing: 14) {
                         Text(String(format: "%02d", episode.number)).font(.headline.monospacedDigit()).foregroundStyle(TaleForkTheme.coral)
                         VStack(alignment: .leading, spacing: 4) {
                             Text(episode.title.resolved).font(.headline)
-                            Text(episode.ending == nil ? "drama.interactive.episode" : "drama.ending.episode").font(.caption).foregroundStyle(.secondary)
+                            Text(String(format: String(localized: "player.episode.format"), episode.number)).font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         Image(systemName: store.run(for: drama).watchedEpisodeIDs.contains(episode.id) ? "checkmark.circle.fill" : "play.circle")

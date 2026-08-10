@@ -112,9 +112,6 @@ struct DramaPoster: View {
                     }
                     Spacer()
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(drama.genre.resolved.uppercased())
-                            .font(.caption2.weight(.bold).monospaced())
-                            .foregroundStyle(Color(hex: drama.accentHex))
                         Text(drama.title.resolved)
                             .font(.system(.title2, design: .rounded, weight: .black))
                             .foregroundStyle(.white)
@@ -173,23 +170,5 @@ struct SectionHeading: View {
                 .font(.system(.title2, design: .rounded, weight: .bold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-struct RouteDot: View {
-    let isVisited: Bool
-    let isCurrent: Bool
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(isVisited ? TaleForkTheme.mint : TaleForkTheme.mist)
-            if isCurrent {
-                Circle()
-                    .stroke(TaleForkTheme.coral, lineWidth: 3)
-                    .padding(-4)
-            }
-        }
-        .frame(width: 14, height: 14)
     }
 }

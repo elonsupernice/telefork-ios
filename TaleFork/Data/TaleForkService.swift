@@ -4,24 +4,9 @@ import UIKit
 
 private enum ServiceRoute: String {
     case visitorRegister = "api/user/visitorRegister"
-    case smsCode = "api/user/getSmsCode"
     case appConfiguration = "api/user/appConfig"
-    case bindMobile = "api/user/bindMobileBySmsCode"
-    case dramaCategories = "api/drama/dramaTypes"
-    case dramasByCategory = "api/drama/dramaListByType"
-    case hotRecommendations = "api/drama/hotRecommend"
-    case profileSummary = "api/welfare/myData"
-    case history = "api/user/getHistoryRecord"
     case discover = "api/drama/dramaDiscover"
-    case unfollow = "api/user/cancelFollowDrama"
-    case follow = "api/user/addFollowDrama"
-    case watchlist = "api/user/getFollowDrama"
-    case removeWatchlistItems = "api/user/cancelFollowDramas"
     case search = "api/drama/dramaListByKeyword"
-    case welfare = "api/welfare/index"
-    case refreshUser = "api/user/fetchUser"
-    case dramaDetail = "api/drama/dramaInfo"
-    case redPacketCheck = "api/user/redPacketCheck"
 }
 
 enum TaleForkServiceError: LocalizedError {
@@ -40,17 +25,44 @@ enum TaleForkServiceError: LocalizedError {
 
 private struct ServiceEnvelope<Payload: Decodable>: Decodable {
     let status: Int
-    let message: String?
+    let msg: String?
     let data: Payload?
+}
 
-    private enum CodingKeys: String, CodingKey {
-        case status, data
-        case message = "msg"
+private extension KeyedDecodingContainer {
+    func tolerantString(_ key: Key) -> String {
+        if let text = try? decode(String.self, forKey: key) { return text }
+        if let integer = try? decode(Int64.self, forKey: key) { return String(integer) }
+        return ""
+    }
+
+    func tolerantInteger(_ key: Key, fallback: Int) -> Int {
+        if let integer = try? decode(Int.self, forKey: key) { return integer }
+        if let text = try? decode(String.self, forKey: key), let integer = Int(text) { return integer }
+        return fallback
+    }
+
+    func tolerantArray<Element: Decodable>(_ type: Element.Type, _ key: Key) -> [Element] {
+        (try? decode([Element].self, forKey: key)) ?? []
     }
 }
 
 private struct VisitorPayload: Decodable {
+    let id: String
     let token: String
+
+    private enum CodingKeys: String, CodingKey { case id, token }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = values.tolerantString(.id)
+        token = values.tolerantString(.token)
+    }
+}
+
+private struct CatalogBootstrap {
+    let userID: String
+    let dramas: [Drama]
 }
 
 private struct ConfigurationPayload: Decodable {
@@ -60,7 +72,7 @@ private struct ConfigurationPayload: Decodable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        let raw = (try? values.decode(String.self, forKey: .resourceHost)) ?? ""
+        let raw = values.tolerantString(.resourceHost)
         guard let url = URL(string: raw), !raw.isEmpty else { throw TaleForkServiceError.decoding }
         resourceHost = url
     }
@@ -79,9 +91,9 @@ private struct CatalogPayload: Decodable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        list = (try? values.decode([RemoteDrama].self, forKey: .list)) ?? []
-        topFive = (try? values.decode([RemoteDrama].self, forKey: .topFive)) ?? []
-        topNine = (try? values.decode([RemoteDrama].self, forKey: .topNine)) ?? []
+        list = values.tolerantArray(RemoteDrama.self, .list)
+        topFive = values.tolerantArray(RemoteDrama.self, .topFive)
+        topNine = values.tolerantArray(RemoteDrama.self, .topNine)
     }
 }
 
@@ -91,21 +103,19 @@ private struct RemoteDrama: Decodable {
     let summary: String
     let coverURL: URL?
     let totalEpisodes: Int
-    let category: String
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, type, total, coverImage
+        case id, title, total, coverImage
         case summary = "desc"
     }
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        id = (try? values.decode(String.self, forKey: .id)) ?? ""
-        title = (try? values.decode(String.self, forKey: .title)) ?? ""
-        summary = (try? values.decode(String.self, forKey: .summary)) ?? ""
-        coverURL = URL(string: (try? values.decode(String.self, forKey: .coverImage)) ?? "")
-        totalEpisodes = max((try? values.decode(Int.self, forKey: .total)) ?? 1, 1)
-        category = (try? values.decode(String.self, forKey: .type)) ?? ""
+        id = values.tolerantString(.id)
+        title = values.tolerantString(.title)
+        summary = values.tolerantString(.summary)
+        coverURL = URL(string: values.tolerantString(.coverImage))
+        totalEpisodes = max(values.tolerantInteger(.total, fallback: 1), 1)
     }
 
     func appDrama(resourceHost: URL) -> Drama {
@@ -121,9 +131,7 @@ private struct RemoteDrama: Decodable {
                     .appendingPathComponent("video")
                     .appendingPathComponent(id)
                     .appendingPathComponent("\(number).mp4"),
-                durationSeconds: 1,
-                choices: [],
-                ending: nil
+                durationSeconds: 1
             )
         }
         return Drama(
@@ -131,9 +139,6 @@ private struct RemoteDrama: Decodable {
             title: .server(title),
             subtitle: .server(summary),
             synopsis: .server(summary),
-            genre: .server(category),
-            tags: [],
-            year: Calendar.current.component(.year, from: .now),
             posterImageName: "",
             coverURL: coverURL,
             accentHex: accentColor,
@@ -150,38 +155,64 @@ private struct RemoteDrama: Decodable {
     }
 }
 
+private enum JSONScalar: Encodable {
+    case text(String)
+    case number(Int)
+
+    func encode(to encoder: Encoder) throws {
+        var value = encoder.singleValueContainer()
+        switch self {
+        case let .text(text): try value.encode(text)
+        case let .number(number): try value.encode(number)
+        }
+    }
+}
+
 @MainActor
 private final class TaleForkService {
     private let baseURL = URL(string: "https://djhk.shujuku009.xyz/")!
+    private let deviceIDKey = "talefork.service-device-id"
     private var token = ""
 
-    func bootstrap() async throws -> [Drama] {
+    func bootstrap() async throws -> CatalogBootstrap {
         let visitor: VisitorPayload = try await post(.visitorRegister, body: devicePayload, requiresToken: false)
         token = visitor.token
         let configuration: ConfigurationPayload = try await post(.appConfiguration, body: devicePayload)
         let discovery: DiscoveryPayload = try await post(.discover, body: [:])
-        return discovery.dramas.map { $0.appDrama(resourceHost: configuration.resourceHost) }
+        return CatalogBootstrap(
+            userID: visitor.id,
+            dramas: discovery.dramas.map { $0.appDrama(resourceHost: configuration.resourceHost) }
+        )
     }
 
     func search(_ keyword: String) async throws -> [Drama] {
-        guard !token.isEmpty else { return try await bootstrap().filter { $0.title.resolved.localizedCaseInsensitiveContains(keyword) } }
+        guard !token.isEmpty else {
+            return try await bootstrap().dramas.filter {
+                $0.title.resolved.localizedCaseInsensitiveContains(keyword)
+            }
+        }
         let configuration: ConfigurationPayload = try await post(.appConfiguration, body: devicePayload)
         let catalog: CatalogPayload = try await post(
             .search,
-            body: ["keyword": keyword, "pageNumber": 1, "pageSize": 50]
+            body: ["keyword": .text(keyword), "pageNumber": .number(1), "pageSize": .number(50)]
         )
         return catalog.list.map { $0.appDrama(resourceHost: configuration.resourceHost) }
     }
 
+    func clearLocalIdentity() {
+        token = ""
+        UserDefaults.standard.removeObject(forKey: deviceIDKey)
+    }
+
     private func post<Payload: Decodable>(
         _ route: ServiceRoute,
-        body: [String: Any],
+        body: [String: JSONScalar],
         requiresToken: Bool = true
     ) async throws -> Payload {
         var request = URLRequest(url: baseURL.appendingPathComponent(route.rawValue))
         request.httpMethod = "POST"
         request.timeoutInterval = 30
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        request.httpBody = try JSONEncoder().encode(body)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(Bundle.main.bundleIdentifier ?? "com.talefork.storypaths", forHTTPHeaderField: "pkg")
         request.setValue("IOS", forHTTPHeaderField: "platform")
@@ -198,28 +229,27 @@ private final class TaleForkService {
         guard let envelope = try? JSONDecoder().decode(ServiceEnvelope<Payload>.self, from: data) else {
             throw TaleForkServiceError.decoding
         }
-        guard envelope.status == 0 else { throw TaleForkServiceError.rejected(envelope.message ?? "") }
+        guard envelope.status == 0 else { throw TaleForkServiceError.rejected(envelope.msg ?? "") }
         guard let payload = envelope.data else { throw TaleForkServiceError.invalidResponse }
         return payload
     }
 
-    private var devicePayload: [String: Any] {
+    private var devicePayload: [String: JSONScalar] {
         let defaults = UserDefaults.standard
-        let key = "talefork.service-device-id"
-        let deviceID = defaults.string(forKey: key) ?? UUID().uuidString
-        defaults.set(deviceID, forKey: key)
+        let deviceID = defaults.string(forKey: deviceIDKey) ?? UUID().uuidString
+        defaults.set(deviceID, forKey: deviceIDKey)
         return [
-            "androidId": deviceID,
-            "appName": "talefork",
-            "channel": "IOS",
-            "iOSDeviceId": deviceID,
-            "model": UIDevice.current.model,
-            "oaid": deviceID,
-            "pkg": Bundle.main.bundleIdentifier ?? "com.talefork.storypaths",
-            "versionCode": "225",
-            "platform": "IOS",
-            "version": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0",
-            "idfv": UIDevice.current.identifierForVendor?.uuidString ?? deviceID
+            "androidId": .text(deviceID),
+            "appName": .text("talefork"),
+            "channel": .text("IOS"),
+            "iOSDeviceId": .text(deviceID),
+            "model": .text(UIDevice.current.model),
+            "oaid": .text(deviceID),
+            "pkg": .text(Bundle.main.bundleIdentifier ?? "com.talefork.storypaths"),
+            "versionCode": .text("225"),
+            "platform": .text("IOS"),
+            "version": .text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"),
+            "idfv": .text(UIDevice.current.identifierForVendor?.uuidString ?? deviceID)
         ]
     }
 
@@ -242,9 +272,9 @@ private final class TaleForkService {
 final class CatalogStore {
     private(set) var dramas: [Drama] = []
     private(set) var searchResults: [Drama] = []
+    private(set) var currentUserID = ""
     private(set) var isLoading = false
     private(set) var errorMessage: String?
-    private(set) var usesOfflineFallback = false
 
     private let service = TaleForkService()
     private var hasLoaded = false
@@ -252,7 +282,7 @@ final class CatalogStore {
     var featured: Drama? { dramas.first }
 
     func drama(id: String) -> Drama? {
-        dramas.first { $0.id == id } ?? DramaLibrary.drama(id: id)
+        dramas.first { $0.id == id }
     }
 
     func load(force: Bool = false) async {
@@ -261,19 +291,28 @@ final class CatalogStore {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            let remote = try await service.bootstrap()
-            guard !remote.isEmpty else { throw TaleForkServiceError.invalidResponse }
-            dramas = remote
-            usesOfflineFallback = false
+            let bootstrap = try await service.bootstrap()
+            guard !bootstrap.dramas.isEmpty else { throw TaleForkServiceError.invalidResponse }
+            dramas = bootstrap.dramas
+            currentUserID = bootstrap.userID
             hasLoaded = true
         } catch {
             errorMessage = error.localizedDescription
-            usesOfflineFallback = true
-            dramas = DramaLibrary.dramas
+            dramas = []
+            searchResults = []
         }
     }
 
     func retry() async { await load(force: true) }
+
+    func deleteLocalAccount() {
+        service.clearLocalIdentity()
+        currentUserID = ""
+        dramas = []
+        searchResults = []
+        errorMessage = nil
+        hasLoaded = false
+    }
 
     func search(keyword: String) async {
         let value = keyword.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -283,7 +322,6 @@ final class CatalogStore {
         } catch {
             searchResults = dramas.filter {
                 $0.title.resolved.localizedCaseInsensitiveContains(value)
-                || $0.genre.resolved.localizedCaseInsensitiveContains(value)
             }
         }
     }

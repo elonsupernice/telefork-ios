@@ -2,34 +2,17 @@ import AVFoundation
 import XCTest
 @testable import TaleFork
 
-final class DramaLibraryTests: XCTestCase {
-    func testCatalogContainsPlayableInteractiveShortDrama() throws {
-        XCTAssertGreaterThanOrEqual(DramaLibrary.dramas.count, 3)
-        let drama = DramaLibrary.beforeRainStops
+final class DramaModelTests: XCTestCase {
+    func testFixtureContainsUniqueOrderedEpisodes() throws {
+        let drama = makeTestDrama()
         XCTAssertEqual(drama.availability, .available)
-        XCTAssertGreaterThanOrEqual(drama.episodes.count, 6)
-        XCTAssertGreaterThanOrEqual(drama.endings.count, 2)
+        XCTAssertEqual(drama.episodes.count, 3)
         XCTAssertNotNil(drama.episode(id: drama.entryEpisodeID))
 
         let ids = drama.episodes.map(\.id)
         XCTAssertEqual(Set(ids).count, ids.count)
-        for episode in drama.episodes {
-            if episode.ending == nil { XCTAssertFalse(episode.choices.isEmpty) }
-            for choice in episode.choices { XCTAssertNotNil(drama.episode(id: choice.destinationEpisodeID)) }
-            XCTAssertNotNil(Bundle.main.url(forResource: episode.clipName, withExtension: "mp4"), "Missing video \(episode.clipName)")
-        }
-        XCTAssertNotNil(Bundle.main.url(forResource: drama.posterImageName, withExtension: nil))
-    }
-
-    func testEveryPlayableEpisodeIsReachable() {
-        let drama = DramaLibrary.beforeRainStops
-        var pending = [drama.entryEpisodeID]
-        var reached = Set<String>()
-        while let id = pending.popLast() {
-            guard reached.insert(id).inserted, let episode = drama.episode(id: id) else { continue }
-            pending.append(contentsOf: episode.choices.map(\.destinationEpisodeID))
-        }
-        XCTAssertEqual(reached, Set(drama.episodes.map(\.id)))
+        XCTAssertEqual(drama.episodes.map(\.number), [1, 2, 3])
+        XCTAssertTrue(drama.episodes.allSatisfy { $0.videoURL != nil })
     }
 
     func testLocalizationKeySetsMatch() throws {
@@ -51,7 +34,8 @@ final class LiveServiceTests: XCTestCase {
         let catalog = CatalogStore()
         await catalog.load(force: true)
 
-        XCTAssertFalse(catalog.usesOfflineFallback, catalog.errorMessage ?? "Unexpected offline fallback")
+        XCTAssertNil(catalog.errorMessage)
+        XCTAssertFalse(catalog.currentUserID.isEmpty, "Visitor registration must return a stable user ID")
         let drama = try XCTUnwrap(catalog.dramas.first)
         XCTAssertGreaterThan(drama.episodes.count, 1)
         let videoURL = try XCTUnwrap(drama.episodes.first?.videoURL)
@@ -94,44 +78,65 @@ final class LiveServiceTests: XCTestCase {
 
 @MainActor
 final class ProgressStoreTests: XCTestCase {
-    func testChoiceProgressFavoritesAndPersistence() throws {
+    func testProgressFavoritesAndPersistence() throws {
         let (suite, defaults) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
-        let drama = DramaLibrary.beforeRainStops
-        let entry = try XCTUnwrap(drama.episode(id: drama.entryEpisodeID))
-        let choice = try XCTUnwrap(entry.choices.first)
+        let drama = makeTestDrama()
+        let episode = drama.episodes[1]
         let store = ProgressStore(defaults: defaults)
 
         store.start(drama)
-        store.watch(drama: drama, episodeID: entry.id, position: 3.5)
-        store.choose(choice, in: drama)
+        store.selectEpisode(drama: drama, episodeID: episode.id)
+        store.watch(drama: drama, episodeID: episode.id, position: 3.5)
         store.toggleFavorite(drama)
 
-        XCTAssertEqual(store.run(for: drama).currentEpisodeID, choice.destinationEpisodeID)
+        XCTAssertEqual(store.run(for: drama).currentEpisodeID, episode.id)
         XCTAssertTrue(store.isFavorite(drama))
         XCTAssertEqual(store.history.first?.dramaID, drama.id)
-        XCTAssertEqual(store.run(for: drama).playbackSeconds[entry.id], 3.5)
+        XCTAssertEqual(store.run(for: drama).playbackSeconds[episode.id], 3.5)
+        XCTAssertTrue(store.run(for: drama).watchedEpisodeIDs.contains(episode.id))
 
         let restored = ProgressStore(defaults: defaults)
         XCTAssertEqual(restored.run(for: drama), store.run(for: drama))
         XCTAssertTrue(restored.isFavorite(drama))
     }
 
-    func testRestartKeepsUnlockedEndings() throws {
-        let drama = DramaLibrary.beforeRainStops
-        var run = DramaRun(drama: drama)
-        var safety = 0
-        while drama.episode(id: run.currentEpisodeID)?.ending == nil, safety < 20 {
-            let episode = try XCTUnwrap(drama.episode(id: run.currentEpisodeID))
-            run.choose(try XCTUnwrap(episode.choices.first), in: drama)
-            safety += 1
-        }
-        XCTAssertFalse(run.completedEndingIDs.isEmpty)
-        let endings = run.completedEndingIDs
-        run.restart(with: drama)
-        XCTAssertEqual(run.currentEpisodeID, drama.entryEpisodeID)
-        XCTAssertTrue(run.watchedEpisodeIDs.isEmpty)
-        XCTAssertEqual(run.completedEndingIDs, endings)
+    func testSelectingEpisodeDoesNotCountAsWatchedUntilPlaybackThreshold() {
+        let (suite, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let drama = makeTestDrama()
+        let episode = drama.episodes[2]
+        let store = ProgressStore(defaults: defaults)
+
+        store.selectEpisode(drama: drama, episodeID: episode.id)
+        XCTAssertFalse(store.run(for: drama).watchedEpisodeIDs.contains(episode.id))
+
+        store.watch(drama: drama, episodeID: episode.id, position: 2.9)
+        XCTAssertFalse(store.run(for: drama).watchedEpisodeIDs.contains(episode.id))
+
+        store.watch(drama: drama, episodeID: episode.id, position: 3)
+        XCTAssertTrue(store.run(for: drama).watchedEpisodeIDs.contains(episode.id))
+    }
+
+    func testDeletingLocalAccountRemovesIdentityStateAndPersistence() {
+        let (suite, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let drama = makeTestDrama()
+        let store = ProgressStore(defaults: defaults)
+
+        store.hasCompletedOnboarding = true
+        store.watch(drama: drama, episodeID: drama.entryEpisodeID, position: 8)
+        store.toggleFavorite(drama)
+        store.deleteLocalAccount()
+
+        XCTAssertFalse(store.hasCompletedOnboarding)
+        XCTAssertTrue(store.runs.isEmpty)
+        XCTAssertTrue(store.history.isEmpty)
+        XCTAssertTrue(store.favoriteDramaIDs.isEmpty)
+
+        let restored = ProgressStore(defaults: defaults)
+        XCTAssertFalse(restored.hasCompletedOnboarding)
+        XCTAssertTrue(restored.runs.isEmpty)
     }
 
     private func makeDefaults() -> (String, UserDefaults) {
@@ -140,4 +145,30 @@ final class ProgressStoreTests: XCTestCase {
         defaults.removePersistentDomain(forName: suite)
         return (suite, defaults)
     }
+}
+
+private func makeTestDrama() -> Drama {
+    let episodes = (1...3).map { number in
+        DramaEpisode(
+            id: "test-\(number)",
+            number: number,
+            title: .server("Episode \(number)"),
+            sceneCaption: .server("Test caption"),
+            clipName: "",
+            videoURL: URL(string: "https://example.com/video/test/\(number).mp4"),
+            durationSeconds: 30
+        )
+    }
+    return Drama(
+        id: "test-drama",
+        title: .server("Test Drama"),
+        subtitle: .server("Test Subtitle"),
+        synopsis: .server("Test Synopsis"),
+        posterImageName: "",
+        coverURL: URL(string: "https://example.com/cover.png"),
+        accentHex: "E6A84C",
+        availability: .available,
+        entryEpisodeID: episodes[0].id,
+        episodes: episodes
+    )
 }

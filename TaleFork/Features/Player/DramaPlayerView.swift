@@ -9,7 +9,7 @@ struct DramaPlayerView: View {
 
     @State private var player = AVPlayer()
     @State private var currentEpisodeID: String
-    @State private var showDecision = false
+    @State private var showCompletion = false
     @State private var showEpisodePicker = false
     @State private var controlsVisible = true
     @State private var playbackFailed = false
@@ -18,6 +18,7 @@ struct DramaPlayerView: View {
     @State private var isMuted = false
     @State private var playbackSeconds = 0.0
     @State private var durationSeconds = 1.0
+    @State private var pendingResumeSeconds: Double?
     @State private var lastPersistedSecond = -1
 
     private let playbackClock = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
@@ -35,9 +36,9 @@ struct DramaPlayerView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { toggleControls() }
 
-            if controlsVisible && !showDecision && !playbackFailed { controlOverlay.transition(.opacity) }
+            if controlsVisible && !showCompletion && !playbackFailed { controlOverlay.transition(.opacity) }
             if playbackFailed { failureOverlay }
-            if showDecision { decisionOverlay.transition(.move(edge: .bottom).combined(with: .opacity)) }
+            if showCompletion { completionOverlay.transition(.move(edge: .bottom).combined(with: .opacity)) }
         }
         .preferredColorScheme(.dark)
         .statusBarHidden(true)
@@ -62,21 +63,15 @@ struct DramaPlayerView: View {
             guard notification.object as? AVPlayerItem === player.currentItem else { return }
             playbackSeconds = 0
             isPlaying = false
-            store.watch(drama: drama, episodeID: currentEpisodeID, position: 0)
-            if let onlyChoice = episode?.choices.first, episode?.choices.count == 1, store.preferences.autoplayEnabled {
-                controlsVisible = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                    guard currentEpisodeID == drama.entryEpisodeID else { return }
-                    selectChoice(onlyChoice)
-                }
-            } else if let nextEpisode, episode?.choices.isEmpty == true, store.preferences.autoplayEnabled {
+            store.watch(drama: drama, episodeID: currentEpisodeID, position: 0, completed: true)
+            if let nextEpisode, store.preferences.autoplayEnabled {
                 controlsVisible = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.65) {
                     guard currentEpisodeID != nextEpisode.id else { return }
                     selectEpisode(nextEpisode.id)
                 }
             } else {
-                withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) { showDecision = true; controlsVisible = true }
+                withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) { showCompletion = true; controlsVisible = true }
             }
         }
         .sheet(isPresented: $showEpisodePicker) { EpisodePickerSheet(drama: drama, currentEpisodeID: currentEpisodeID) { selectEpisode($0) } }
@@ -91,73 +86,112 @@ struct DramaPlayerView: View {
     }
 
     private var controlOverlay: some View {
-        VStack(spacing: 0) {
-            LinearGradient(colors: [.black.opacity(0.72), .clear], startPoint: .top, endPoint: .bottom)
-                .frame(height: 150).overlay(alignment: .top) {
-                    ZStack(alignment: .top) {
-                        HStack {
-                            backButton
-                            Spacer()
-                            circleButton("rectangle.stack", accessibilityLabel: "player.episodes") { showEpisodePicker = true }
-                        }
-                        VStack(spacing: 2) {
-                            Text(drama.title.resolved).font(.headline).foregroundStyle(.white).lineLimit(1)
-                            Text(String(format: String(localized: "player.episode.format"), episode?.number ?? 1)).font(.caption).foregroundStyle(.white.opacity(0.7))
-                        }
-                        .padding(.horizontal, 108)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                }
-            Spacer()
-            centerPlaybackControls
-            Spacer()
-            LinearGradient(colors: [.clear, .black.opacity(0.88)], startPoint: .top, endPoint: .bottom)
-                .frame(height: 300).overlay(alignment: .bottomLeading) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(spacing: 8) {
-                            Text("player.interactive.short").font(.caption2.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
-                            Circle().fill(.white.opacity(0.5)).frame(width: 3, height: 3)
-                            Text(drama.genre.resolved).font(.caption).foregroundStyle(.white.opacity(0.72))
-                        }
-                        Text(episode?.title.resolved ?? "").font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
-                        Text(episode?.sceneCaption.resolved ?? "").font(.subheadline).foregroundStyle(.white.opacity(0.76)).lineLimit(3)
-                        HStack(spacing: 10) {
-                            Text(formatTime(playbackSeconds))
-                            Slider(
-                                value: Binding(
-                                    get: { min(playbackSeconds, durationSeconds) },
-                                    set: { seek(to: $0) }
-                                ),
-                                in: 0...max(durationSeconds, 1)
-                            )
-                            .tint(TaleForkTheme.coral)
-                            Text("-\(formatTime(max(durationSeconds - playbackSeconds, 0)))")
-                        }
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(.white.opacity(0.72))
-                        HStack(spacing: 18) {
-                            Button { togglePlayback() } label: {
-                                Label(isPlaying ? "player.pause" : "player.play", systemImage: isPlaying ? "pause.fill" : "play.fill")
-                            }
-                            Button { store.toggleFavorite(drama) } label: {
-                                Label(store.isFavorite(drama) ? "player.saved" : "player.save", systemImage: store.isFavorite(drama) ? "heart.fill" : "heart")
-                            }
-                            Button { showEpisodePicker = true } label: { Label("player.episodes", systemImage: "list.number") }
-                            Spacer(minLength: 0)
-                            Button { toggleMute() } label: {
-                                Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                                    .frame(width: 44, height: 44)
-                            }
-                            .accessibilityLabel(Text(isMuted ? "player.unmute" : "player.mute"))
-                        }
-                        .font(.subheadline.weight(.semibold)).foregroundStyle(.white)
-                    }.padding(.horizontal, 20).padding(.bottom, 18)
-                }
+        GeometryReader { proxy in
+            let topScrimHeight = max(proxy.safeAreaInsets.top + 150, 190)
+            let bottomScrimHeight = max(proxy.safeAreaInsets.bottom + 300, 330)
+            ZStack {
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [.black.opacity(0.82), .black.opacity(0.45), .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: topScrimHeight)
+                Spacer(minLength: 0)
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.62), .black.opacity(0.94)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: bottomScrimHeight)
+            }
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                topControlBar
+                Spacer(minLength: 8)
+                centerPlaybackControls
+                Spacer(minLength: 8)
+                bottomControlPanel
+            }
+            .padding(.top, proxy.safeAreaInsets.top + 8)
+            .padding(.bottom, proxy.safeAreaInsets.bottom + 8)
+            .dynamicTypeSize(.xSmall ... .xxxLarge)
+            }
+            .ignoresSafeArea()
         }
-        .safeAreaPadding(.top, 2)
-        .safeAreaPadding(.bottom, 2)
         .allowsHitTesting(true)
+    }
+
+    private var topControlBar: some View {
+        ZStack(alignment: .top) {
+            HStack {
+                backButton
+                Spacer()
+                circleButton("rectangle.stack", accessibilityLabel: "player.episodes") { showEpisodePicker = true }
+            }
+            VStack(spacing: 2) {
+                Text(drama.title.resolved)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                Text(String(format: String(localized: "player.episode.format"), episode?.number ?? 1))
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.72))
+            }
+            .padding(.horizontal, 108)
+        }
+        .padding(.horizontal, 16)
+    }
+
+    private var bottomControlPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("player.featured.short")
+                .font(.caption2.weight(.black).monospaced())
+                .foregroundStyle(TaleForkTheme.coral)
+            Text(episode?.title.resolved ?? "")
+                .font(.system(.title2, design: .rounded, weight: .black))
+                .foregroundStyle(.white)
+            Text(episode?.sceneCaption.resolved ?? "")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.78))
+                .lineLimit(3)
+            HStack(spacing: 10) {
+                Text(formatTime(playbackSeconds))
+                Slider(
+                    value: Binding(
+                        get: { min(playbackSeconds, durationSeconds) },
+                        set: { seek(to: $0) }
+                    ),
+                    in: 0...max(durationSeconds, 1)
+                )
+                .tint(TaleForkTheme.coral)
+                Text("-\(formatTime(max(durationSeconds - playbackSeconds, 0)))")
+            }
+            .font(.caption2.monospacedDigit())
+            .foregroundStyle(.white.opacity(0.74))
+            HStack(spacing: 18) {
+                Button { togglePlayback() } label: {
+                    Label(isPlaying ? "player.pause" : "player.play", systemImage: isPlaying ? "pause.fill" : "play.fill")
+                }
+                Button {
+                    TactileFeedback.tap(enabled: store.preferences.tactileFeedbackEnabled)
+                    store.toggleFavorite(drama)
+                } label: {
+                    Label(store.isFavorite(drama) ? "player.saved" : "player.save", systemImage: store.isFavorite(drama) ? "heart.fill" : "heart")
+                }
+                Button { showEpisodePicker = true } label: { Label("player.episodes", systemImage: "list.number") }
+                Spacer(minLength: 0)
+                Button { toggleMute() } label: {
+                    Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        .frame(width: 44, height: 44)
+                }
+                .accessibilityLabel(Text(isMuted ? "player.unmute" : "player.mute"))
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+        }
+        .padding(.horizontal, 20)
     }
 
     @ViewBuilder
@@ -216,7 +250,7 @@ struct DramaPlayerView: View {
         .accessibilityLabel(Text("common.back"))
     }
 
-    private var decisionOverlay: some View {
+    private var completionOverlay: some View {
         ZStack {
             Color.black.opacity(0.9).ignoresSafeArea()
             VStack(spacing: 18) {
@@ -228,42 +262,13 @@ struct DramaPlayerView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
                 Spacer(minLength: 8)
-                if let ending = episode?.ending {
-                    Image(systemName: ending.symbol).font(.system(size: 44)).foregroundStyle(TaleForkTheme.coral)
-                    Text("player.ending.unlocked").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
-                    Text(ending.title.resolved).font(.system(.largeTitle, design: .rounded, weight: .black)).foregroundStyle(.white).multilineTextAlignment(.center)
-                    Text(ending.summary.resolved).font(.body).foregroundStyle(.white.opacity(0.74)).multilineTextAlignment(.center)
-                    Button {
-                        store.restart(drama); currentEpisodeID = drama.entryEpisodeID; showDecision = false; loadCurrentEpisode()
-                    } label: { Label("player.replay", systemImage: "arrow.counterclockwise").primaryPlayerButton() }
-                    Button { dismiss() } label: { Text("common.done").foregroundStyle(.white.opacity(0.8)).frame(minHeight: 44) }
-                } else if !((episode?.choices ?? []).isEmpty) {
-                    Text("player.choice.eyebrow").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
-                    Text("player.choice.title").font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
-                    ForEach(episode?.choices ?? []) { choice in
-                        Button { selectChoice(choice) } label: {
-                            HStack(spacing: 14) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(choice.title.resolved).font(.headline)
-                                    Text(choice.consequence.resolved).font(.caption).foregroundStyle(.white.opacity(0.65))
-                                }
-                                Spacer()
-                                Image(systemName: "arrow.right").foregroundStyle(TaleForkTheme.coral)
-                            }.padding(18).foregroundStyle(.white)
-                                .background(.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-                                .overlay { RoundedRectangle(cornerRadius: 18).stroke(.white.opacity(0.12)) }
-                        }.buttonStyle(.plain)
-                    }
-                    Button { showDecision = false; player.seek(to: .zero); player.play() } label: {
-                        Label("player.rewatch", systemImage: "gobackward").font(.subheadline).foregroundStyle(.white.opacity(0.72)).frame(minHeight: 44)
-                    }
-                } else if let nextEpisode {
+                if let nextEpisode {
                     Image(systemName: "forward.end.fill").font(.system(size: 42)).foregroundStyle(TaleForkTheme.coral)
                     Text(nextEpisode.title.resolved).font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
                     Button { selectEpisode(nextEpisode.id) } label: {
                         Label("player.next", systemImage: "play.fill").primaryPlayerButton()
                     }
-                    Button { showDecision = false; player.seek(to: .zero); player.play() } label: {
+                    Button { showCompletion = false; player.seek(to: .zero); player.play() } label: {
                         Label("player.rewatch", systemImage: "gobackward").font(.subheadline).foregroundStyle(.white.opacity(0.72)).frame(minHeight: 44)
                     }
                 } else {
@@ -323,7 +328,7 @@ struct DramaPlayerView: View {
         guard let episode else { playbackFailed = true; isBuffering = false; return }
         let bundledURL = Bundle.main.url(forResource: episode.clipName, withExtension: "mp4")
         guard let url = episode.videoURL ?? bundledURL else { playbackFailed = true; isBuffering = false; return }
-        showDecision = false
+        showCompletion = false
         playbackFailed = false
         isBuffering = true
         controlsVisible = true
@@ -331,6 +336,7 @@ struct DramaPlayerView: View {
         durationSeconds = Double(max(episode.durationSeconds, 1))
         lastPersistedSecond = -1
         let savedPosition = store.run(for: drama).playbackSeconds[episode.id] ?? 0
+        pendingResumeSeconds = savedPosition > 0 ? savedPosition : nil
         do {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.playback, mode: .moviePlayback)
@@ -353,19 +359,9 @@ struct DramaPlayerView: View {
         item.preferredForwardBufferDuration = 2
         player.replaceCurrentItem(with: item)
         player.isMuted = isMuted
-        store.watch(drama: drama, episodeID: episode.id, position: savedPosition)
-        if savedPosition > 0, savedPosition < durationSeconds - 0.75 {
-            playbackSeconds = savedPosition
-            player.seek(to: CMTime(seconds: savedPosition, preferredTimescale: 600))
-        }
+        store.selectEpisode(drama: drama, episodeID: episode.id)
         player.play()
         isPlaying = true
-    }
-
-    private func selectChoice(_ choice: DramaChoice) {
-        store.choose(choice, in: drama)
-        currentEpisodeID = choice.destinationEpisodeID
-        loadCurrentEpisode()
     }
 
     private func selectEpisode(_ episodeID: String) {
@@ -424,6 +420,16 @@ struct DramaPlayerView: View {
         if let itemDuration = player.currentItem?.duration.seconds, itemDuration.isFinite, itemDuration > 0 {
             durationSeconds = itemDuration
         }
+        if let target = pendingResumeSeconds,
+           player.currentItem?.status == .readyToPlay,
+           durationSeconds > 1 {
+            pendingResumeSeconds = nil
+            let resumeSecond = target < durationSeconds - 0.75 ? target : 0
+            playbackSeconds = resumeSecond
+            if resumeSecond > 0 {
+                player.seek(to: CMTime(seconds: resumeSecond, preferredTimescale: 600))
+            }
+        }
         let time = player.currentTime().seconds
         if time.isFinite { playbackSeconds = min(max(time, 0), durationSeconds) }
         isPlaying = player.timeControlStatus == .playing
@@ -464,7 +470,7 @@ private struct EpisodePickerSheet: View {
                         Text(String(format: "%02d", episode.number)).font(.headline.monospacedDigit()).foregroundStyle(TaleForkTheme.coral)
                         VStack(alignment: .leading, spacing: 3) {
                             Text(episode.title.resolved).font(.headline)
-                            Text(episode.ending == nil ? "drama.interactive.episode" : "drama.ending.episode").font(.caption).foregroundStyle(.secondary)
+                            Text(String(format: String(localized: "player.episode.format"), episode.number)).font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         if episode.id == currentEpisodeID { Image(systemName: "waveform").foregroundStyle(TaleForkTheme.mint) }

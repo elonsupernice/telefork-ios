@@ -16,12 +16,6 @@
 		154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 7363778109848BBB4B77CA71 /* TaleForkApp.swift */;
 		};
-		8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/DramaLibrary.swift"; sourceTree = "<group>";
-		};
-		6F7B6637474CA6D4F784041F /* DramaLibrary.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = 8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */;
-		};
 		CE3954CF99627E8EA2640A7D /* ProgressStore.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/ProgressStore.swift"; sourceTree = "<group>";
 		};
@@ -130,72 +124,6 @@
 		D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */ = {
 			isa = PBXBuildFile; fileRef = C34C88A08FD8558D2EE86688 /* terms-of-use.html */;
 		};
-		CB66C861D348F4047FC13D9C /* rain-stop-arrival.png */ = {
-			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-arrival.png"; sourceTree = "<group>";
-		};
-		55B9C78F4A7F424720352254 /* rain-stop-arrival.png in Resources */ = {
-			isa = PBXBuildFile; fileRef = CB66C861D348F4047FC13D9C /* rain-stop-arrival.png */;
-		};
-		C82DF04FBBF5283F95591864 /* rain-stop-call.png */ = {
-			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-call.png"; sourceTree = "<group>";
-		};
-		27453C8EAB6A9C0DF6A70D4D /* rain-stop-call.png in Resources */ = {
-			isa = PBXBuildFile; fileRef = C82DF04FBBF5283F95591864 /* rain-stop-call.png */;
-		};
-		7BCB4467565BCA95F72ABC4E /* rain-stop-dawn.png */ = {
-			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-dawn.png"; sourceTree = "<group>";
-		};
-		0250C5C6842A4902E82A4DFF /* rain-stop-dawn.png in Resources */ = {
-			isa = PBXBuildFile; fileRef = 7BCB4467565BCA95F72ABC4E /* rain-stop-dawn.png */;
-		};
-		DD14776BAE87385965224050 /* rain-stop-meeting.png */ = {
-			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-meeting.png"; sourceTree = "<group>";
-		};
-		09BF6F3FD78E567E8047A8E6 /* rain-stop-meeting.png in Resources */ = {
-			isa = PBXBuildFile; fileRef = DD14776BAE87385965224050 /* rain-stop-meeting.png */;
-		};
-		7862F4CA0DA6EDF6493189A8 /* rain-stop-phone.png */ = {
-			isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/DramaImages/rain-stop-phone.png"; sourceTree = "<group>";
-		};
-		3B4A8C20FECC0775B302624B /* rain-stop-phone.png in Resources */ = {
-			isa = PBXBuildFile; fileRef = 7862F4CA0DA6EDF6493189A8 /* rain-stop-phone.png */;
-		};
-		446C4610A7B5868F88E8D87D /* rain-01-arrival.mp4 */ = {
-			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-01-arrival.mp4"; sourceTree = "<group>";
-		};
-		07F1CDE42E36B1A5339DDFB0 /* rain-01-arrival.mp4 in Resources */ = {
-			isa = PBXBuildFile; fileRef = 446C4610A7B5868F88E8D87D /* rain-01-arrival.mp4 */;
-		};
-		962A254C1D41A3C6BA4FDAB3 /* rain-02-letter.mp4 */ = {
-			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-02-letter.mp4"; sourceTree = "<group>";
-		};
-		A1895B9DBB32524E52000D99 /* rain-02-letter.mp4 in Resources */ = {
-			isa = PBXBuildFile; fileRef = 962A254C1D41A3C6BA4FDAB3 /* rain-02-letter.mp4 */;
-		};
-		A0E4CAF888FC5C3197019790 /* rain-03-meeting.mp4 */ = {
-			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-03-meeting.mp4"; sourceTree = "<group>";
-		};
-		09A67F086F033807ED212D62 /* rain-03-meeting.mp4 in Resources */ = {
-			isa = PBXBuildFile; fileRef = A0E4CAF888FC5C3197019790 /* rain-03-meeting.mp4 */;
-		};
-		08C4A897943BD5F8020E1CB0 /* rain-04-answer.mp4 */ = {
-			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-04-answer.mp4"; sourceTree = "<group>";
-		};
-		4323A36EC11086238B7EBC5F /* rain-04-answer.mp4 in Resources */ = {
-			isa = PBXBuildFile; fileRef = 08C4A897943BD5F8020E1CB0 /* rain-04-answer.mp4 */;
-		};
-		A581A28EA07382114CFDFCEC /* rain-05-dawn.mp4 */ = {
-			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-05-dawn.mp4"; sourceTree = "<group>";
-		};
-		34D7D53944EF4A518273B75C /* rain-05-dawn.mp4 in Resources */ = {
-			isa = PBXBuildFile; fileRef = A581A28EA07382114CFDFCEC /* rain-05-dawn.mp4 */;
-		};
-		A951AE7937823474CECC1625 /* rain-06-call.mp4 */ = {
-			isa = PBXFileReference; lastKnownFileType = video.mp4; path = "Resources/Videos/rain-06-call.mp4"; sourceTree = "<group>";
-		};
-		9498C84DCFC15A42901EC216 /* rain-06-call.mp4 in Resources */ = {
-			isa = PBXBuildFile; fileRef = A951AE7937823474CECC1625 /* rain-06-call.mp4 */;
-		};
 		DC2505CE620F9BC667AD417B /* en */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en"; path = "en.lproj/Localizable.strings"; sourceTree = "<group>";
 		};
@@ -251,7 +179,6 @@
 			children = (
 				BD3414D09AA902FA2FF55EEA /* AppRootView.swift */,
 				7363778109848BBB4B77CA71 /* TaleForkApp.swift */,
-				8AC8FF6C037A558C13711A66 /* DramaLibrary.swift */,
 				CE3954CF99627E8EA2640A7D /* ProgressStore.swift */,
 				CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */,
 				E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */,
@@ -269,17 +196,6 @@
 				1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */,
 				2EE611779289671749418A19 /* privacy-policy.html */,
 				C34C88A08FD8558D2EE86688 /* terms-of-use.html */,
-				CB66C861D348F4047FC13D9C /* rain-stop-arrival.png */,
-				C82DF04FBBF5283F95591864 /* rain-stop-call.png */,
-				7BCB4467565BCA95F72ABC4E /* rain-stop-dawn.png */,
-				DD14776BAE87385965224050 /* rain-stop-meeting.png */,
-				7862F4CA0DA6EDF6493189A8 /* rain-stop-phone.png */,
-				446C4610A7B5868F88E8D87D /* rain-01-arrival.mp4 */,
-				962A254C1D41A3C6BA4FDAB3 /* rain-02-letter.mp4 */,
-				A0E4CAF888FC5C3197019790 /* rain-03-meeting.mp4 */,
-				08C4A897943BD5F8020E1CB0 /* rain-04-answer.mp4 */,
-				A581A28EA07382114CFDFCEC /* rain-05-dawn.mp4 */,
-				A951AE7937823474CECC1625 /* rain-06-call.mp4 */,
 				DE31DD00C5CDDD7FAB35B978 /* Localizations */,
 			);
 			path = TaleFork;
@@ -326,7 +242,6 @@
 			files = (
 				DFD62E1F25BDEAC36B3BDAF4 /* AppRootView.swift in Sources */,
 				154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */,
-				6F7B6637474CA6D4F784041F /* DramaLibrary.swift in Sources */,
 				E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */,
 				8655129C5D68C61621AEB893 /* TaleForkService.swift in Sources */,
 				ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */,
@@ -351,17 +266,6 @@
 				5107D93F8D9D781F5FAED86D /* PrivacyInfo.xcprivacy in Resources */,
 				F02C45815237D8895AEEB5DE /* privacy-policy.html in Resources */,
 				D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */,
-				55B9C78F4A7F424720352254 /* rain-stop-arrival.png in Resources */,
-				27453C8EAB6A9C0DF6A70D4D /* rain-stop-call.png in Resources */,
-				0250C5C6842A4902E82A4DFF /* rain-stop-dawn.png in Resources */,
-				09BF6F3FD78E567E8047A8E6 /* rain-stop-meeting.png in Resources */,
-				3B4A8C20FECC0775B302624B /* rain-stop-phone.png in Resources */,
-				07F1CDE42E36B1A5339DDFB0 /* rain-01-arrival.mp4 in Resources */,
-				A1895B9DBB32524E52000D99 /* rain-02-letter.mp4 in Resources */,
-				09A67F086F033807ED212D62 /* rain-03-meeting.mp4 in Resources */,
-				4323A36EC11086238B7EBC5F /* rain-04-answer.mp4 in Resources */,
-				34D7D53944EF4A518273B75C /* rain-05-dawn.mp4 in Resources */,
-				9498C84DCFC15A42901EC216 /* rain-06-call.mp4 in Resources */,
 				F11FAFAF4C3CDA40D56539B7 /* Localizable.strings in Resources */,
 				42ABAC958588B4B7E4AAF410 /* InfoPlist.strings in Resources */,
 			);
@@ -476,7 +380,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -496,7 +400,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -522,6 +426,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -544,6 +449,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -558,7 +464,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -576,7 +482,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

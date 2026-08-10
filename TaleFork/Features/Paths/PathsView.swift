@@ -1,93 +1,166 @@
 import SwiftUI
 
 struct PathsView: View {
-    @Environment(ProgressStore.self) private var store
-    @State private var showPlayer = false
+    @Environment(ProgressStore.self) private var progress
+    @Environment(CatalogStore.self) private var catalog
+    @State private var playerDrama: Drama?
 
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                LazyVStack(alignment: .leading, spacing: 24) {
                     SectionHeading(eyebrow: "paths.eyebrow", title: "paths.title")
-                    Text("paths.subtitle").foregroundStyle(.secondary)
+                    Text("paths.subtitle")
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                    routeMap
-                    endingCollection
-
-                    Button {
-                        store.start(DramaLibrary.beforeRainStops); showPlayer = true
-                    } label: {
-                        Label(store.runs[DramaLibrary.beforeRainStops.id] == nil ? "drama.start" : "drama.continue", systemImage: "play.fill")
-                            .font(.headline).foregroundStyle(TaleForkTheme.ink).frame(maxWidth: .infinity, minHeight: 54)
-                            .background(TaleForkTheme.coral, in: RoundedRectangle(cornerRadius: 18))
+                    if catalog.isLoading, catalog.dramas.isEmpty {
+                        ProgressView("discover.loading")
+                            .frame(maxWidth: .infinity, minHeight: 240)
+                    } else if let drama = currentDrama {
+                        viewingSummary(for: drama)
+                        episodeTimeline(for: drama)
+                        continueButton(for: drama)
+                    } else {
+                        ContentUnavailableView(
+                            "paths.empty.title",
+                            systemImage: "point.bottomleft.forward.to.point.topright.scurvepath",
+                            description: Text("paths.empty.body")
+                        )
+                        .frame(maxWidth: .infinity, minHeight: 320)
                     }
                 }
-                .padding(.horizontal, TaleForkTheme.horizontalMargin(for: proxy.size.width)).padding(.vertical, 20)
-                .frame(maxWidth: 720).frame(maxWidth: .infinity)
-            }.background(PaperBackground())
+                .padding(.horizontal, TaleForkTheme.horizontalMargin(for: proxy.size.width))
+                .padding(.top, 20)
+                .padding(.bottom, 112)
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
+            }
+            .background(PaperBackground())
         }
-        .navigationTitle("tab.paths").navigationBarTitleDisplayMode(.inline)
-        .fullScreenCover(isPresented: $showPlayer) { DramaPlayerView(drama: DramaLibrary.beforeRainStops) }
+        .navigationTitle("tab.paths")
+        .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(item: $playerDrama) { drama in
+            DramaPlayerView(drama: drama)
+        }
+        .task { await catalog.load() }
     }
 
-    private var routeMap: some View {
-        let drama = DramaLibrary.beforeRainStops
-        let run = store.run(for: drama)
-        return VStack(alignment: .leading, spacing: 18) {
-            HStack {
-                BundleImage(name: drama.posterImageName).scaledToFill().frame(width: 58, height: 74).clipped().clipShape(RoundedRectangle(cornerRadius: 12))
+    private var currentDrama: Drama? {
+        progress.history
+            .sorted { $0.watchedAt > $1.watchedAt }
+            .compactMap { catalog.drama(id: $0.dramaID) }
+            .first
+    }
+
+    private func viewingSummary(for drama: Drama) -> some View {
+        let run = progress.run(for: drama)
+        return HStack(spacing: 14) {
+            BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL)
+                .scaledToFill()
+                .frame(width: 72, height: 94)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            VStack(alignment: .leading, spacing: 6) {
+                Text(drama.title.resolved)
+                    .font(.title3.bold())
+                    .lineLimit(2)
+                Text(String(
+                    format: String(localized: "paths.progress.format"),
+                    run.watchedEpisodeIDs.count,
+                    drama.episodes.count
+                ))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                ProgressView(
+                    value: Double(run.watchedEpisodeIDs.count),
+                    total: Double(max(drama.episodes.count, 1))
+                )
+                .tint(TaleForkTheme.coral)
+            }
+            Spacer(minLength: 8)
+            Image(systemName: "point.bottomleft.forward.to.point.topright.scurvepath")
+                .font(.title2)
+                .foregroundStyle(TaleForkTheme.coral)
+        }
+        .padding(18)
+        .background(.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+
+    private func episodeTimeline(for drama: Drama) -> some View {
+        let run = progress.run(for: drama)
+        return LazyVStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(drama.episodes.enumerated()), id: \.element.id) { index, episode in
+                episodeRow(episode, drama: drama, run: run, isLast: index == drama.episodes.count - 1)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.background.opacity(0.76), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+
+    private func episodeRow(_ episode: DramaEpisode, drama: Drama, run: DramaRun, isLast: Bool) -> some View {
+        let watched = run.watchedEpisodeIDs.contains(episode.id)
+        let current = run.currentEpisodeID == episode.id
+        return Button {
+            TactileFeedback.tap(enabled: progress.preferences.tactileFeedbackEnabled)
+            progress.selectEpisode(drama: drama, episodeID: episode.id)
+            playerDrama = drama
+        } label: {
+            HStack(alignment: .top, spacing: 14) {
+                VStack(spacing: 0) {
+                    ZStack {
+                        Circle()
+                            .fill(current ? TaleForkTheme.coral : (watched ? TaleForkTheme.mint : TaleForkTheme.mist))
+                            .frame(width: 34, height: 34)
+                        Image(systemName: current ? "play.fill" : (watched ? "checkmark" : "circle"))
+                            .font(.caption.bold())
+                            .foregroundStyle(current || watched ? TaleForkTheme.ink : .secondary)
+                    }
+                    if !isLast {
+                        Rectangle()
+                            .fill(watched ? TaleForkTheme.mint.opacity(0.72) : TaleForkTheme.mist)
+                            .frame(width: 2, height: 34)
+                    }
+                }
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(drama.title.resolved).font(.headline)
-                    Text(String(format: String(localized: "paths.progress.format"), run.watchedEpisodeIDs.count, drama.episodes.count)).font(.caption).foregroundStyle(.secondary)
+                    Text(String(format: String(localized: "player.episode.format"), episode.number))
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(current ? TaleForkTheme.coral : .secondary)
+                    Text(episode.title.resolved)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
                 }
-                Spacer()
-                Image(systemName: "arrow.triangle.branch").font(.title2).foregroundStyle(TaleForkTheme.coral)
+                .padding(.top, 1)
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundStyle(.tertiary)
+                    .padding(.top, 10)
             }
-
-            routeRow(episode: drama.episodes[0], depth: 0, run: run)
-            routeConnector(split: true)
-            HStack(alignment: .top, spacing: 12) {
-                VStack { routeRow(episode: drama.episodes[2], depth: 1, run: run); routeConnector(split: false); routeRow(episode: drama.episodes[4], depth: 2, run: run) }
-                VStack { routeRow(episode: drama.episodes[3], depth: 1, run: run); routeConnector(split: false); routeRow(episode: drama.episodes[5], depth: 2, run: run) }
-            }
-        }.padding(18).background(.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 24))
-    }
-
-    private func routeRow(episode: DramaEpisode, depth: Int, run: DramaRun) -> some View {
-        let unlocked = run.watchedEpisodeIDs.contains(episode.id) || run.currentEpisodeID == episode.id
-        return VStack(spacing: 6) {
-            ZStack {
-                Circle().fill(unlocked ? TaleForkTheme.mint : TaleForkTheme.mist).frame(width: 32, height: 32)
-                Image(systemName: unlocked ? (episode.ending == nil ? "play.fill" : "seal.fill") : "lock.fill")
-                    .font(.caption).foregroundStyle(unlocked ? TaleForkTheme.ink : .secondary)
-            }
-            Text(unlocked ? episode.title.resolved : String(localized: "paths.unknown.node"))
-                .font(.caption.weight(.semibold)).multilineTextAlignment(.center).lineLimit(2)
-        }.frame(maxWidth: .infinity)
-    }
-
-    private func routeConnector(split: Bool) -> some View {
-        Image(systemName: split ? "arrow.triangle.branch" : "arrow.down")
-            .foregroundStyle(TaleForkTheme.coral.opacity(0.7)).frame(maxWidth: .infinity)
-    }
-
-    private var endingCollection: some View {
-        let drama = DramaLibrary.beforeRainStops
-        let unlocked = store.run(for: drama).completedEndingIDs
-        return VStack(alignment: .leading, spacing: 14) {
-            Text("paths.endings.title").font(.title3.bold())
-            HStack(spacing: 12) {
-                ForEach(drama.endings) { episode in
-                    let isUnlocked = unlocked.contains(episode.id)
-                    VStack(spacing: 8) {
-                        Image(systemName: isUnlocked ? (episode.ending?.symbol ?? "seal.fill") : "questionmark")
-                            .font(.title2).foregroundStyle(isUnlocked ? TaleForkTheme.coral : .secondary)
-                        Text(isUnlocked ? (episode.ending?.title.resolved ?? "") : String(localized: "paths.locked.ending"))
-                            .font(.caption.weight(.semibold)).multilineTextAlignment(.center)
-                    }.frame(maxWidth: .infinity, minHeight: 110)
-                        .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 18))
-                }
-            }
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(String(
+            format: String(localized: "paths.episode.accessibility"),
+            episode.number,
+            current ? String(localized: "paths.current") : (watched ? String(localized: "paths.watched") : String(localized: "paths.unwatched"))
+        )))
+    }
+
+    private func continueButton(for drama: Drama) -> some View {
+        Button {
+            TactileFeedback.tap(enabled: progress.preferences.tactileFeedbackEnabled)
+            progress.start(drama)
+            playerDrama = drama
+        } label: {
+            Label("drama.continue", systemImage: "play.fill")
+                .font(.headline)
+                .foregroundStyle(TaleForkTheme.ink)
+                .frame(maxWidth: .infinity, minHeight: 56)
+                .background(TaleForkTheme.coral, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .accessibilityHint(Text("paths.continue.hint"))
     }
 }

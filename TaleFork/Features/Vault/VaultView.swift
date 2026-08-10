@@ -17,7 +17,9 @@ struct VaultView: View {
 
                     if selection == 0 { historyContent } else { favoriteContent }
                 }
-                .padding(.horizontal, TaleForkTheme.horizontalMargin(for: proxy.size.width)).padding(.vertical, 20)
+                .padding(.horizontal, TaleForkTheme.horizontalMargin(for: proxy.size.width))
+                .padding(.top, 20)
+                .padding(.bottom, 112)
                 .frame(maxWidth: 720).frame(maxWidth: .infinity)
             }.background(PaperBackground())
         }.navigationTitle("tab.vault").navigationBarTitleDisplayMode(.inline)
@@ -37,8 +39,7 @@ struct VaultView: View {
     }
 
     @ViewBuilder private var favoriteContent: some View {
-        let source = catalog.dramas.isEmpty ? DramaLibrary.dramas : catalog.dramas
-        let dramas = source.filter { store.favoriteDramaIDs.contains($0.id) }
+        let dramas = catalog.dramas.filter { store.favoriteDramaIDs.contains($0.id) }
         if dramas.isEmpty { emptyState("heart", "vault.favorites.empty.title", "vault.favorites.empty.body") }
         else {
             LazyVStack(spacing: 14) {
@@ -54,7 +55,6 @@ struct VaultView: View {
             BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(width: 84, height: 112).clipped().clipShape(RoundedRectangle(cornerRadius: 14))
             VStack(alignment: .leading, spacing: 6) {
                 Text(drama.title.resolved).font(.headline)
-                Text(drama.genre.resolved).font(.caption).foregroundStyle(TaleForkTheme.coral)
                 if let entry, let episode = drama.episode(id: entry.episodeID) {
                     Text(String(format: String(localized: "vault.last.watched.format"), episode.number, episode.title.resolved)).font(.caption).foregroundStyle(.secondary).lineLimit(2)
                 }
