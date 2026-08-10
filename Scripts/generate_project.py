@@ -32,7 +32,7 @@ resources = [
     ("terms-of-use.html", "Resources/Legal/terms-of-use.html", "text.html"),
 ]
 
-languages = ["en", "ja", "zh-Hant"]
+languages = ["en", "ja", "zh-Hans", "zh-Hant"]
 variant_names = ["Localizable.strings", "InfoPlist.strings"]
 
 project_id = oid("project")
@@ -193,7 +193,7 @@ add(
 add(
     project_id,
     "Project object",
-    f"\t\t\tisa = PBXProject;\n\t\t\tattributes = {{\n\t\t\t\tBuildIndependentTargetsInParallel = 1;\n\t\t\t\tLastSwiftUpdateCheck = 2660;\n\t\t\t\tLastUpgradeCheck = 2660;\n\t\t\t\tTargetAttributes = {{\n\t\t\t\t\t{app_target} = {{ CreatedOnToolsVersion = 26.6; }};\n\t\t\t\t\t{tests_target} = {{ CreatedOnToolsVersion = 26.6; TestTargetID = {app_target}; }};\n\t\t\t\t}};\n\t\t\t}};\n\t\t\tbuildConfigurationList = {project_config_list} /* Build configuration list for PBXProject \"TaleFork\" */;\n\t\t\tcompatibilityVersion = \"Xcode 14.0\";\n\t\t\tdevelopmentRegion = en;\n\t\t\thasScannedForEncodings = 0;\n\t\t\tknownRegions = (en, ja, \"zh-Hant\", Base);\n\t\t\tmainGroup = {main_group};\n\t\t\tproductRefGroup = {products_group} /* Products */;\n\t\t\tprojectDirPath = \"\";\n\t\t\tprojectRoot = \"\";\n\t\t\ttargets = (\n\t\t\t\t{app_target} /* TaleFork */,\n\t\t\t\t{tests_target} /* TaleForkTests */,\n\t\t\t);",
+    f"\t\t\tisa = PBXProject;\n\t\t\tattributes = {{\n\t\t\t\tBuildIndependentTargetsInParallel = 1;\n\t\t\t\tLastSwiftUpdateCheck = 2660;\n\t\t\t\tLastUpgradeCheck = 2660;\n\t\t\t\tTargetAttributes = {{\n\t\t\t\t\t{app_target} = {{ CreatedOnToolsVersion = 26.6; }};\n\t\t\t\t\t{tests_target} = {{ CreatedOnToolsVersion = 26.6; TestTargetID = {app_target}; }};\n\t\t\t\t}};\n\t\t\t}};\n\t\t\tbuildConfigurationList = {project_config_list} /* Build configuration list for PBXProject \"TaleFork\" */;\n\t\t\tcompatibilityVersion = \"Xcode 14.0\";\n\t\t\tdevelopmentRegion = \"zh-Hant\";\n\t\t\thasScannedForEncodings = 0;\n\t\t\tknownRegions = (en, ja, \"zh-Hans\", \"zh-Hant\", Base);\n\t\t\tmainGroup = {main_group};\n\t\t\tproductRefGroup = {products_group} /* Products */;\n\t\t\tprojectDirPath = \"\";\n\t\t\tprojectRoot = \"\";\n\t\t\ttargets = (\n\t\t\t\t{app_target} /* TaleFork */,\n\t\t\t\t{tests_target} /* TaleForkTests */,\n\t\t\t);",
 )
 
 

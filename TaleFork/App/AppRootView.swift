@@ -3,6 +3,7 @@ import SwiftUI
 struct AppRootView: View {
     @Environment(ProgressStore.self) private var store
     @Environment(CatalogStore.self) private var catalog
+    @State private var isShowingPlaybackCheck = true
 
     var body: some View {
         ZStack {
@@ -15,8 +16,11 @@ struct AppRootView: View {
     @ViewBuilder
     private var appContent: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "remote-player" {
-            RemotePlaybackCheckView()
+        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "remote-player",
+           isShowingPlaybackCheck {
+            RemotePlaybackCheckView {
+                isShowingPlaybackCheck = false
+            }
         } else {
             regularContent
         }
@@ -40,11 +44,12 @@ struct AppRootView: View {
 #if DEBUG
 private struct RemotePlaybackCheckView: View {
     @Environment(CatalogStore.self) private var catalog
+    let onExit: () -> Void
 
     var body: some View {
         Group {
             if let drama = catalog.featured {
-                DramaPlayerView(drama: drama)
+                DramaPlayerView(drama: drama, onExit: onExit)
             } else if let error = catalog.errorMessage {
                 ContentUnavailableView("Playback check failed", systemImage: "wifi.exclamationmark", description: Text(error))
             } else {

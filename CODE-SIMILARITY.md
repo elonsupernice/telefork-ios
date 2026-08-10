@@ -17,8 +17,8 @@
 
 | 范围 | TaleFork token 数 | 短片段命中/覆盖率 | 长片段命中/覆盖率 | 深度命中/覆盖率 |
 | --- | ---: | ---: | ---: | ---: |
-| 全部 App Swift 源码 | 16220 | 1666 / 10.27% | 199 / 1.23% | 58 / 0.36% |
-| 排除必要网络协议层 | 13900 | 1290 / 9.28% | 39 / 0.28% | 0 / 0.00% |
+| 全部 App Swift 源码 | 16287 | 1666 / 10.23% | 199 / 1.22% | 58 / 0.36% |
+| 排除必要网络协议层 | 13967 | 1290 / 9.24% | 39 / 0.28% | 0 / 0.00% |
 
 ## TaleFork 文件级最高匹配
 
@@ -32,10 +32,10 @@
 | `Features/Vault/VaultView.swift` | `Features/Profile/ProfileView.swift` | 5.05% | 38/753 |
 | `Shared/LocalLegalView.swift` | `Features/Theater/TheaterView.swift` | 4.17% | 12/288 |
 | `Features/Explore/ExploreView.swift` | `Features/Theater/TheaterView.swift` | 4.16% | 111/2671 |
-| `Features/Player/DramaPlayerView.swift` | `Features/Home/ImmersiveFeedView.swift` | 3.21% | 115/3587 |
+| `Features/Player/DramaPlayerView.swift` | `Features/Home/ImmersiveFeedView.swift` | 3.17% | 115/3631 |
 | `Data/ProgressStore.swift` | `Core/Persistence/AppStorageStore.swift` | 1.99% | 15/755 |
+| `App/AppRootView.swift` | `-` | 0.00% | 0/479 |
 | `Domain/DramaModels.swift` | `-` | 0.00% | 0/456 |
-| `App/AppRootView.swift` | `-` | 0.00% | 0/456 |
 
 ## 解读边界
 

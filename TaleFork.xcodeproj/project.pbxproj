@@ -130,6 +130,9 @@
 		B6AD7300C4DA1FEF78605FA7 /* ja */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ja"; path = "ja.lproj/Localizable.strings"; sourceTree = "<group>";
 		};
+		C1DA6E3A1A8E9D88F6455561 /* zh-Hans */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>";
+		};
 		452BAD5CC59329D90D6A150F /* zh-Hant */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>";
 		};
@@ -138,6 +141,7 @@
 			children = (
 				DC2505CE620F9BC667AD417B /* en */,
 				B6AD7300C4DA1FEF78605FA7 /* ja */,
+				C1DA6E3A1A8E9D88F6455561 /* zh-Hans */,
 				452BAD5CC59329D90D6A150F /* zh-Hant */,
 			);
 			name = "Localizable.strings";
@@ -152,6 +156,9 @@
 		85F6F88716E295D560262520 /* ja */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ja"; path = "ja.lproj/InfoPlist.strings"; sourceTree = "<group>";
 		};
+		03B72375810282161C109129 /* zh-Hans */ = {
+			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>";
+		};
 		F8A1037FBC891A927E5F11AC /* zh-Hant */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>";
 		};
@@ -160,6 +167,7 @@
 			children = (
 				0502F30168C230F6F9A02D92 /* en */,
 				85F6F88716E295D560262520 /* ja */,
+				03B72375810282161C109129 /* zh-Hans */,
 				F8A1037FBC891A927E5F11AC /* zh-Hant */,
 			);
 			name = "InfoPlist.strings";
@@ -360,9 +368,9 @@
 			};
 			buildConfigurationList = 99DE79F146C1665D0B462638 /* Build configuration list for PBXProject "TaleFork" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hant";
 			hasScannedForEncodings = 0;
-			knownRegions = (en, ja, "zh-Hant", Base);
+			knownRegions = (en, ja, "zh-Hans", "zh-Hant", Base);
 			mainGroup = AB48CFA305015276AB5620D4;
 			productRefGroup = 692092DE1C1C8624E142B71D /* Products */;
 			projectDirPath = "";

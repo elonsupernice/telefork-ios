@@ -6,6 +6,7 @@ struct DramaPlayerView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     let drama: Drama
+    let onExit: (() -> Void)?
 
     @State private var player = AVPlayer()
     @State private var currentEpisodeID: String
@@ -23,8 +24,9 @@ struct DramaPlayerView: View {
 
     private let playbackClock = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
-    init(drama: Drama) {
+    init(drama: Drama, onExit: (() -> Void)? = nil) {
         self.drama = drama
+        self.onExit = onExit
         _currentEpisodeID = State(initialValue: drama.entryEpisodeID)
     }
 
@@ -238,11 +240,7 @@ struct DramaPlayerView: View {
     }
 
     private var backButton: some View {
-        Button {
-            persistPlaybackPosition()
-            player.pause()
-            dismiss()
-        } label: {
+        Button(action: exitPlayer) {
             HStack(spacing: 6) {
                 Image(systemName: "chevron.left")
                 Text("common.back")
@@ -280,7 +278,7 @@ struct DramaPlayerView: View {
                 } else {
                     Image(systemName: "checkmark.seal.fill").font(.system(size: 44)).foregroundStyle(TaleForkTheme.coral)
                     Text("player.series.complete").font(.system(.title2, design: .rounded, weight: .black)).foregroundStyle(.white)
-                    Button { dismiss() } label: { Text("common.done").primaryPlayerButton() }
+                    Button(action: exitPlayer) { Text("common.done").primaryPlayerButton() }
                 }
                 Spacer().frame(height: 20)
             }.padding(.horizontal, 22).frame(maxWidth: 520)
@@ -328,6 +326,16 @@ struct DramaPlayerView: View {
         Button(action: action) { Image(systemName: symbol).font(.headline).frame(width: 44, height: 44).background(.black.opacity(0.34), in: Circle()) }
             .foregroundStyle(.white)
             .accessibilityLabel(Text(accessibilityLabel))
+    }
+
+    private func exitPlayer() {
+        persistPlaybackPosition()
+        player.pause()
+        if let onExit {
+            onExit()
+        } else {
+            dismiss()
+        }
     }
 
     private func loadCurrentEpisode() {

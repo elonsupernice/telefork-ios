@@ -17,7 +17,7 @@ final class DramaModelTests: XCTestCase {
 
     func testLocalizationKeySetsMatch() throws {
         var baseline: Set<String>?
-        for language in ["en", "ja", "zh-Hant"] {
+        for language in ["en", "ja", "zh-Hans", "zh-Hant"] {
             let lproj = try XCTUnwrap(Bundle.main.path(forResource: language, ofType: "lproj"))
             let path = URL(fileURLWithPath: lproj).appendingPathComponent("Localizable.strings").path
             let dictionary = try XCTUnwrap(NSDictionary(contentsOfFile: path) as? [String: String])
