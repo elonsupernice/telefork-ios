@@ -18,6 +18,14 @@
 "discover.collection.title" = "ショートドラマライブラリ";
 "discover.search.results" = "検索結果";
 "discover.search.placeholder" = "タイトルで検索";
+"discover.search.clear" = "検索を消去";
+"discover.searching" = "ショートドラマを検索中…";
+"discover.search.empty.title" = "該当するドラマがありません";
+"discover.search.empty.body" = "別のタイトルやキーワードをお試しください。";
+"discover.empty.title" = "シアターに作品がありません";
+"discover.empty.body" = "再接続して最新作品をご確認ください。";
+"discover.connection.title" = "シアターに接続できません";
+"discover.open.details.hint" = "作品の詳細とエピソードを開きます";
 "discover.continue" = "続きを見る";
 "discover.continue.hint" = "保存した位置から現在のエピソードを再開します";
 "drama.episodes.format" = "%d 話";
@@ -26,6 +34,8 @@
 "drama.start" = "第1話から見る";
 "drama.continue" = "続きを見る";
 "drama.episodes.title" = "エピソード";
+"drama.episode.accessibility" = "第 %d 話、%@";
+"drama.episode.open.hint" = "このエピソードを再生します";
 "player.episode.format" = "第 %d 話";
 "player.featured.short" = "注目ショートドラマ";
 "player.play" = "再生";
@@ -41,6 +51,9 @@
 "player.forward" = "10秒進む";
 "player.mute" = "ミュート";
 "player.unmute" = "ミュート解除";
+"player.video" = "ショートドラマ動画";
+"player.video.hint" = "ダブルタップで操作を表示または非表示、2本指のダブルタップで再生または一時停止";
+"player.progress" = "再生位置";
 "player.restart.first" = "第1話から再生";
 "paths.eyebrow" = "WATCHING PROGRESS";
 "paths.title" = "視聴進捗";

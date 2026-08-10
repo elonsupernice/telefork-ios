@@ -18,6 +18,14 @@
 "discover.collection.title" = "短劇片庫";
 "discover.search.results" = "搜尋結果";
 "discover.search.placeholder" = "搜尋劇名";
+"discover.search.clear" = "清除搜尋內容";
+"discover.searching" = "正在搜尋短劇…";
+"discover.search.empty.title" = "沒有找到相關短劇";
+"discover.search.empty.body" = "請更換劇名或關鍵字後再試。";
+"discover.empty.title" = "劇場暫時沒有短劇";
+"discover.empty.body" = "重新連接後再看看最新內容。";
+"discover.connection.title" = "劇場連接失敗";
+"discover.open.details.hint" = "開啟短劇詳情與選集";
 "discover.continue" = "繼續觀看";
 "discover.continue.hint" = "從已保存的位置繼續播放當前集數";
 "drama.episodes.format" = "%d 集";
@@ -26,6 +34,8 @@
 "drama.start" = "從第 1 集開始";
 "drama.continue" = "繼續觀看";
 "drama.episodes.title" = "選集";
+"drama.episode.accessibility" = "第 %d 集，%@";
+"drama.episode.open.hint" = "播放這一集";
 "player.episode.format" = "第 %d 集";
 "player.featured.short" = "精選短劇";
 "player.play" = "播放";
@@ -41,6 +51,9 @@
 "player.forward" = "快進 10 秒";
 "player.mute" = "靜音";
 "player.unmute" = "恢復聲音";
+"player.video" = "短劇影片";
+"player.video.hint" = "點兩下顯示或隱藏控制；雙指點兩下可播放或暫停";
+"player.progress" = "播放進度";
 "player.restart.first" = "改從第 1 集播放";
 "paths.eyebrow" = "WATCHING PROGRESS";
 "paths.title" = "你的觀看進度";

@@ -18,6 +18,14 @@
 "discover.collection.title" = "Short drama library";
 "discover.search.results" = "Search results";
 "discover.search.placeholder" = "Search by title";
+"discover.search.clear" = "Clear search";
+"discover.searching" = "Searching short dramas…";
+"discover.search.empty.title" = "No matching dramas";
+"discover.search.empty.body" = "Try another title or keyword.";
+"discover.empty.title" = "The theater is empty";
+"discover.empty.body" = "Reconnect to check for the latest dramas.";
+"discover.connection.title" = "Could not connect to the theater";
+"discover.open.details.hint" = "Opens drama details and episodes";
 "discover.continue" = "Continue watching";
 "discover.continue.hint" = "Resumes the current episode from your saved position";
 "drama.episodes.format" = "%d episodes";
@@ -26,6 +34,8 @@
 "drama.start" = "Start Episode 1";
 "drama.continue" = "Continue Watching";
 "drama.episodes.title" = "Episodes";
+"drama.episode.accessibility" = "Episode %d, %@";
+"drama.episode.open.hint" = "Plays this episode";
 "player.episode.format" = "Episode %d";
 "player.featured.short" = "FEATURED SHORT";
 "player.play" = "Play";
@@ -41,6 +51,9 @@
 "player.forward" = "Forward 10 seconds";
 "player.mute" = "Mute";
 "player.unmute" = "Unmute";
+"player.video" = "Short drama video";
+"player.video.hint" = "Double tap to show or hide controls; two-finger double tap to play or pause";
+"player.progress" = "Playback progress";
 "player.restart.first" = "Play from Episode 1";
 "paths.eyebrow" = "WATCHING PROGRESS";
 "paths.title" = "Your viewing progress";

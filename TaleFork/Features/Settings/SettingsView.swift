@@ -184,6 +184,8 @@ struct SettingsView: View {
             .lineLimit(1)
             .minimumScaleFactor(0.55)
             .textSelection(.enabled)
+            .accessibilityLabel(Text("settings.user.id"))
+            .accessibilityValue(Text(userIDLabel))
     }
 }
 

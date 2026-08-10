@@ -35,6 +35,10 @@ struct DramaPlayerView: View {
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture { toggleControls() }
+                .accessibilityElement()
+                .accessibilityLabel(Text("player.video"))
+                .accessibilityHint(Text("player.video.hint"))
+                .accessibilityAction(.magicTap) { togglePlayback() }
 
             if controlsVisible && !showCompletion && !playbackFailed { controlOverlay.transition(.opacity) }
             if playbackFailed { failureOverlay }
@@ -166,6 +170,8 @@ struct DramaPlayerView: View {
                     in: 0...max(durationSeconds, 1)
                 )
                 .tint(TaleForkTheme.coral)
+                .accessibilityLabel(Text("player.progress"))
+                .accessibilityValue(Text("(formatTime(playbackSeconds)) / (formatTime(durationSeconds))"))
                 Text("-\(formatTime(max(durationSeconds - playbackSeconds, 0)))")
             }
             .font(.caption2.monospacedDigit())
@@ -210,7 +216,7 @@ struct DramaPlayerView: View {
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 30, weight: .bold))
                         .frame(width: 72, height: 72)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(TaleForkTheme.ink)
                         .background(TaleForkTheme.coral.opacity(0.92), in: Circle())
                         .shadow(color: .black.opacity(0.35), radius: 14, y: 6)
                 }
@@ -476,6 +482,13 @@ private struct EpisodePickerSheet: View {
                         if episode.id == currentEpisodeID { Image(systemName: "waveform").foregroundStyle(TaleForkTheme.mint) }
                     }.foregroundStyle(.primary)
                 }
+                .accessibilityLabel(Text(String(
+                    format: String(localized: "drama.episode.accessibility"),
+                    episode.number,
+                    episode.title.resolved
+                )))
+                .accessibilityValue(episode.id == currentEpisodeID ? Text("paths.current") : Text(""))
+                .accessibilityHint(Text("drama.episode.open.hint"))
             }
             .navigationTitle("player.episodes")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("common.done") { dismiss() } } }

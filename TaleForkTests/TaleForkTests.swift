@@ -77,6 +77,55 @@ final class LiveServiceTests: XCTestCase {
 }
 
 @MainActor
+final class CatalogStoreTests: XCTestCase {
+    func testFailedRefreshKeepsPreviouslyLoadedCatalog() async {
+        let drama = makeTestDrama(id: "kept", title: "Kept Drama")
+        let service = FakeCatalogService(
+            bootstrapResults: [
+                .success(CatalogBootstrap(userID: "viewer", dramas: [drama])),
+                .failure(FakeServiceError.unavailable)
+            ]
+        )
+        let catalog = CatalogStore(service: service)
+
+        await catalog.load(force: true)
+        XCTAssertEqual(catalog.dramas.map(\.id), ["kept"])
+        XCTAssertNil(catalog.errorMessage)
+
+        await catalog.retry()
+        XCTAssertEqual(catalog.dramas.map(\.id), ["kept"])
+        XCTAssertNotNil(catalog.errorMessage)
+    }
+
+    func testCancelledSearchCannotReplaceNewerResults() async {
+        let slowDrama = makeTestDrama(id: "slow", title: "Slow")
+        let fastDrama = makeTestDrama(id: "fast", title: "Fast")
+        let service = FakeCatalogService(
+            bootstrapResults: [.success(CatalogBootstrap(userID: "viewer", dramas: [slowDrama, fastDrama]))],
+            searchHandler: { keyword in
+                if keyword == "slow" {
+                    try? await Task.sleep(for: .milliseconds(250))
+                    return [slowDrama]
+                }
+                return [fastDrama]
+            }
+        )
+        let catalog = CatalogStore(service: service)
+        await catalog.load(force: true)
+
+        let staleSearch = Task { await catalog.search(keyword: "slow") }
+        try? await Task.sleep(for: .milliseconds(30))
+        staleSearch.cancel()
+        await catalog.search(keyword: "fast")
+        await staleSearch.value
+
+        XCTAssertEqual(catalog.searchResults.map(\.id), ["fast"])
+        XCTAssertNil(catalog.searchErrorMessage)
+        XCTAssertFalse(catalog.isSearching)
+    }
+}
+
+@MainActor
 final class ProgressStoreTests: XCTestCase {
     func testProgressFavoritesAndPersistence() throws {
         let (suite, defaults) = makeDefaults()
@@ -147,21 +196,52 @@ final class ProgressStoreTests: XCTestCase {
     }
 }
 
-private func makeTestDrama() -> Drama {
+@MainActor
+private final class FakeCatalogService: CatalogServing {
+    private var bootstrapResults: [Result<CatalogBootstrap, Error>]
+    private let searchHandler: (String) async throws -> [Drama]
+
+    init(
+        bootstrapResults: [Result<CatalogBootstrap, Error>],
+        searchHandler: @escaping (String) async throws -> [Drama] = { _ in [] }
+    ) {
+        self.bootstrapResults = bootstrapResults
+        self.searchHandler = searchHandler
+    }
+
+    func bootstrap() async throws -> CatalogBootstrap {
+        guard !bootstrapResults.isEmpty else { throw FakeServiceError.unavailable }
+        return try bootstrapResults.removeFirst().get()
+    }
+
+    func search(_ keyword: String) async throws -> [Drama] {
+        try await searchHandler(keyword)
+    }
+
+    func clearLocalIdentity() {}
+}
+
+private enum FakeServiceError: LocalizedError {
+    case unavailable
+
+    var errorDescription: String? { "Service unavailable" }
+}
+
+private func makeTestDrama(id: String = "test-drama", title: String = "Test Drama") -> Drama {
     let episodes = (1...3).map { number in
         DramaEpisode(
-            id: "test-\(number)",
+            id: "\(id)-\(number)",
             number: number,
             title: .server("Episode \(number)"),
             sceneCaption: .server("Test caption"),
             clipName: "",
-            videoURL: URL(string: "https://example.com/video/test/\(number).mp4"),
+            videoURL: URL(string: "https://example.com/video/\(id)/\(number).mp4"),
             durationSeconds: 30
         )
     }
     return Drama(
-        id: "test-drama",
-        title: .server("Test Drama"),
+        id: id,
+        title: .server(title),
         subtitle: .server("Test Subtitle"),
         synopsis: .server("Test Synopsis"),
         posterImageName: "",

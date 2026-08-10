@@ -23,17 +23,45 @@ struct ExploreView: View {
                         Label("discover.loading", systemImage: "antenna.radiowaves.left.and.right")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.secondary)
-                    } else if catalog.errorMessage != nil {
-                        Button { Task { await catalog.retry() } } label: {
-                            Label("discover.retry", systemImage: "arrow.clockwise")
-                                .font(.subheadline.weight(.bold))
+                    } else if let errorMessage = catalog.errorMessage {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Label("discover.connection.title", systemImage: "wifi.exclamationmark")
+                                .font(.headline)
+                            Text(errorMessage)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Button { Task { await catalog.retry() } } label: {
+                                Label("discover.retry", systemImage: "arrow.clockwise")
+                                    .font(.subheadline.weight(.bold))
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(TaleForkTheme.accentText)
                         }
-                        .buttonStyle(.bordered)
-                        .tint(TaleForkTheme.coral)
+                        .padding(18)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     }
 
                     SectionHeading(eyebrow: "discover.collection.eyebrow", title: query.isEmpty ? "discover.collection.title" : "discover.search.results")
-                    dramaGrid(width: proxy.size.width - margin * 2)
+                    if !query.isEmpty, let searchErrorMessage = catalog.searchErrorMessage {
+                        Label(searchErrorMessage, systemImage: "wifi.exclamationmark")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    if !query.isEmpty, catalog.isSearching {
+                        ProgressView("discover.searching")
+                            .frame(maxWidth: .infinity, minHeight: 180)
+                    } else if filteredDramas.isEmpty {
+                        ContentUnavailableView(
+                            query.isEmpty ? "discover.empty.title" : "discover.search.empty.title",
+                            systemImage: query.isEmpty ? "film.stack" : "magnifyingglass",
+                            description: Text(query.isEmpty ? "discover.empty.body" : "discover.search.empty.body")
+                        )
+                        .frame(maxWidth: .infinity, minHeight: 220)
+                    } else {
+                        dramaGrid(width: proxy.size.width - margin * 2)
+                    }
 
                 }
                 .padding(.horizontal, margin)
@@ -80,6 +108,8 @@ struct ExploreView: View {
                 .textInputAutocapitalization(.never)
             if !query.isEmpty {
                 Button { query = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityLabel(Text("discover.search.clear"))
             }
         }
         .padding(.horizontal, 16).frame(minHeight: 50)
@@ -115,6 +145,10 @@ struct ExploreView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
             }
             .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(featured.title.resolved))
+            .accessibilityValue(Text(String(format: String(localized: "drama.episodes.format"), featured.episodes.count)))
+            .accessibilityHint(Text("discover.open.details.hint"))
         }
     }
 
@@ -129,19 +163,20 @@ struct ExploreView: View {
                     BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(width: 78, height: 96).clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("discover.continue").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.coral)
+                        Text("discover.continue").font(.caption.weight(.black).monospaced()).foregroundStyle(TaleForkTheme.accentText)
                         Text(drama.title.resolved).font(.headline)
                         Text(drama.episode(id: run.currentEpisodeID)?.title.resolved ?? "")
                             .font(.caption).foregroundStyle(.secondary)
                         ProgressView(value: Double(run.watchedEpisodeIDs.count), total: Double(max(drama.episodes.count, 1))).tint(TaleForkTheme.coral)
                     }
                     Spacer()
-                    Image(systemName: "play.circle.fill").font(.title).foregroundStyle(TaleForkTheme.coral)
+                    Image(systemName: "play.circle.fill").font(.title).foregroundStyle(TaleForkTheme.accentText)
                 }
                 .padding(14).foregroundStyle(.primary)
                 .background(.background.opacity(0.84), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             }
             .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
             .accessibilityHint(Text("discover.continue.hint"))
         }
     }
@@ -149,7 +184,11 @@ struct ExploreView: View {
     private func dramaGrid(width: CGFloat) -> some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: min(220, width), maximum: 360), spacing: 16)], spacing: 20) {
             ForEach(filteredDramas) { drama in
-                NavigationLink(value: drama) { DramaPoster(drama: drama, height: 310) }.buttonStyle(.plain)
+                NavigationLink(value: drama) { DramaPoster(drama: drama, height: 310) }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text(drama.title.resolved))
+                    .accessibilityValue(Text(String(format: String(localized: "drama.episodes.format"), drama.episodes.count)))
+                    .accessibilityHint(Text("discover.open.details.hint"))
             }
         }
     }
@@ -210,6 +249,7 @@ struct DramaDetailView: View {
                                 .font(.title3).foregroundStyle(store.isFavorite(drama) ? .red : .primary)
                                 .frame(width: 54, height: 54).background(Color.primary.opacity(0.07), in: RoundedRectangle(cornerRadius: 16))
                         }
+                        .accessibilityLabel(Text(store.isFavorite(drama) ? "player.saved" : "player.save"))
                     }
                     episodeList
                 } else {
@@ -237,7 +277,7 @@ struct DramaDetailView: View {
                     showPlayer = true
                 } label: {
                     HStack(spacing: 14) {
-                        Text(String(format: "%02d", episode.number)).font(.headline.monospacedDigit()).foregroundStyle(TaleForkTheme.coral)
+                        Text(String(format: "%02d", episode.number)).font(.headline.monospacedDigit()).foregroundStyle(TaleForkTheme.accentText)
                         VStack(alignment: .leading, spacing: 4) {
                             Text(episode.title.resolved).font(.headline)
                             Text(String(format: String(localized: "player.episode.format"), episode.number)).font(.caption).foregroundStyle(.secondary)
@@ -246,7 +286,14 @@ struct DramaDetailView: View {
                         Image(systemName: store.run(for: drama).watchedEpisodeIDs.contains(episode.id) ? "checkmark.circle.fill" : "play.circle")
                             .foregroundStyle(store.run(for: drama).watchedEpisodeIDs.contains(episode.id) ? TaleForkTheme.mint : .secondary)
                     }.padding(14).foregroundStyle(.primary).background(.background.opacity(0.75), in: RoundedRectangle(cornerRadius: 18))
-                }.buttonStyle(.plain)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(String(
+                    format: String(localized: "drama.episode.accessibility"),
+                    episode.number,
+                    episode.title.resolved
+                )))
+                .accessibilityHint(Text("drama.episode.open.hint"))
             }
         }
     }

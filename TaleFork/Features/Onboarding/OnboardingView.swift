@@ -19,6 +19,7 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, margin)
                 .padding(.top, 14)
+                .dynamicTypeSize(.xSmall ... .xxxLarge)
 
                 TabView(selection: $page) {
                     introPage.tag(0)
@@ -45,7 +46,7 @@ struct OnboardingView: View {
                             Image(systemName: "arrow.right")
                         }
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(TaleForkTheme.ink)
                         .padding(.horizontal, 20)
                         .frame(minHeight: 50)
                         .background(TaleForkTheme.coral, in: Capsule())
@@ -53,59 +54,60 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, margin)
                 .padding(.bottom, max(proxy.safeAreaInsets.bottom, 18))
+                .dynamicTypeSize(.xSmall ... .xxxLarge)
             }
         }
     }
 
     private var introPage: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            Spacer(minLength: 12)
-            ZStack {
-                RoundedRectangle(cornerRadius: 36, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [TaleForkTheme.violet, TaleForkTheme.coral],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 36, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [TaleForkTheme.violet, TaleForkTheme.coral],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                Image(systemName: "play.rectangle.on.rectangle.fill")
-                    .font(.system(size: 92, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
+                    Image(systemName: "play.rectangle.on.rectangle.fill")
+                        .font(.system(size: 76, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+                .frame(height: 220)
+                .accessibilityHidden(true)
+                Text("onboarding.title")
+                    .font(.system(.largeTitle, design: .rounded, weight: .black))
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("onboarding.subtitle")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(height: 300)
-            .accessibilityHidden(true)
-            Text("onboarding.title")
-                .font(.system(.largeTitle, design: .rounded, weight: .black))
-                .lineLimit(2)
-                .minimumScaleFactor(0.86)
-                .fixedSize(horizontal: false, vertical: true)
-            Text("onboarding.subtitle")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            Spacer()
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
         }
-        .padding(.horizontal, 24)
+        .scrollIndicators(.hidden)
     }
 
     private var pathPage: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            Spacer()
-            ProgressPreview()
-                .frame(height: 290)
-            Text("onboarding.path.title")
-                .font(.system(.largeTitle, design: .rounded, weight: .black))
-                .lineLimit(2)
-                .minimumScaleFactor(0.86)
-                .fixedSize(horizontal: false, vertical: true)
-            Text("onboarding.path.body")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            Spacer()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                ProgressPreview()
+                    .frame(height: 250)
+                Text("onboarding.path.title")
+                    .font(.system(.largeTitle, design: .rounded, weight: .black))
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("onboarding.path.body")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
         }
-        .padding(.horizontal, 24)
+        .scrollIndicators(.hidden)
     }
 
 }

@@ -5,6 +5,12 @@ enum TaleForkTheme {
     static let ink = Color(hex: "091018")
     static let paper = Color(hex: "F4F1EA")
     static let coral = Color(hex: "E6A84C")
+    static let accentText = Color(uiColor: UIColor { traits in
+        if traits.userInterfaceStyle == .dark {
+            return UIColor(red: 230 / 255, green: 168 / 255, blue: 76 / 255, alpha: 1)
+        }
+        return UIColor(red: 138 / 255, green: 78 / 255, blue: 0, alpha: 1)
+    })
     static let mint = Color(hex: "59C4BE")
     static let violet = Color(hex: "6570C5")
     static let mist = Color(hex: "DEE6E9")
@@ -164,7 +170,7 @@ struct SectionHeading: View {
         VStack(alignment: .leading, spacing: 5) {
             Text(eyebrow)
                 .font(.caption.weight(.bold).monospaced())
-                .foregroundStyle(TaleForkTheme.coral)
+                .foregroundStyle(TaleForkTheme.accentText)
                 .textCase(.uppercase)
             Text(title)
                 .font(.system(.title2, design: .rounded, weight: .bold))

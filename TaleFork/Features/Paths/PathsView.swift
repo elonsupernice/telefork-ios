@@ -81,7 +81,7 @@ struct PathsView: View {
             Spacer(minLength: 8)
             Image(systemName: "point.bottomleft.forward.to.point.topright.scurvepath")
                 .font(.title2)
-                .foregroundStyle(TaleForkTheme.coral)
+                .foregroundStyle(TaleForkTheme.accentText)
         }
         .padding(18)
         .background(.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -126,7 +126,7 @@ struct PathsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(String(format: String(localized: "player.episode.format"), episode.number))
                         .font(.caption.weight(.bold).monospacedDigit())
-                        .foregroundStyle(current ? TaleForkTheme.coral : .secondary)
+                        .foregroundStyle(current ? TaleForkTheme.accentText : .secondary)
                     Text(episode.title.resolved)
                         .font(.headline)
                         .foregroundStyle(.primary)

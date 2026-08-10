@@ -31,7 +31,10 @@ struct VaultView: View {
             LazyVStack(spacing: 14) {
                 ForEach(store.history) { entry in
                     if let drama = catalog.drama(id: entry.dramaID) {
-                        NavigationLink(value: drama) { libraryRow(drama: drama, entry: entry) }.buttonStyle(.plain)
+                        NavigationLink(value: drama) { libraryRow(drama: drama, entry: entry) }
+                            .buttonStyle(.plain)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityHint(Text("discover.open.details.hint"))
                     }
                 }
             }.navigationDestination(for: Drama.self) { DramaDetailView(drama: $0) }
@@ -44,7 +47,10 @@ struct VaultView: View {
         else {
             LazyVStack(spacing: 14) {
                 ForEach(dramas) { drama in
-                    NavigationLink(value: drama) { libraryRow(drama: drama, entry: nil) }.buttonStyle(.plain)
+                    NavigationLink(value: drama) { libraryRow(drama: drama, entry: nil) }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityHint(Text("discover.open.details.hint"))
                 }
             }.navigationDestination(for: Drama.self) { DramaDetailView(drama: $0) }
         }

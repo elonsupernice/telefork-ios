@@ -17,22 +17,22 @@
 
 | 范围 | TaleFork token 数 | 短片段命中/覆盖率 | 长片段命中/覆盖率 | 深度命中/覆盖率 |
 | --- | ---: | ---: | ---: | ---: |
-| 全部 App Swift 源码 | 15395 | 1602 / 10.41% | 199 / 1.29% | 58 / 0.38% |
-| 排除必要网络协议层 | 13268 | 1226 / 9.24% | 39 / 0.29% | 0 / 0.00% |
+| 全部 App Swift 源码 | 16220 | 1666 / 10.27% | 199 / 1.23% | 58 / 0.36% |
+| 排除必要网络协议层 | 13900 | 1290 / 9.28% | 39 / 0.28% | 0 / 0.00% |
 
 ## TaleFork 文件级最高匹配
 
 | TaleFork 文件 | 最接近的 Dramile 文件 | 该文件精确覆盖率 | 命中/总 token |
 | --- | --- | ---: | ---: |
-| `Features/Onboarding/OnboardingView.swift` | `Features/Theater/TheaterView.swift` | 14.36% | 132/919 |
-| `Data/TaleForkService.swift` | `Core/Networking/HTTPClient.swift` | 8.23% | 175/2127 |
+| `Features/Onboarding/OnboardingView.swift` | `Features/Theater/TheaterView.swift` | 12.17% | 114/937 |
+| `Data/TaleForkService.swift` | `Core/Networking/HTTPClient.swift` | 7.54% | 175/2320 |
 | `Features/Paths/PathsView.swift` | `Features/Theater/TheaterView.swift` | 6.63% | 80/1206 |
-| `Features/Settings/SettingsView.swift` | `Features/Theater/TheaterView.swift` | 6.50% | 81/1247 |
-| `DesignSystem/TaleForkTheme.swift` | `Features/Shell/DramaCard.swift` | 5.71% | 68/1191 |
-| `Features/Vault/VaultView.swift` | `Features/Profile/ProfileView.swift` | 5.27% | 38/721 |
-| `Features/Explore/ExploreView.swift` | `Features/Theater/TheaterView.swift` | 4.34% | 99/2279 |
+| `Features/Settings/SettingsView.swift` | `Features/Theater/TheaterView.swift` | 6.41% | 81/1263 |
+| `DesignSystem/TaleForkTheme.swift` | `Features/Shell/DramaCard.swift` | 5.39% | 68/1262 |
+| `Features/Vault/VaultView.swift` | `Features/Profile/ProfileView.swift` | 5.05% | 38/753 |
 | `Shared/LocalLegalView.swift` | `Features/Theater/TheaterView.swift` | 4.17% | 12/288 |
-| `Features/Player/DramaPlayerView.swift` | `Features/Home/ImmersiveFeedView.swift` | 3.30% | 115/3484 |
+| `Features/Explore/ExploreView.swift` | `Features/Theater/TheaterView.swift` | 4.16% | 111/2671 |
+| `Features/Player/DramaPlayerView.swift` | `Features/Home/ImmersiveFeedView.swift` | 3.21% | 115/3587 |
 | `Data/ProgressStore.swift` | `Core/Persistence/AppStorageStore.swift` | 1.99% | 15/755 |
 | `Domain/DramaModels.swift` | `-` | 0.00% | 0/456 |
 | `App/AppRootView.swift` | `-` | 0.00% | 0/456 |

@@ -60,9 +60,16 @@ private struct VisitorPayload: Decodable {
     }
 }
 
-private struct CatalogBootstrap {
+struct CatalogBootstrap {
     let userID: String
     let dramas: [Drama]
+}
+
+@MainActor
+protocol CatalogServing: AnyObject {
+    func bootstrap() async throws -> CatalogBootstrap
+    func search(_ keyword: String) async throws -> [Drama]
+    func clearLocalIdentity()
 }
 
 private struct ConfigurationPayload: Decodable {
@@ -169,10 +176,21 @@ private enum JSONScalar: Encodable {
 }
 
 @MainActor
-private final class TaleForkService {
-    private let baseURL = URL(string: "https://djhk.shujuku009.xyz/")!
+final class TaleForkService: CatalogServing {
+    private let baseURL: URL
     private let deviceIDKey = "talefork.service-device-id"
     private var token = ""
+
+    init() {
+#if DEBUG
+        if let override = ProcessInfo.processInfo.environment["TALEFORK_SERVICE_BASE_URL"],
+           let url = URL(string: override) {
+            baseURL = url
+            return
+        }
+#endif
+        baseURL = URL(string: "https://djhk.shujuku009.xyz/")!
+    }
 
     func bootstrap() async throws -> CatalogBootstrap {
         let visitor: VisitorPayload = try await post(.visitorRegister, body: devicePayload, requiresToken: false)
@@ -274,10 +292,17 @@ final class CatalogStore {
     private(set) var searchResults: [Drama] = []
     private(set) var currentUserID = ""
     private(set) var isLoading = false
+    private(set) var isSearching = false
     private(set) var errorMessage: String?
+    private(set) var searchErrorMessage: String?
 
-    private let service = TaleForkService()
+    private let service: any CatalogServing
     private var hasLoaded = false
+    private var searchRequestID = UUID()
+
+    init(service: any CatalogServing = TaleForkService()) {
+        self.service = service
+    }
 
     var featured: Drama? { dramas.first }
 
@@ -298,8 +323,7 @@ final class CatalogStore {
             hasLoaded = true
         } catch {
             errorMessage = error.localizedDescription
-            dramas = []
-            searchResults = []
+            if dramas.isEmpty { searchResults = [] }
         }
     }
 
@@ -311,18 +335,36 @@ final class CatalogStore {
         dramas = []
         searchResults = []
         errorMessage = nil
+        searchErrorMessage = nil
         hasLoaded = false
+        searchRequestID = UUID()
     }
 
     func search(keyword: String) async {
         let value = keyword.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !value.isEmpty else { searchResults = []; return }
+        let requestID = UUID()
+        searchRequestID = requestID
+        guard !value.isEmpty else {
+            searchResults = []
+            searchErrorMessage = nil
+            isSearching = false
+            return
+        }
+        isSearching = true
+        searchErrorMessage = nil
+        defer {
+            if searchRequestID == requestID { isSearching = false }
+        }
         do {
-            searchResults = try await service.search(value)
+            let results = try await service.search(value)
+            guard searchRequestID == requestID, !Task.isCancelled else { return }
+            searchResults = results
         } catch {
+            guard searchRequestID == requestID, !Task.isCancelled else { return }
             searchResults = dramas.filter {
                 $0.title.resolved.localizedCaseInsensitiveContains(value)
             }
+            searchErrorMessage = error.localizedDescription
         }
     }
 }

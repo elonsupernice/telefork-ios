@@ -90,7 +90,7 @@ struct AppShellView: View {
                 .tabItem { Label("tab.settings", systemImage: "slider.horizontal.3") }
                 .tag(AppTab.settings)
         }
-        .tint(TaleForkTheme.coral)
+        .tint(TaleForkTheme.accentText)
     }
 }
 
