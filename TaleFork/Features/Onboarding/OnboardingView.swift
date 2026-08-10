@@ -2,11 +2,14 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Environment(ProgressStore.self) private var store
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var page = 0
 
     var body: some View {
         GeometryReader { proxy in
             let margin = TaleForkTheme.horizontalMargin(for: proxy.size.width)
+            let usesCompactMedia = proxy.size.height < 740 || dynamicTypeSize.isAccessibilitySize
+
             VStack(spacing: 0) {
                 HStack {
                     BrandMark(size: 42)
@@ -22,44 +25,18 @@ struct OnboardingView: View {
                 .dynamicTypeSize(.xSmall ... .xxxLarge)
 
                 TabView(selection: $page) {
-                    introPage.tag(0)
-                    pathPage.tag(1)
+                    introPage(usesCompactMedia: usesCompactMedia).tag(0)
+                    pathPage(usesCompactMedia: usesCompactMedia).tag(1)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-
-                HStack(spacing: 8) {
-                    ForEach(0..<2, id: \.self) { index in
-                        Capsule()
-                            .fill(index == page ? TaleForkTheme.coral : TaleForkTheme.mist)
-                            .frame(width: index == page ? 28 : 8, height: 8)
-                    }
-                    Spacer()
-                    Button {
-                        if page < 1 {
-                            page += 1
-                        } else {
-                            store.hasCompletedOnboarding = true
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Text(page == 1 ? "onboarding.begin" : "common.next")
-                            Image(systemName: "arrow.right")
-                        }
-                        .font(.headline)
-                        .foregroundStyle(TaleForkTheme.ink)
-                        .padding(.horizontal, 20)
-                        .frame(minHeight: 50)
-                        .background(TaleForkTheme.coral, in: Capsule())
-                    }
-                }
-                .padding(.horizontal, margin)
-                .padding(.bottom, max(proxy.safeAreaInsets.bottom, 18))
-                .dynamicTypeSize(.xSmall ... .xxxLarge)
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                footer(margin: margin)
             }
         }
     }
 
-    private var introPage: some View {
+    private func introPage(usesCompactMedia: Bool) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 ZStack {
@@ -72,10 +49,10 @@ struct OnboardingView: View {
                             )
                         )
                     Image(systemName: "play.rectangle.on.rectangle.fill")
-                        .font(.system(size: 76, weight: .semibold, design: .rounded))
+                        .font(.system(size: usesCompactMedia ? 58 : 76, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white)
                 }
-                .frame(height: 220)
+                .frame(height: usesCompactMedia ? 150 : 220)
                 .accessibilityHidden(true)
                 Text("onboarding.title")
                     .font(.system(.largeTitle, design: .rounded, weight: .black))
@@ -91,11 +68,11 @@ struct OnboardingView: View {
         .scrollIndicators(.hidden)
     }
 
-    private var pathPage: some View {
+    private func pathPage(usesCompactMedia: Bool) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 ProgressPreview()
-                    .frame(height: 250)
+                    .frame(height: usesCompactMedia ? 190 : 250)
                 Text("onboarding.path.title")
                     .font(.system(.largeTitle, design: .rounded, weight: .black))
                     .fixedSize(horizontal: false, vertical: true)
@@ -110,6 +87,37 @@ struct OnboardingView: View {
         .scrollIndicators(.hidden)
     }
 
+    private func footer(margin: CGFloat) -> some View {
+        HStack(spacing: 8) {
+            ForEach(0..<2, id: \.self) { index in
+                Capsule()
+                    .fill(index == page ? TaleForkTheme.coral : TaleForkTheme.mist)
+                    .frame(width: index == page ? 28 : 8, height: 8)
+            }
+            Spacer()
+            Button {
+                if page < 1 {
+                    page += 1
+                } else {
+                    store.hasCompletedOnboarding = true
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Text(page == 1 ? "onboarding.begin" : "common.next")
+                    Image(systemName: "arrow.right")
+                }
+                .font(.headline)
+                .foregroundStyle(TaleForkTheme.ink)
+                .padding(.horizontal, 20)
+                .frame(minHeight: 50)
+                .background(TaleForkTheme.coral, in: Capsule())
+            }
+        }
+        .padding(.horizontal, margin)
+        .padding(.vertical, 12)
+        .background(.regularMaterial)
+        .dynamicTypeSize(.xSmall ... .xxxLarge)
+    }
 }
 
 private struct ProgressPreview: View {
@@ -143,6 +151,7 @@ private struct ProgressPreview: View {
         }
         .padding(24)
         .background(TaleForkTheme.ink, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
+        .dynamicTypeSize(.xSmall ... .xxLarge)
         .accessibilityHidden(true)
     }
 }

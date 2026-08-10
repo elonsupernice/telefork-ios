@@ -3,6 +3,16 @@ import XCTest
 @testable import TaleFork
 
 final class DramaModelTests: XCTestCase {
+    func testHorizontalMarginsCoverSupportedIPhoneWidths() {
+        let supportedWidths: [CGFloat] = [320, 375, 390, 402, 430, 440]
+        let margins = supportedWidths.map(TaleForkTheme.horizontalMargin(for:))
+
+        XCTAssertTrue(margins.allSatisfy { (16...28).contains($0) })
+        XCTAssertEqual(margins, margins.sorted())
+        XCTAssertEqual(TaleForkTheme.horizontalMargin(for: 320), 16.64, accuracy: 0.001)
+        XCTAssertEqual(TaleForkTheme.horizontalMargin(for: 440), 22.88, accuracy: 0.001)
+    }
+
     func testFixtureContainsUniqueOrderedEpisodes() throws {
         let drama = makeTestDrama()
         XCTAssertEqual(drama.availability, .available)

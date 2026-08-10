@@ -16,12 +16,16 @@ struct AppRootView: View {
     @ViewBuilder
     private var appContent: some View {
 #if DEBUG
-        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "remote-player",
-           isShowingPlaybackCheck {
+        switch ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] {
+        case "remote-player" where isShowingPlaybackCheck:
             RemotePlaybackCheckView {
                 isShowingPlaybackCheck = false
             }
-        } else {
+        case "onboarding":
+            OnboardingView()
+        case "discover", "paths", "vault", "settings":
+            AppShellView()
+        default:
             regularContent
         }
 #else
@@ -51,11 +55,12 @@ private struct RemotePlaybackCheckView: View {
             if let drama = catalog.featured {
                 DramaPlayerView(drama: drama, onExit: onExit)
             } else if let error = catalog.errorMessage {
-                ContentUnavailableView("Playback check failed", systemImage: "wifi.exclamationmark", description: Text(error))
+                ContentUnavailableView("discover.connection.title", systemImage: "wifi.exclamationmark", description: Text(error))
             } else {
-                ProgressView("Connecting to live video…")
+                ProgressView("discover.loading")
             }
         }
+        .dynamicTypeSize(.xSmall ... .xxxLarge)
         .task { await catalog.load(force: true) }
     }
 }
