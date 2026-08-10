@@ -73,24 +73,19 @@ struct PaperBackground: View {
 }
 
 struct BrandMark: View {
-    @Environment(\.colorScheme) private var colorScheme
     var size: CGFloat = 44
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: size * 0.32, style: .continuous)
-                .fill(colorScheme == .dark ? Color(hex: "26223F") : TaleForkTheme.ink)
-                .overlay {
-                    RoundedRectangle(cornerRadius: size * 0.32, style: .continuous)
-                        .stroke(.white.opacity(colorScheme == .dark ? 0.14 : 0), lineWidth: 1)
-                }
-            Image(systemName: "play.fill")
-                .font(.system(size: size * 0.34, weight: .bold))
-                .foregroundStyle(TaleForkTheme.coral)
-                .offset(x: size * 0.02)
-        }
-        .frame(width: size, height: size)
-        .accessibilityLabel(Text("TaleFork"))
+        Image("TaleForkBrandMark")
+            .resizable()
+            .scaledToFill()
+            .clipShape(RoundedRectangle(cornerRadius: size * 0.24, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: size * 0.24, style: .continuous)
+                    .stroke(.white.opacity(0.12), lineWidth: 1)
+            }
+            .frame(width: size, height: size)
+            .accessibilityLabel(Text("TaleFork"))
     }
 }
 
