@@ -76,16 +76,17 @@ Episodes 1–10 are free. Episode 11 and later display a lock and open the Apple
 
 Scene notes, progress, favorites, history, and preferences are stored on the device. The Settings screen provides deletion of the current anonymous service identity and local app data. No external payment link, advertising SDK, or tracking SDK is included.
 
-## App Privacy answers that still require service-owner confirmation
+## App Privacy answers from the current client and server source
 
 - Tracking: No.
 - Third-party advertising: No.
-- Device ID: Collected for App Functionality; not used for tracking.
-- Search History: confirm whether search text is retained beyond servicing the request.
-- Product Interaction: confirm whether server logs retain catalog or playback events.
-- Diagnostics: confirm whether IP address, request logs, or failure diagnostics are retained, for how long, and whether they are linked to the anonymous audience identifier.
+- Device ID: Collected, linked to the device identity, used for App Functionality, and not used for tracking. The service stores a salted hash of the app-generated installation seed.
+- Product Interaction: Collected, linked to the anonymous device identity, used for App Functionality, and not used for tracking. The service stores the latest authenticated service-access time.
+- Search History: Not collected under Apple’s definition. Search text is transmitted to service the request in real time but is not persisted in the TaleFork application database.
+- Purchase History: Not collected by TaleFork. Apple processes StoreKit purchases and the app reads verified entitlement state.
+- Diagnostics/IP address: pending production-operator confirmation. Nginx forwards client IP headers and may retain access logs; the exact deployed log destination and retention period must be confirmed before finalizing the questionnaire.
 
-Do not finalize the App Privacy questionnaire until these server retention facts match the public privacy policy and production behavior.
+Do not finalize the App Privacy questionnaire until the production log-retention fact matches the public privacy policy and deployed behavior.
 
 ## Submission selections pending account access
 

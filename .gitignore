@@ -14,3 +14,8 @@ xcuserdata/
 # Generated delivery artifacts
 Delivery/
 Screenshots/
+
+# App Store screenshot working inputs and drafts contain production captures
+# or offline fixture data. Keep them local until final assets are approved.
+artifacts/app-store/
+Scripts/generate_app_store_drafts.py
