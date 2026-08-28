@@ -84,9 +84,9 @@ Scene notes, progress, favorites, history, and preferences are stored on the dev
 - Product Interaction: Collected, linked to the anonymous device identity, used for App Functionality, and not used for tracking. The service stores the latest authenticated service-access time.
 - Search History: Not collected under Apple’s definition. Search text is transmitted to service the request in real time but is not persisted in the TaleFork application database.
 - Purchase History: Not collected by TaleFork. Apple processes StoreKit purchases and the app reads verified entitlement state.
-- Diagnostics/IP address: pending production-operator confirmation. Nginx forwards client IP headers and may retain access logs; the exact deployed log destination and retention period must be confirmed before finalizing the questionnaire.
+- Other Diagnostic Data: Collected, linked to the device identity, used for App Functionality, and not used for tracking. Operational logs may contain an IP address and limited request details for service security, abuse prevention, troubleshooting, and reliability.
 
-Do not finalize the App Privacy questionnaire until the production log-retention fact matches the public privacy policy and deployed behavior.
+These answers use a conservative disclosure based on the current client, server, and Nginx source. Recheck them against the exact production archive and deployed logging configuration immediately before submission.
 
 ## Submission selections pending account access
 
