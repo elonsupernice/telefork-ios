@@ -1,0 +1,60 @@
+workflows:
+  talefork-app-store:
+    name: TaleFork App Store
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+
+    integrations:
+      app_store_connect: talefork-app-store-connect
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.talefork.storypaths
+      vars:
+        XCODE_PROJECT: TaleFork.xcodeproj
+        XCODE_SCHEME: TaleFork
+        BUNDLE_ID: com.talefork.storypaths
+      xcode: latest
+
+    scripts:
+      - name: Verify TaleFork release identity
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+          xcodebuild -version
+          XCODE_MAJOR="$(xcodebuild -version | awk 'NR == 1 { split($2, version, "."); print version[1] }')"
+          test "$XCODE_MAJOR" -ge 26
+          BUNDLE_ID_FROM_PROJECT="$(xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -configuration Release -showBuildSettings | awk '/PRODUCT_BUNDLE_IDENTIFIER/ { print $3; exit }')"
+          test "$BUNDLE_ID_FROM_PROJECT" = "$BUNDLE_ID"
+
+      - name: Apply Codemagic App Store signing profiles
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+          xcode-project use-profiles
+
+      - name: Set App Store build number
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+          agvtool new-version -all "$BUILD_NUMBER"
+
+      - name: Build signed App Store IPA
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false

@@ -329,6 +329,7 @@ target_common = [
     ("SWIFT_STRICT_CONCURRENCY", "complete"),
     ("SWIFT_VERSION", "6.0"),
     ("TARGETED_DEVICE_FAMILY", "1"),
+    ("VERSIONING_SYSTEM", quote("apple-generic")),
 ]
 
 tests_common = [
@@ -344,6 +345,7 @@ tests_common = [
     ("SWIFT_VERSION", "6.0"),
     ("TARGETED_DEVICE_FAMILY", "1"),
     ("TEST_HOST", quote("$(BUILT_PRODUCTS_DIR)/TaleFork.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaleFork")),
+    ("VERSIONING_SYSTEM", quote("apple-generic")),
 ]
 
 ui_tests_common = [
@@ -358,6 +360,7 @@ ui_tests_common = [
     ("SWIFT_VERSION", "6.0"),
     ("TARGETED_DEVICE_FAMILY", "1"),
     ("TEST_TARGET_NAME", "TaleFork"),
+    ("VERSIONING_SYSTEM", quote("apple-generic")),
 ]
 
 for identifier, name, values in [
