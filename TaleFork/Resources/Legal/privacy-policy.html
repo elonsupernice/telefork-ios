@@ -13,12 +13,12 @@
 </head>
 <body>
   <h1>TaleFork Privacy Policy</h1>
-  <p><strong>Effective date: August 27, 2026</strong></p>
+  <p><strong>Effective date: August 29, 2026</strong></p>
   <p class="note">TaleFork connects to a content service to provide its short-drama catalog and video playback. It does not display advertising or track users across apps or websites.</p>
   <h2>Information stored on your device</h2>
   <p>The app stores playback progress, watched episodes, saved dramas, onboarding status, and playback preferences locally on your device. This information is used only to provide the app’s features.</p>
   <h2>Information used by the online service</h2>
-  <p>When the app connects to the content service, it sends an app-generated installation identifier, the device vendor identifier when available, device model, system language, bundle identifier, app version, and basic network request information. The service returns an anonymous visitor ID and session credential. These details are used to establish an anonymous session, deliver compatible content, maintain service security, and diagnose connection failures. They are not used for advertising or cross-app tracking.</p>
+  <p>When the app connects to the content service, it sends an app-generated random device seed, the app release name and build number, the system language tag, the device hardware family, search text when you choose to search, and basic network request information. The service returns an anonymous audience identifier and access pass. These details are used to establish an anonymous session, deliver compatible content, maintain service security, and diagnose connection failures. They are not used for advertising or cross-app tracking.</p>
   <h2>Information we do not request</h2>
   <p>The current version does not request your name, phone number, email address, precise location, contacts, photos, camera, microphone, payment card information, or advertising identifier. TaleFork contains no third-party analytics or advertising SDK.</p>
   <h2>Apple In-App Purchase</h2>
@@ -26,7 +26,7 @@
   <h2>Sharing and tracking</h2>
   <p>We do not sell personal information and do not track you across apps or websites. The minimum technical information described above is transmitted only to the service provider responsible for content delivery and service security.</p>
   <h2>Deletion</h2>
-  <p>You can remove playback progress, watch history, favorites, preferences, and the anonymous session stored on this device from Settings. The next use of the service may create a new anonymous visitor identity. The current content service has not yet provided TaleFork with a server-side permanent account-deletion interface; the app must not be represented as performing server-side deletion until that interface is implemented and verified. Removing the app also removes its locally stored data, subject to the behavior of device backups.</p>
+  <p>You can delete the current anonymous TaleFork identity from Settings. The app requests deletion from the content service first; after the service confirms deletion, the app removes the local device seed, playback progress, watch history, favorites, scene notes, onboarding state, and preferences. If the service cannot confirm deletion, the app keeps the local identity and shows an error so you can retry. The next use of the service after a successful deletion may create a new anonymous identity. Removing the app also removes its locally stored data, subject to the behavior of device backups, but does not cancel an Apple subscription.</p>
   <h2>Children</h2>
   <p>TaleFork is designed for a general audience and does not knowingly request personal details from children.</p>
   <h2>Changes</h2>
