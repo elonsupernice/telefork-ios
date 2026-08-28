@@ -5,91 +5,133 @@
 	objectVersion = 56;
 	objects = {
 		BD3414D09AA902FA2FF55EEA /* AppRootView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/AppRootView.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppRootView.swift"; sourceTree = "<group>";
 		};
 		DFD62E1F25BDEAC36B3BDAF4 /* AppRootView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = BD3414D09AA902FA2FF55EEA /* AppRootView.swift */;
 		};
 		7363778109848BBB4B77CA71 /* TaleForkApp.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/TaleForkApp.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaleForkApp.swift"; sourceTree = "<group>";
 		};
 		154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 7363778109848BBB4B77CA71 /* TaleForkApp.swift */;
 		};
+		46F6412C7A0490261D7E9D02 /* OfflineCatalogService.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OfflineCatalogService.swift"; sourceTree = "<group>";
+		};
+		20CF4508D3374ECC3B08A359 /* OfflineCatalogService.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 46F6412C7A0490261D7E9D02 /* OfflineCatalogService.swift */;
+		};
 		CE3954CF99627E8EA2640A7D /* ProgressStore.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/ProgressStore.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProgressStore.swift"; sourceTree = "<group>";
 		};
 		E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = CE3954CF99627E8EA2640A7D /* ProgressStore.swift */;
 		};
 		CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data/TaleForkService.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaleForkService.swift"; sourceTree = "<group>";
 		};
 		8655129C5D68C61621AEB893 /* TaleForkService.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */;
 		};
 		E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem/TaleForkTheme.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaleForkTheme.swift"; sourceTree = "<group>";
 		};
 		ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */;
 		};
 		375457AA304F5B45943FB65D /* DramaModels.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Domain/DramaModels.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DramaModels.swift"; sourceTree = "<group>";
 		};
 		5C46CD24189C39CD595A2D89 /* DramaModels.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 375457AA304F5B45943FB65D /* DramaModels.swift */;
 		};
+		C93660004CB83AE50AA33598 /* SceneMark.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneMark.swift"; sourceTree = "<group>";
+		};
+		F37C9D053EB5A0FA1B782461 /* SceneMark.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = C93660004CB83AE50AA33598 /* SceneMark.swift */;
+		};
 		F3D2EDFAAAD62DB68477633C /* ExploreView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Explore/ExploreView.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExploreView.swift"; sourceTree = "<group>";
 		};
 		79FEC9A89FE73BDD66544F34 /* ExploreView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = F3D2EDFAAAD62DB68477633C /* ExploreView.swift */;
 		};
+		9459B07C49C14707A0FF2823 /* MembershipAccess.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MembershipAccess.swift"; sourceTree = "<group>";
+		};
+		FA36446B44482F46AC23380C /* MembershipAccess.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 9459B07C49C14707A0FF2823 /* MembershipAccess.swift */;
+		};
+		82C9F78C0217CD3D02DB0B95 /* MembershipPaywallView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MembershipPaywallView.swift"; sourceTree = "<group>";
+		};
+		3A8A2E865468D952C52C2286 /* MembershipPaywallView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 82C9F78C0217CD3D02DB0B95 /* MembershipPaywallView.swift */;
+		};
+		0E30A7E2E064093A7B965CB6 /* MembershipStore.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MembershipStore.swift"; sourceTree = "<group>";
+		};
+		59C3A2F24521E5EF72FF6068 /* MembershipStore.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 0E30A7E2E064093A7B965CB6 /* MembershipStore.swift */;
+		};
 		E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Onboarding/OnboardingView.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingView.swift"; sourceTree = "<group>";
 		};
 		5DB3EDB4F61EFBB401949366 /* OnboardingView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */;
 		};
-		52FC7CEEC395C1E647A5EF69 /* PathsView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Paths/PathsView.swift"; sourceTree = "<group>";
+		AE8ECDBF691E73A6D6FE79C4 /* MomentPlayerView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MomentPlayerView.swift"; sourceTree = "<group>";
 		};
-		CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = 52FC7CEEC395C1E647A5EF69 /* PathsView.swift */;
-		};
-		08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Player/DramaPlayerView.swift"; sourceTree = "<group>";
-		};
-		5C68009E3734E43129010334 /* DramaPlayerView.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = 08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */;
+		B5A083456EE7844106DD40A4 /* MomentPlayerView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = AE8ECDBF691E73A6D6FE79C4 /* MomentPlayerView.swift */;
 		};
 		69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Player/PortraitVideoCanvas.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PortraitVideoCanvas.swift"; sourceTree = "<group>";
 		};
 		10E88C001910F9983A6E0092 /* PortraitVideoCanvas.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */;
 		};
-		553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Settings/SettingsView.swift"; sourceTree = "<group>";
+		F4043D7767353A9DE084DA59 /* SceneMarkComposerView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneMarkComposerView.swift"; sourceTree = "<group>";
 		};
-		6FAE91EA579340D6F6648B55 /* SettingsView.swift in Sources */ = {
-			isa = PBXBuildFile; fileRef = 553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */;
+		017BE73CBDF73F757F8D4E1A /* SceneMarkComposerView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = F4043D7767353A9DE084DA59 /* SceneMarkComposerView.swift */;
+		};
+		26FC94F5E9E716AC3E926E31 /* SceneMarkRow.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneMarkRow.swift"; sourceTree = "<group>";
+		};
+		A5EEDD3AFE5E66F3BED4FF23 /* SceneMarkRow.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 26FC94F5E9E716AC3E926E31 /* SceneMarkRow.swift */;
+		};
+		B3163FEA17E91C878C0BD6BC /* SceneNotesView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneNotesView.swift"; sourceTree = "<group>";
+		};
+		5F8729A53668AAC215470ADC /* SceneNotesView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = B3163FEA17E91C878C0BD6BC /* SceneNotesView.swift */;
+		};
+		4A769A0E0C5D2E8273BAD12F /* StoryStudioView.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryStudioView.swift"; sourceTree = "<group>";
+		};
+		02A3DF68E57567FB31874657 /* StoryStudioView.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = 4A769A0E0C5D2E8273BAD12F /* StoryStudioView.swift */;
 		};
 		6164121C02F4CAE187E30A2C /* VaultView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Vault/VaultView.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VaultView.swift"; sourceTree = "<group>";
 		};
 		1BC2C00DA2A8106873A85661 /* VaultView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 6164121C02F4CAE187E30A2C /* VaultView.swift */;
 		};
 		F8CDC5ACAA6FF833610AC59D /* Haptics.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shared/Haptics.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Haptics.swift"; sourceTree = "<group>";
 		};
 		5C4905705A75DAE7AFC0D4F0 /* Haptics.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = F8CDC5ACAA6FF833610AC59D /* Haptics.swift */;
 		};
 		AE584561513FA1BF3DE38360 /* LocalLegalView.swift */ = {
-			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shared/LocalLegalView.swift"; sourceTree = "<group>";
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalLegalView.swift"; sourceTree = "<group>";
 		};
 		112C51C314A43F839EFF6896 /* LocalLegalView.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = AE584561513FA1BF3DE38360 /* LocalLegalView.swift */;
@@ -99,6 +141,12 @@
 		};
 		70D49FDEACAF25592C2AED71 /* TaleForkTests.swift in Sources */ = {
 			isa = PBXBuildFile; fileRef = 754EB8E03B23E43092DFB63C /* TaleForkTests.swift */;
+		};
+		A03C7C21937AAABDB73E4179 /* TaleForkSceneNotesUITests.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaleForkSceneNotesUITests.swift"; sourceTree = "<group>";
+		};
+		8B46565BA322F546696B4B0F /* TaleForkSceneNotesUITests.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = A03C7C21937AAABDB73E4179 /* TaleForkSceneNotesUITests.swift */;
 		};
 		60E0818503A7590D6EDF1D7E /* Assets.xcassets */ = {
 			isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Resources/Assets.xcassets"; sourceTree = "<group>";
@@ -123,6 +171,12 @@
 		};
 		D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */ = {
 			isa = PBXBuildFile; fileRef = C34C88A08FD8558D2EE86688 /* terms-of-use.html */;
+		};
+		D9A99A92A96E24DE1B0F23C7 /* TaleFork.storekit */ = {
+			isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/StoreKit/TaleFork.storekit; sourceTree = "<group>";
+		};
+		E30EF6B4DBC62A0BF286846B /* TaleFork.storekit in Resources */ = {
+			isa = PBXBuildFile; fileRef = D9A99A92A96E24DE1B0F23C7 /* TaleFork.storekit */;
 		};
 		DC2505CE620F9BC667AD417B /* en */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en"; path = "en.lproj/Localizable.strings"; sourceTree = "<group>";
@@ -182,31 +236,154 @@
 		9FEED0499F36FF4A8531E2EC /* TaleForkTests.xctest */ = {
 			isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaleForkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		C8A1E76B6CA46DDC89E29CCD /* TaleFork */ = {
+		7A2474D11343FDA180BE140D /* TaleForkUITests.xctest */ = {
+			isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaleForkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		383A225C1DE04D1464B1890A /* Vault */ = {
+			isa = PBXGroup;
+			children = (
+				6164121C02F4CAE187E30A2C /* VaultView.swift */,
+			);
+			path = "Vault";
+			sourceTree = "<group>";
+		};
+		6FA5E4E99373858D425C55E2 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4A769A0E0C5D2E8273BAD12F /* StoryStudioView.swift */,
+			);
+			path = "Settings";
+			sourceTree = "<group>";
+		};
+		CE7370D2BB14C9BF7DC82684 /* SceneNotes */ = {
+			isa = PBXGroup;
+			children = (
+				F4043D7767353A9DE084DA59 /* SceneMarkComposerView.swift */,
+				26FC94F5E9E716AC3E926E31 /* SceneMarkRow.swift */,
+				B3163FEA17E91C878C0BD6BC /* SceneNotesView.swift */,
+			);
+			path = "SceneNotes";
+			sourceTree = "<group>";
+		};
+		B720A16AF6B7FF24B39377DE /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				AE8ECDBF691E73A6D6FE79C4 /* MomentPlayerView.swift */,
+				69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */,
+			);
+			path = "Player";
+			sourceTree = "<group>";
+		};
+		7E21C9A1C52D93D894392067 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */,
+			);
+			path = "Onboarding";
+			sourceTree = "<group>";
+		};
+		979441C3D0844B142A8900A6 /* Membership */ = {
+			isa = PBXGroup;
+			children = (
+				9459B07C49C14707A0FF2823 /* MembershipAccess.swift */,
+				82C9F78C0217CD3D02DB0B95 /* MembershipPaywallView.swift */,
+				0E30A7E2E064093A7B965CB6 /* MembershipStore.swift */,
+			);
+			path = "Membership";
+			sourceTree = "<group>";
+		};
+		282E59031023527A65061066 /* Explore */ = {
+			isa = PBXGroup;
+			children = (
+				F3D2EDFAAAD62DB68477633C /* ExploreView.swift */,
+			);
+			path = "Explore";
+			sourceTree = "<group>";
+		};
+		3B4591BF29F866463D0DD786 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				F8CDC5ACAA6FF833610AC59D /* Haptics.swift */,
+				AE584561513FA1BF3DE38360 /* LocalLegalView.swift */,
+			);
+			path = "Shared";
+			sourceTree = "<group>";
+		};
+		176B0E401AFFE88147AD5C0D /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				383A225C1DE04D1464B1890A /* Vault */,
+				6FA5E4E99373858D425C55E2 /* Settings */,
+				CE7370D2BB14C9BF7DC82684 /* SceneNotes */,
+				B720A16AF6B7FF24B39377DE /* Player */,
+				7E21C9A1C52D93D894392067 /* Onboarding */,
+				979441C3D0844B142A8900A6 /* Membership */,
+				282E59031023527A65061066 /* Explore */,
+			);
+			path = "Features";
+			sourceTree = "<group>";
+		};
+		A5D1242E02F3D4B95109976E /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				375457AA304F5B45943FB65D /* DramaModels.swift */,
+				C93660004CB83AE50AA33598 /* SceneMark.swift */,
+			);
+			path = "Domain";
+			sourceTree = "<group>";
+		};
+		ACF09CA7354491F53E0F8223 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */,
+			);
+			path = "DesignSystem";
+			sourceTree = "<group>";
+		};
+		03525D92EADC32BA57A3A5D8 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				46F6412C7A0490261D7E9D02 /* OfflineCatalogService.swift */,
+				CE3954CF99627E8EA2640A7D /* ProgressStore.swift */,
+				CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */,
+			);
+			path = "Data";
+			sourceTree = "<group>";
+		};
+		45CB98F236445745B00363E9 /* App */ = {
 			isa = PBXGroup;
 			children = (
 				BD3414D09AA902FA2FF55EEA /* AppRootView.swift */,
 				7363778109848BBB4B77CA71 /* TaleForkApp.swift */,
-				CE3954CF99627E8EA2640A7D /* ProgressStore.swift */,
-				CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */,
-				E67A5FC635FD7804C7BADED5 /* TaleForkTheme.swift */,
-				375457AA304F5B45943FB65D /* DramaModels.swift */,
-				F3D2EDFAAAD62DB68477633C /* ExploreView.swift */,
-				E81F9AD9763686D68ADB48D1 /* OnboardingView.swift */,
-				52FC7CEEC395C1E647A5EF69 /* PathsView.swift */,
-				08FBA80969AB99DA99269CFB /* DramaPlayerView.swift */,
-				69B05CF5FD74378C20AFC36E /* PortraitVideoCanvas.swift */,
-				553E60FB4F98DBEFCD6C49E3 /* SettingsView.swift */,
-				6164121C02F4CAE187E30A2C /* VaultView.swift */,
-				F8CDC5ACAA6FF833610AC59D /* Haptics.swift */,
-				AE584561513FA1BF3DE38360 /* LocalLegalView.swift */,
+			);
+			path = "App";
+			sourceTree = "<group>";
+		};
+		C8A1E76B6CA46DDC89E29CCD /* TaleFork */ = {
+			isa = PBXGroup;
+			children = (
+				45CB98F236445745B00363E9 /* App */,
+				03525D92EADC32BA57A3A5D8 /* Data */,
+				ACF09CA7354491F53E0F8223 /* DesignSystem */,
+				A5D1242E02F3D4B95109976E /* Domain */,
+				176B0E401AFFE88147AD5C0D /* Features */,
+				3B4591BF29F866463D0DD786 /* Shared */,
+				7E59914C38A5E7088F5D7727 /* Resources */,
+			);
+			path = TaleFork;
+			sourceTree = "<group>";
+		};
+		7E59914C38A5E7088F5D7727 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
 				60E0818503A7590D6EDF1D7E /* Assets.xcassets */,
 				1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */,
 				2EE611779289671749418A19 /* privacy-policy.html */,
 				C34C88A08FD8558D2EE86688 /* terms-of-use.html */,
+				D9A99A92A96E24DE1B0F23C7 /* TaleFork.storekit */,
 				DE31DD00C5CDDD7FAB35B978 /* Localizations */,
 			);
-			path = TaleFork;
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		DE31DD00C5CDDD7FAB35B978 /* Localizations */ = {
@@ -226,11 +403,20 @@
 			path = TaleForkTests;
 			sourceTree = "<group>";
 		};
+		8C5B79BEF544D1898D851B90 /* TaleForkUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A03C7C21937AAABDB73E4179 /* TaleForkSceneNotesUITests.swift */,
+			);
+			path = TaleForkUITests;
+			sourceTree = "<group>";
+		};
 		692092DE1C1C8624E142B71D /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				845F65209D19F1E91A3C573D /* TaleFork.app */,
 				9FEED0499F36FF4A8531E2EC /* TaleForkTests.xctest */,
+				7A2474D11343FDA180BE140D /* TaleForkUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,6 +426,7 @@
 			children = (
 				C8A1E76B6CA46DDC89E29CCD /* TaleFork */,
 				8C35799A97AD3FA99FA2EDFE /* TaleForkTests */,
+				8C5B79BEF544D1898D851B90 /* TaleForkUITests */,
 				692092DE1C1C8624E142B71D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -250,16 +437,23 @@
 			files = (
 				DFD62E1F25BDEAC36B3BDAF4 /* AppRootView.swift in Sources */,
 				154D20AB886AFCD2BC8FF823 /* TaleForkApp.swift in Sources */,
+				20CF4508D3374ECC3B08A359 /* OfflineCatalogService.swift in Sources */,
 				E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */,
 				8655129C5D68C61621AEB893 /* TaleForkService.swift in Sources */,
 				ADE5EF7C185283BA0C675837 /* TaleForkTheme.swift in Sources */,
 				5C46CD24189C39CD595A2D89 /* DramaModels.swift in Sources */,
+				F37C9D053EB5A0FA1B782461 /* SceneMark.swift in Sources */,
 				79FEC9A89FE73BDD66544F34 /* ExploreView.swift in Sources */,
+				FA36446B44482F46AC23380C /* MembershipAccess.swift in Sources */,
+				3A8A2E865468D952C52C2286 /* MembershipPaywallView.swift in Sources */,
+				59C3A2F24521E5EF72FF6068 /* MembershipStore.swift in Sources */,
 				5DB3EDB4F61EFBB401949366 /* OnboardingView.swift in Sources */,
-				CD6F556CCE101E431E738D38 /* PathsView.swift in Sources */,
-				5C68009E3734E43129010334 /* DramaPlayerView.swift in Sources */,
+				B5A083456EE7844106DD40A4 /* MomentPlayerView.swift in Sources */,
 				10E88C001910F9983A6E0092 /* PortraitVideoCanvas.swift in Sources */,
-				6FAE91EA579340D6F6648B55 /* SettingsView.swift in Sources */,
+				017BE73CBDF73F757F8D4E1A /* SceneMarkComposerView.swift in Sources */,
+				A5EEDD3AFE5E66F3BED4FF23 /* SceneMarkRow.swift in Sources */,
+				5F8729A53668AAC215470ADC /* SceneNotesView.swift in Sources */,
+				02A3DF68E57567FB31874657 /* StoryStudioView.swift in Sources */,
 				1BC2C00DA2A8106873A85661 /* VaultView.swift in Sources */,
 				5C4905705A75DAE7AFC0D4F0 /* Haptics.swift in Sources */,
 				112C51C314A43F839EFF6896 /* LocalLegalView.swift in Sources */,
@@ -299,11 +493,35 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
+				E30EF6B4DBC62A0BF286846B /* TaleFork.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4B600A77575E0C26C2541FEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F212CD20C62BA6C8709525B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B46565BA322F546696B4B0F /* TaleForkSceneNotesUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		187AF9519D45169B333E9D77 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		115A26459F7129ECC323602E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -322,6 +540,18 @@
 			isa = PBXTargetDependency;
 			target = B902F7C2327297FC583709E1 /* TaleFork */;
 			targetProxy = 880523A3CD97806381440697 /* PBXContainerItemProxy */;
+		};
+		C1B4C69312A5C3033DD38BAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B902F7C2327297FC583709E1;
+			remoteInfo = TaleFork;
+		};
+		5499A3FC0B11C371B6134608 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B902F7C2327297FC583709E1 /* TaleFork */;
+			targetProxy = C1B4C69312A5C3033DD38BAA /* PBXContainerItemProxy */;
 		};
 		B902F7C2327297FC583709E1 /* TaleFork */ = {
 			isa = PBXNativeTarget;
@@ -355,6 +585,23 @@
 			productReference = 9FEED0499F36FF4A8531E2EC /* TaleForkTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		28A4E0DF68D51C06D760C3DD /* TaleForkUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9CA3278A1C63293360085232 /* Build configuration list for PBXNativeTarget "TaleForkUITests" */;
+			buildPhases = (
+				6F212CD20C62BA6C8709525B /* Sources */,
+				115A26459F7129ECC323602E /* Frameworks */,
+				187AF9519D45169B333E9D77 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				5499A3FC0B11C371B6134608 /* PBXTargetDependency */,
+			);
+			name = TaleForkUITests;
+			productName = TaleForkUITests;
+			productReference = 7A2474D11343FDA180BE140D /* TaleForkUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
@@ -364,6 +611,7 @@
 				TargetAttributes = {
 					B902F7C2327297FC583709E1 = { CreatedOnToolsVersion = 26.6; };
 					6A1E24F1D627678E5C8106C0 = { CreatedOnToolsVersion = 26.6; TestTargetID = B902F7C2327297FC583709E1; };
+					28A4E0DF68D51C06D760C3DD = { CreatedOnToolsVersion = 26.6; TestTargetID = B902F7C2327297FC583709E1; };
 				};
 			};
 			buildConfigurationList = 99DE79F146C1665D0B462638 /* Build configuration list for PBXProject "TaleFork" */;
@@ -378,6 +626,7 @@
 			targets = (
 				B902F7C2327297FC583709E1 /* TaleFork */,
 				6A1E24F1D627678E5C8106C0 /* TaleForkTests */,
+				28A4E0DF68D51C06D760C3DD /* TaleForkUITests */,
 			);
 		};
 		41F4B1CEEACC5CF5F3860887 /* Debug */ = {
@@ -387,6 +636,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
@@ -407,6 +657,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
@@ -423,6 +674,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -436,6 +688,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -446,6 +699,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -459,6 +713,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -500,6 +755,40 @@
 			};
 			name = Release;
 		};
+		65FEFDC3FA15164597115549 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = TaleFork;
+			};
+			name = Debug;
+		};
+		14B85BCCA83E08E3D12AEE35 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = TaleFork;
+			};
+			name = Release;
+		};
 		99DE79F146C1665D0B462638 /* Build configuration list for PBXProject "TaleFork" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -523,6 +812,15 @@
 			buildConfigurations = (
 				6649D2CEEA1D031C9DAC60DC /* Debug */,
 				322E770679E22DCE997AB5EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9CA3278A1C63293360085232 /* Build configuration list for PBXNativeTarget "TaleForkUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65FEFDC3FA15164597115549 /* Debug */,
+				14B85BCCA83E08E3D12AEE35 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

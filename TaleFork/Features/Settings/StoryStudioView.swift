@@ -1,10 +1,12 @@
 import SwiftUI
 
-struct SettingsView: View {
+struct StoryStudioView: View {
     @Environment(ProgressStore.self) private var store
     @Environment(CatalogStore.self) private var catalog
+    @Environment(MembershipStore.self) private var membership
     @State private var showResetConfirmation = false
     @State private var showAccountDeletionConfirmation = false
+    @State private var showMembership = false
 
     var body: some View {
         @Bindable var store = store
@@ -13,6 +15,25 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     settingsHeader
+
+                    SettingsCard(title: "settings.membership", symbol: "crown.fill") {
+                        HStack(spacing: 12) {
+                            Label(
+                                membership.isSubscribed ? "settings.membership.active" : "settings.membership.inactive",
+                                systemImage: membership.isSubscribed ? "checkmark.seal.fill" : "lock.fill"
+                            )
+                            .foregroundStyle(membership.isSubscribed ? TaleForkTheme.mint : .secondary)
+                            Spacer()
+                            Button(membership.isSubscribed ? "settings.membership.manage" : "settings.membership.join") {
+                                showMembership = true
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(TaleForkTheme.coral)
+                        }
+                        Text("settings.membership.detail")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
                     SettingsCard(title: "settings.account", symbol: "person.crop.circle") {
                         ViewThatFits(in: .horizontal) {
@@ -70,7 +91,7 @@ struct SettingsView: View {
                         HStack {
                             Label("settings.version", systemImage: "number")
                             Spacer()
-                            Text(appVersion)
+                            Text(releaseLabel)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -107,8 +128,8 @@ struct SettingsView: View {
             }
             .background(PaperBackground())
         }
-        .navigationTitle("tab.settings")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("tab.studio")
+        .navigationBarTitleDisplayMode(.large)
         .alert("settings.reset.title", isPresented: $showResetConfirmation) {
             Button("common.cancel", role: .cancel) {}
             Button("settings.reset.confirm", role: .destructive) {
@@ -120,12 +141,17 @@ struct SettingsView: View {
         .alert("settings.delete.account.title", isPresented: $showAccountDeletionConfirmation) {
             Button("common.cancel", role: .cancel) {}
             Button("settings.delete.account.confirm", role: .destructive) {
-                TactileFeedback.success(enabled: store.preferences.tactileFeedbackEnabled)
-                catalog.deleteLocalAccount()
-                store.deleteLocalAccount()
+                Task {
+                    guard await catalog.deleteAccount() else { return }
+                    TactileFeedback.success(enabled: store.preferences.tactileFeedbackEnabled)
+                    store.deleteLocalAccount()
+                }
             }
         } message: {
             Text("settings.delete.account.message")
+        }
+        .sheet(isPresented: $showMembership) {
+            MembershipPaywallView()
         }
         .task { await catalog.load() }
     }
@@ -166,7 +192,7 @@ struct SettingsView: View {
         .contentShape(Rectangle())
     }
 
-    private var appVersion: String {
+    private var releaseLabel: String {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
         return "\(version) (\(build))"

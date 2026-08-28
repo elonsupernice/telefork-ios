@@ -3,6 +3,13 @@ import XCTest
 @testable import TaleFork
 
 final class DramaModelTests: XCTestCase {
+    func testVIPAccessStartsAtEpisodeEleven() {
+        XCTAssertFalse(MembershipAccess.requiresSubscription(forEpisodeNumber: 1))
+        XCTAssertFalse(MembershipAccess.requiresSubscription(forEpisodeNumber: 10))
+        XCTAssertTrue(MembershipAccess.requiresSubscription(forEpisodeNumber: 11))
+        XCTAssertTrue(MembershipAccess.requiresSubscription(forEpisodeNumber: 59))
+    }
+
     func testHorizontalMarginsCoverSupportedIPhoneWidths() {
         let supportedWidths: [CGFloat] = [320, 375, 390, 402, 430, 440]
         let margins = supportedWidths.map(TaleForkTheme.horizontalMargin(for:))
@@ -23,6 +30,14 @@ final class DramaModelTests: XCTestCase {
         XCTAssertEqual(Set(ids).count, ids.count)
         XCTAssertEqual(drama.episodes.map(\.number), [1, 2, 3])
         XCTAssertTrue(drama.episodes.allSatisfy { $0.videoURL != nil })
+        XCTAssertEqual(
+            drama.episodes.compactMap(\.videoURL?.path),
+            [
+                "/tale-assets/stories/test-drama/reels/1/playback.mp4",
+                "/tale-assets/stories/test-drama/reels/2/playback.mp4",
+                "/tale-assets/stories/test-drama/reels/3/playback.mp4"
+            ]
+        )
     }
 
     func testLocalizationKeySetsMatch() throws {
@@ -39,8 +54,34 @@ final class DramaModelTests: XCTestCase {
 }
 
 @MainActor
+final class MembershipConfigurationTests: XCTestCase {
+    func testWeeklySubscriptionConfigurationContract() throws {
+        let configurationURL = try XCTUnwrap(
+            Bundle(for: MembershipConfigurationTests.self).url(forResource: "TaleFork", withExtension: "storekit")
+        )
+        let configurationData = try Data(contentsOf: configurationURL)
+        let configuration = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: configurationData) as? [String: Any]
+        )
+        let groups = try XCTUnwrap(configuration["subscriptionGroups"] as? [[String: Any]])
+        let subscriptions = try XCTUnwrap(groups.first?["subscriptions"] as? [[String: Any]])
+        let weekly = try XCTUnwrap(subscriptions.first)
+
+        XCTAssertEqual(weekly["productID"] as? String, "com.talefork.storypaths.vip.weekly")
+        XCTAssertEqual(weekly["displayPrice"] as? String, "9.9")
+        XCTAssertEqual(weekly["recurringSubscriptionPeriod"] as? String, "P1W")
+        XCTAssertEqual(subscriptions.count, 1)
+        XCTAssertEqual(weekly["productID"] as? String, MembershipAccess.weeklyProductID)
+    }
+}
+
+@MainActor
 final class LiveServiceTests: XCTestCase {
     func testLiveCatalogAndFirstVideoAreReachable() async throws {
+        guard ProcessInfo.processInfo.environment["TALEFORK_RUN_LIVE_TESTS"] == "1" else {
+            throw XCTSkip("Live catalog, visitor registration, and playback checks require explicit opt-in")
+        }
+
         let catalog = CatalogStore()
         await catalog.load(force: true)
 
@@ -177,6 +218,32 @@ final class ProgressStoreTests: XCTestCase {
         XCTAssertTrue(store.run(for: drama).watchedEpisodeIDs.contains(episode.id))
     }
 
+    func testSceneMarkPersistsAndRestoresItsExactPlaybackPosition() throws {
+        let (suite, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let drama = makeTestDrama()
+        let episode = drama.episodes[1]
+        let store = ProgressStore(defaults: defaults)
+
+        let mark = store.addSceneMark(
+            drama: drama,
+            episode: episode,
+            position: 12.5,
+            kind: .clue,
+            note: "  Watch the doorway  "
+        )
+
+        let restored = ProgressStore(defaults: defaults)
+        let restoredMark = try XCTUnwrap(restored.sceneMarks.first)
+        XCTAssertEqual(restoredMark, mark)
+        XCTAssertEqual(restoredMark.note, "Watch the doorway")
+
+        restored.preparePlayback(for: restoredMark, in: drama)
+        let run = restored.run(for: drama)
+        XCTAssertEqual(run.currentEpisodeID, episode.id)
+        XCTAssertEqual(run.playbackSeconds[episode.id], 12.5)
+    }
+
     func testDeletingLocalAccountRemovesIdentityStateAndPersistence() {
         let (suite, defaults) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
@@ -186,16 +253,25 @@ final class ProgressStoreTests: XCTestCase {
         store.hasCompletedOnboarding = true
         store.watch(drama: drama, episodeID: drama.entryEpisodeID, position: 8)
         store.toggleFavorite(drama)
+        store.addSceneMark(
+            drama: drama,
+            episode: drama.episodes[0],
+            position: 8,
+            kind: .turningPoint,
+            note: "Remove with local account"
+        )
         store.deleteLocalAccount()
 
         XCTAssertFalse(store.hasCompletedOnboarding)
         XCTAssertTrue(store.runs.isEmpty)
         XCTAssertTrue(store.history.isEmpty)
         XCTAssertTrue(store.favoriteDramaIDs.isEmpty)
+        XCTAssertTrue(store.sceneMarks.isEmpty)
 
         let restored = ProgressStore(defaults: defaults)
         XCTAssertFalse(restored.hasCompletedOnboarding)
         XCTAssertTrue(restored.runs.isEmpty)
+        XCTAssertTrue(restored.sceneMarks.isEmpty)
     }
 
     private func makeDefaults() -> (String, UserDefaults) {
@@ -228,6 +304,8 @@ private final class FakeCatalogService: CatalogServing {
         try await searchHandler(keyword)
     }
 
+    func deleteAccount() async throws {}
+
     func clearLocalIdentity() {}
 }
 
@@ -245,7 +323,7 @@ private func makeTestDrama(id: String = "test-drama", title: String = "Test Dram
             title: .server("Episode \(number)"),
             sceneCaption: .server("Test caption"),
             clipName: "",
-            videoURL: URL(string: "https://example.com/video/\(id)/\(number).mp4"),
+            videoURL: URL(string: "https://example.com/tale-assets/stories/\(id)/reels/\(number)/playback.mp4"),
             durationSeconds: 30
         )
     }
@@ -253,7 +331,7 @@ private func makeTestDrama(id: String = "test-drama", title: String = "Test Dram
         id: id,
         title: .server(title),
         subtitle: .server("Test Subtitle"),
-        synopsis: .server("Test Synopsis"),
+        storySummary: .server("Test Synopsis"),
         posterImageName: "",
         coverURL: URL(string: "https://example.com/cover.png"),
         accentHex: "E6A84C",

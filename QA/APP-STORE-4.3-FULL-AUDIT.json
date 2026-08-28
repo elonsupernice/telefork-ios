@@ -1,0 +1,3612 @@
+{
+  "checkedDate": "2026-08-29",
+  "comparisons": [
+    {
+      "commonAssetCatalogNames": [
+        "AccentColor.colorset",
+        "AppIcon.appiconset"
+      ],
+      "commonCodeBasenames": [
+        "privacy-policy.html"
+      ],
+      "commonImports": [
+        "AVFoundation",
+        "Foundation",
+        "StoreKit",
+        "SwiftUI",
+        "UIKit"
+      ],
+      "commonNetworkLiterals": [
+        "CFBundleShortVersionString",
+        "CFBundleVersion",
+        "Content-Type",
+        "POST"
+      ],
+      "commonStringLiterals": [
+        "%02d",
+        "application/json",
+        "arrow.clockwise",
+        "arrow.right",
+        "CFBundleShortVersionString",
+        "CFBundleVersion",
+        "checkmark.circle.fill",
+        "checkmark.seal.fill",
+        "chevron.left",
+        "chevron.right",
+        "clock.arrow.circlepath",
+        "Content-Type",
+        "crown.fill",
+        "exclamationmark.triangle.fill",
+        "forward.end.fill",
+        "heart",
+        "heart.fill",
+        "html",
+        "list.number",
+        "lock.fill",
+        "pause.fill",
+        "person.crop.circle",
+        "play.circle.fill",
+        "play.fill",
+        "play.rectangle.fill",
+        "play.rectangle.on.rectangle",
+        "play.rectangle.on.rectangle.fill",
+        "POST",
+        "privacy-policy",
+        "slider.horizontal.3",
+        "sparkles.tv",
+        "speaker.wave.2.fill",
+        "utf-8",
+        "viewport",
+        "waveform",
+        "xmark.circle.fill"
+      ],
+      "configuration": {
+        "ASSETCATALOG_COMPILER_APPICON_NAME": [
+          "AppIcon"
+        ],
+        "CFBundleDisplayName": [
+          "\"Dramile\""
+        ],
+        "CFBundleIdentifier": [
+          "\"$(PRODUCT_BUNDLE_IDENTIFIER)\""
+        ],
+        "CFBundleName": [
+          "\"$(PRODUCT_NAME)\""
+        ],
+        "CURRENT_PROJECT_VERSION": [
+          "20260825223001"
+        ],
+        "INFOPLIST_FILE": [
+          "Dramile/Resources/Info.plist"
+        ],
+        "IPHONEOS_DEPLOYMENT_TARGET": [
+          "15.0"
+        ],
+        "MARKETING_VERSION": [
+          "1.0.0"
+        ],
+        "PRODUCT_BUNDLE_IDENTIFIER": [
+          "com.dramile.app.ai",
+          "com.dramile.app.ai.tests"
+        ],
+        "PRODUCT_NAME": [
+          "$(TARGET_NAME)"
+        ],
+        "SWIFT_VERSION": [
+          "5.0"
+        ],
+        "TARGETED_DEVICE_FAMILY": [
+          "1"
+        ]
+      },
+      "declarations": {
+        "byKind": {
+          "case": {
+            "common": [
+              "available",
+              "invalidResponse",
+              "let",
+              "rejected",
+              "search"
+            ],
+            "comparison": 109,
+            "primary": 36
+          },
+          "function": {
+            "common": [
+              "benefit",
+              "deleteLocalAccount",
+              "episode",
+              "load",
+              "makeUIViewController",
+              "refreshEntitlements",
+              "restorePurchases",
+              "seek",
+              "togglePlayback",
+              "updateUIViewController"
+            ],
+            "comparison": 201,
+            "primary": 72
+          },
+          "property": {
+            "common": [
+              "asset",
+              "body",
+              "build",
+              "cardRadius",
+              "catalog",
+              "content",
+              "data",
+              "defaults",
+              "detail",
+              "dismiss",
+              "document",
+              "drama",
+              "dramaID",
+              "dramas",
+              "episode",
+              "error",
+              "errorDescription",
+              "errorMessage",
+              "featured",
+              "header",
+              "height",
+              "http",
+              "id",
+              "identity",
+              "index",
+              "ink",
+              "item",
+              "membership",
+              "minutes",
+              "number",
+              "onExit",
+              "outcome",
+              "page",
+              "player",
+              "request",
+              "resolved",
+              "result",
+              "scenePhase",
+              "searchResults",
+              "seconds",
+              "selectedEpisode",
+              "self",
+              "service",
+              "size",
+              "state",
+              "store",
+              "stored",
+              "stories",
+              "symbol",
+              "title",
+              "totalDuration",
+              "transaction",
+              "transactionListener",
+              "url",
+              "value",
+              "values"
+            ],
+            "comparison": 515,
+            "primary": 242
+          },
+          "type": {
+            "common": [
+              "CodingKeys"
+            ],
+            "comparison": 114,
+            "primary": 57
+          }
+        },
+        "common": [
+          "asset",
+          "available",
+          "benefit",
+          "body",
+          "build",
+          "cardRadius",
+          "catalog",
+          "CodingKeys",
+          "content",
+          "continueWatching",
+          "data",
+          "defaults",
+          "deleteLocalAccount",
+          "detail",
+          "dismiss",
+          "document",
+          "drama",
+          "dramaID",
+          "dramas",
+          "episode",
+          "error",
+          "errorDescription",
+          "errorMessage",
+          "featured",
+          "header",
+          "height",
+          "history",
+          "http",
+          "id",
+          "identity",
+          "index",
+          "ink",
+          "invalidResponse",
+          "item",
+          "let",
+          "load",
+          "makeUIViewController",
+          "membership",
+          "minutes",
+          "number",
+          "onExit",
+          "outcome",
+          "page",
+          "player",
+          "privacy",
+          "refreshEntitlements",
+          "rejected",
+          "request",
+          "resolved",
+          "restorePurchases",
+          "result",
+          "retry",
+          "scenePhase",
+          "search",
+          "searchResults",
+          "seconds",
+          "seek",
+          "selectedEpisode",
+          "self",
+          "service",
+          "size",
+          "state",
+          "store",
+          "stored",
+          "stories",
+          "symbol",
+          "terms",
+          "timeText",
+          "title",
+          "togglePlayback",
+          "totalDuration",
+          "transaction",
+          "transactionListener",
+          "updateUIViewController",
+          "url",
+          "value",
+          "values",
+          "videoURL"
+        ],
+        "comparison": 879,
+        "jaccard": 0.0654911838790932,
+        "nontrivialCommon": [
+          "asset",
+          "available",
+          "benefit",
+          "build",
+          "cardRadius",
+          "catalog",
+          "CodingKeys",
+          "continueWatching",
+          "defaults",
+          "deleteLocalAccount",
+          "detail",
+          "dismiss",
+          "document",
+          "drama",
+          "dramaID",
+          "dramas",
+          "episode",
+          "errorDescription",
+          "errorMessage",
+          "featured",
+          "header",
+          "height",
+          "history",
+          "http",
+          "identity",
+          "ink",
+          "invalidResponse",
+          "let",
+          "load",
+          "makeUIViewController",
+          "membership",
+          "minutes",
+          "number",
+          "onExit",
+          "outcome",
+          "page",
+          "player",
+          "privacy",
+          "refreshEntitlements",
+          "rejected",
+          "resolved",
+          "restorePurchases",
+          "retry",
+          "scenePhase",
+          "search",
+          "searchResults",
+          "seconds",
+          "seek",
+          "selectedEpisode",
+          "self",
+          "service",
+          "size",
+          "store",
+          "stored",
+          "stories",
+          "symbol",
+          "terms",
+          "timeText",
+          "togglePlayback",
+          "totalDuration",
+          "transaction",
+          "transactionListener",
+          "updateUIViewController",
+          "videoURL"
+        ],
+        "primary": 390
+      },
+      "exactAssetDuplicates": [],
+      "fileCounts": {
+        "binary": 1,
+        "code": 63,
+        "image": 4,
+        "project": 4,
+        "resource-text": 24,
+        "total": 96
+      },
+      "metrics": {
+        "allCode": {
+          "12": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Domain/Repositories/CheckoutService.swift",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 81,
+                "ratio": 0.36160714285714285,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipRetentionView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 68,
+                "ratio": 0.12686567164179105,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "Dramile/Shared/Legal/BundledLegalPage.swift",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 31,
+                "ratio": 0.1076388888888889,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "Dramile/Features/Theater/StoryJourneyDashboard.swift",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 102,
+                "ratio": 0.09883720930232558,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "Dramile/Features/Home/StoryStreamView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 36,
+                "ratio": 0.08823529411764706,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 67,
+                "ratio": 0.08023952095808383,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "Dramile/Domain/Models/MembershipProduct.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 108,
+                "ratio": 0.0782608695652174,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 54,
+                "ratio": 0.07627118644067797,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipView.swift",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 78,
+                "ratio": 0.06505421184320268,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipView.swift",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 77,
+                "ratio": 0.05492154065620542,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "Dramile/Features/Profile/PersonalHubView.swift",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 38,
+                "ratio": 0.05046480743691899,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "Dramile/App/DramileApplication.swift",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 12,
+                "ratio": 0.049586776859504134,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "Dramile/Features/Theater/StoryJourneyDashboard.swift",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 26,
+                "ratio": 0.04241435562805873,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "Dramile/Features/Search/SeriesSearchView.swift",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 125,
+                "ratio": 0.040257648953301126,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipRetentionView.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 147,
+                "ratio": 0.03620689655172414,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "Dramile/Features/Player/EpisodePlayerView.swift",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 16,
+                "ratio": 0.032388663967611336,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "Dramile/Core/Playback/EpisodePlaybackEngine.swift",
+                "file": "TaleForkTests/TaleForkTests.swift",
+                "matched": 27,
+                "ratio": 0.011508951406649617,
+                "tokens": 2346
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/audit_app_store_43.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1979
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/compare_code_similarity.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 639
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/generate_project.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2722
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/render_icon.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 541
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkUITests/TaleForkSceneNotesUITests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1045
+              }
+            ],
+            "matched": 2241,
+            "ratio": 0.07677812799780732,
+            "tokens": 29188
+          },
+          "24": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Domain/Repositories/CheckoutService.swift",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 42,
+                "ratio": 0.1875,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "Dramile/Shared/Legal/BundledLegalPage.swift",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 31,
+                "ratio": 0.1076388888888889,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "Dramile/Domain/Models/MembershipProduct.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 96,
+                "ratio": 0.06956521739130435,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 27,
+                "ratio": 0.038135593220338986,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 27,
+                "ratio": 0.032335329341317366,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "Dramile/Core/Playback/EpisodePlaybackEngine.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 31,
+                "ratio": 0.007635467980295567,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/audit_app_store_43.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1979
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/compare_code_similarity.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 639
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/generate_project.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2722
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/render_icon.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 541
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkTests/TaleForkTests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2346
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkUITests/TaleForkSceneNotesUITests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1045
+              }
+            ],
+            "matched": 254,
+            "ratio": 0.008702206386186104,
+            "tokens": 29188
+          },
+          "48": {
+            "files": [
+              {
+                "bestComparison": "-",
+                "file": "Scripts/audit_app_store_43.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1979
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/compare_code_similarity.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 639
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/generate_project.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2722
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/render_icon.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 541
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkTests/TaleForkTests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2346
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkUITests/TaleForkSceneNotesUITests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1045
+              }
+            ],
+            "matched": 0,
+            "ratio": 0.0,
+            "tokens": 29188
+          }
+        },
+        "productionCode": {
+          "12": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Domain/Repositories/CheckoutService.swift",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 81,
+                "ratio": 0.36160714285714285,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipRetentionView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 68,
+                "ratio": 0.12686567164179105,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "Dramile/Shared/Legal/BundledLegalPage.swift",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 31,
+                "ratio": 0.1076388888888889,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "Dramile/Features/Theater/StoryJourneyDashboard.swift",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 102,
+                "ratio": 0.09883720930232558,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "Dramile/Features/Home/StoryStreamView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 36,
+                "ratio": 0.08823529411764706,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 67,
+                "ratio": 0.08023952095808383,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "Dramile/Domain/Models/MembershipProduct.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 108,
+                "ratio": 0.0782608695652174,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 54,
+                "ratio": 0.07627118644067797,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipView.swift",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 78,
+                "ratio": 0.06505421184320268,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipView.swift",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 77,
+                "ratio": 0.05492154065620542,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "Dramile/Features/Profile/PersonalHubView.swift",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 38,
+                "ratio": 0.05046480743691899,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "Dramile/App/DramileApplication.swift",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 12,
+                "ratio": 0.049586776859504134,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "Dramile/Features/Theater/StoryJourneyDashboard.swift",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 26,
+                "ratio": 0.04241435562805873,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "Dramile/Features/Search/SeriesSearchView.swift",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 125,
+                "ratio": 0.040257648953301126,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "Dramile/Features/Membership/MembershipRetentionView.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 147,
+                "ratio": 0.03620689655172414,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "Dramile/Features/Player/EpisodePlayerView.swift",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 16,
+                "ratio": 0.032388663967611336,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              }
+            ],
+            "matched": 2214,
+            "ratio": 0.11116690098413336,
+            "tokens": 19916
+          },
+          "24": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Domain/Repositories/CheckoutService.swift",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 42,
+                "ratio": 0.1875,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "Dramile/Shared/Legal/BundledLegalPage.swift",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 31,
+                "ratio": 0.1076388888888889,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "Dramile/Domain/Models/MembershipProduct.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 96,
+                "ratio": 0.06956521739130435,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 27,
+                "ratio": 0.038135593220338986,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "Dramile/Resources/Legal/privacy-policy.html",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 27,
+                "ratio": 0.032335329341317366,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "Dramile/Core/Playback/EpisodePlaybackEngine.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 31,
+                "ratio": 0.007635467980295567,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              }
+            ],
+            "matched": 254,
+            "ratio": 0.012753564972886123,
+            "tokens": 19916
+          },
+          "48": {
+            "files": [
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 288
+              }
+            ],
+            "matched": 0,
+            "ratio": 0.0,
+            "tokens": 19916
+          }
+        },
+        "projectFiles": {
+          "16": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Resources/PrivacyInfo.xcprivacy",
+                "file": "TaleFork/Resources/PrivacyInfo.xcprivacy",
+                "matched": 201,
+                "ratio": 0.995049504950495,
+                "tokens": 202
+              },
+              {
+                "bestComparison": "Dramile/Resources/Info.plist",
+                "file": "TaleFork/Resources/Info.plist",
+                "matched": 234,
+                "ratio": 0.6882352941176471,
+                "tokens": 340
+              },
+              {
+                "bestComparison": "Dramile.xcodeproj/project.pbxproj",
+                "file": "TaleFork.xcodeproj/project.pbxproj",
+                "matched": 2074,
+                "ratio": 0.610718492343934,
+                "tokens": 3396
+              },
+              {
+                "bestComparison": "Dramile.xcodeproj/xcshareddata/xcschemes/Dramile.xcscheme",
+                "file": "TaleFork.xcodeproj/xcshareddata/xcschemes/TaleFork.xcscheme",
+                "matched": 159,
+                "ratio": 0.39949748743718594,
+                "tokens": 398
+              }
+            ],
+            "matched": 2668,
+            "ratio": 0.6153136531365314,
+            "tokens": 4336
+          },
+          "32": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Resources/PrivacyInfo.xcprivacy",
+                "file": "TaleFork/Resources/PrivacyInfo.xcprivacy",
+                "matched": 156,
+                "ratio": 0.7722772277227723,
+                "tokens": 202
+              },
+              {
+                "bestComparison": "Dramile/Resources/Info.plist",
+                "file": "TaleFork/Resources/Info.plist",
+                "matched": 212,
+                "ratio": 0.6235294117647059,
+                "tokens": 340
+              },
+              {
+                "bestComparison": "Dramile.xcodeproj/xcshareddata/xcschemes/Dramile.xcscheme",
+                "file": "TaleFork.xcodeproj/xcshareddata/xcschemes/TaleFork.xcscheme",
+                "matched": 130,
+                "ratio": 0.32663316582914576,
+                "tokens": 398
+              },
+              {
+                "bestComparison": "Dramile.xcodeproj/project.pbxproj",
+                "file": "TaleFork.xcodeproj/project.pbxproj",
+                "matched": 470,
+                "ratio": 0.13839811542991756,
+                "tokens": 3396
+              }
+            ],
+            "matched": 968,
+            "ratio": 0.22324723247232472,
+            "tokens": 4336
+          },
+          "8": {
+            "files": [
+              {
+                "bestComparison": "Dramile/Resources/PrivacyInfo.xcprivacy",
+                "file": "TaleFork/Resources/PrivacyInfo.xcprivacy",
+                "matched": 202,
+                "ratio": 1.0,
+                "tokens": 202
+              },
+              {
+                "bestComparison": "Dramile/Resources/Info.plist",
+                "file": "TaleFork/Resources/Info.plist",
+                "matched": 291,
+                "ratio": 0.8558823529411764,
+                "tokens": 340
+              },
+              {
+                "bestComparison": "Dramile.xcodeproj/project.pbxproj",
+                "file": "TaleFork.xcodeproj/project.pbxproj",
+                "matched": 2722,
+                "ratio": 0.8015312131919906,
+                "tokens": 3396
+              },
+              {
+                "bestComparison": "Dramile.xcodeproj/xcshareddata/xcschemes/Dramile.xcscheme",
+                "file": "TaleFork.xcodeproj/xcshareddata/xcschemes/TaleFork.xcscheme",
+                "matched": 292,
+                "ratio": 0.7336683417085427,
+                "tokens": 398
+              }
+            ],
+            "matched": 3507,
+            "ratio": 0.808809963099631,
+            "tokens": 4336
+          }
+        }
+      },
+      "name": "DRAMILE",
+      "topology": {
+        "assetCatalogNames": [
+          "AccentColor.colorset",
+          "AppIcon.appiconset",
+          "AppMark.imageset"
+        ],
+        "codeBasenames": [
+          "ActivityPresenter.swift",
+          "AdaptiveLayout.swift",
+          "audit_source_similarity.rb",
+          "BundledLegalPage.swift",
+          "CapturePrivacyCoordinator.swift",
+          "CheckoutService.swift",
+          "ClientHandshake.swift",
+          "ContractTests.swift",
+          "DefaultsArchive.swift",
+          "DramileApplication.swift",
+          "DramileLocalization.swift",
+          "DramileRoute.swift",
+          "DramileSession.swift",
+          "DramileStyle.swift",
+          "DramileTransport.swift",
+          "EpisodeGridView.swift",
+          "EpisodePlaybackEngine.swift",
+          "EpisodePlayerChrome.swift",
+          "EpisodePlayerView.swift",
+          "export_api_openapi.rb",
+          "generate_project.rb",
+          "IdentityPayloads.swift",
+          "IdentityService.swift",
+          "MainExperienceView.swift",
+          "MembershipDecisionCountdownView.swift",
+          "MembershipProduct.swift",
+          "MembershipPurchaseActionView.swift",
+          "MembershipRetentionView.swift",
+          "MembershipSpotlightPreviewView.swift",
+          "MembershipView.swift",
+          "MembershipViewModel.swift",
+          "NetworkArtwork.swift",
+          "PersonalHubView.swift",
+          "PhoneAccessView.swift",
+          "PhoneLinkCoordinator.swift",
+          "PhonePassForm.swift",
+          "PlaybackSurface.swift",
+          "PreferencesView.swift",
+          "privacy-policy.html",
+          "PrivacyArrivalView.swift",
+          "probe_backend.rb",
+          "ProtectedContentHost.swift",
+          "ReentryBriefView.swift",
+          "SavedStoriesView.swift",
+          "SeriesCard.swift",
+          "SeriesLibrary.swift",
+          "SeriesSearchView.swift",
+          "ServerEnvelope.swift",
+          "ServicePayloads.swift",
+          "StartupGateView.swift",
+          "StatusPanel.swift",
+          "StoryCheckpoint.swift",
+          "StoryControls.swift",
+          "StoryGeometry.swift",
+          "StoryJourneyDashboard.swift",
+          "StoryLibraryView.swift",
+          "StorySeries.swift",
+          "StoryStreamView.swift",
+          "StoryWorkspace.swift",
+          "user-agreement.html",
+          "ViewerIdentity.swift",
+          "ViewingHistoryView.swift",
+          "ViewingMemory.swift"
+        ],
+        "projectNames": [
+          "Dramile"
+        ],
+        "schemeNames": [
+          "Dramile"
+        ]
+      }
+    },
+    {
+      "commonAssetCatalogNames": [
+        "AccentColor.colorset",
+        "AppIcon.appiconset"
+      ],
+      "commonCodeBasenames": [
+        "privacy-policy.html"
+      ],
+      "commonImports": [
+        "AVFoundation",
+        "Foundation",
+        "StoreKit",
+        "SwiftUI",
+        "UIKit"
+      ],
+      "commonNetworkLiterals": [
+        "CFBundleShortVersionString",
+        "CFBundleVersion",
+        "Content-Type",
+        "fil",
+        "POST",
+        "zh-Hans",
+        "zh-Hant"
+      ],
+      "commonStringLiterals": [
+        "%02d",
+        "application/json",
+        "arrow.clockwise",
+        "arrow.right",
+        "CFBundleShortVersionString",
+        "CFBundleVersion",
+        "checkmark",
+        "checkmark.circle.fill",
+        "checkmark.seal.fill",
+        "chevron.left",
+        "chevron.right",
+        "clock.arrow.circlepath",
+        "Content-Type",
+        "crown.fill",
+        "exclamationmark.triangle.fill",
+        "fil",
+        "heart",
+        "heart.fill",
+        "html",
+        "list.number",
+        "lock.fill",
+        "magnifyingglass",
+        "number",
+        "pause.fill",
+        "play.fill",
+        "play.rectangle",
+        "play.rectangle.fill",
+        "POST",
+        "privacy-policy",
+        "slider.horizontal.3",
+        "trash",
+        "utf-8",
+        "viewport",
+        "wifi.exclamationmark",
+        "xmark.circle.fill",
+        "zh-Hans",
+        "zh-Hant"
+      ],
+      "configuration": {
+        "ASSETCATALOG_COMPILER_APPICON_NAME": [
+          "AppIcon"
+        ],
+        "CFBundleDisplayName": [
+          "\"DRAMILE\""
+        ],
+        "CFBundleIdentifier": [
+          "\"$(PRODUCT_BUNDLE_IDENTIFIER)\""
+        ],
+        "CFBundleName": [
+          "\"$(PRODUCT_NAME)\""
+        ],
+        "CURRENT_PROJECT_VERSION": [
+          "1"
+        ],
+        "INFOPLIST_FILE": [
+          "LanGuoNext/Resources/Info.plist"
+        ],
+        "IPHONEOS_DEPLOYMENT_TARGET": [
+          "15.0"
+        ],
+        "MARKETING_VERSION": [
+          "1.0.0"
+        ],
+        "PRODUCT_BUNDLE_IDENTIFIER": [
+          "com.lah.jhs",
+          "com.lah.jhs.tests"
+        ],
+        "PRODUCT_NAME": [
+          "$(TARGET_NAME)"
+        ],
+        "SWIFT_VERSION": [
+          "5.0"
+        ],
+        "TARGETED_DEVICE_FAMILY": [
+          "1"
+        ]
+      },
+      "declarations": {
+        "byKind": {
+          "case": {
+            "common": [
+              "decoding",
+              "invalidResponse",
+              "let",
+              "search"
+            ],
+            "comparison": 89,
+            "primary": 36
+          },
+          "function": {
+            "common": [
+              "benefit",
+              "encode",
+              "episode",
+              "episodeStatus",
+              "load",
+              "makeUIViewController",
+              "post",
+              "restore",
+              "restorePurchases",
+              "search",
+              "seek",
+              "selectEpisode",
+              "start",
+              "toggleControls",
+              "togglePlayback",
+              "updateUIViewController"
+            ],
+            "comparison": 115,
+            "primary": 72
+          },
+          "property": {
+            "common": [
+              "appContent",
+              "asset",
+              "baseURL",
+              "body",
+              "cardRadius",
+              "content",
+              "controlsVisible",
+              "coverURL",
+              "data",
+              "defaults",
+              "document",
+              "drama",
+              "dramaID",
+              "dramas",
+              "envelope",
+              "episode",
+              "error",
+              "errorDescription",
+              "featured",
+              "freeEpisodeCount",
+              "history",
+              "http",
+              "id",
+              "image",
+              "ink",
+              "item",
+              "page",
+              "paper",
+              "player",
+              "request",
+              "result",
+              "results",
+              "scenePhase",
+              "seconds",
+              "selectedEpisode",
+              "selection",
+              "self",
+              "size",
+              "state",
+              "stored",
+              "title",
+              "url",
+              "value",
+              "values"
+            ],
+            "comparison": 272,
+            "primary": 242
+          },
+          "type": {
+            "common": [
+              "CodingKeys",
+              "Drama"
+            ],
+            "comparison": 83,
+            "primary": 57
+          }
+        },
+        "common": [
+          "appContent",
+          "asset",
+          "baseURL",
+          "benefit",
+          "body",
+          "cardRadius",
+          "CodingKeys",
+          "content",
+          "continueWatching",
+          "controlsVisible",
+          "coverURL",
+          "data",
+          "decoding",
+          "defaults",
+          "detail",
+          "document",
+          "drama",
+          "Drama",
+          "dramaID",
+          "dramas",
+          "emptyState",
+          "encode",
+          "envelope",
+          "episode",
+          "episodeStatus",
+          "error",
+          "errorDescription",
+          "featured",
+          "freeEpisodeCount",
+          "history",
+          "http",
+          "id",
+          "image",
+          "ink",
+          "invalidResponse",
+          "item",
+          "let",
+          "load",
+          "makeUIViewController",
+          "page",
+          "paper",
+          "player",
+          "post",
+          "request",
+          "restore",
+          "restorePurchases",
+          "result",
+          "results",
+          "retry",
+          "scenePhase",
+          "search",
+          "seconds",
+          "seek",
+          "selectedEpisode",
+          "selectEpisode",
+          "selection",
+          "self",
+          "server",
+          "size",
+          "start",
+          "state",
+          "store",
+          "stored",
+          "title",
+          "toggleControls",
+          "togglePlayback",
+          "updateUIViewController",
+          "url",
+          "value",
+          "values",
+          "videoURL"
+        ],
+        "comparison": 509,
+        "jaccard": 0.08574879227053141,
+        "nontrivialCommon": [
+          "appContent",
+          "asset",
+          "baseURL",
+          "benefit",
+          "cardRadius",
+          "CodingKeys",
+          "continueWatching",
+          "controlsVisible",
+          "coverURL",
+          "decoding",
+          "defaults",
+          "detail",
+          "document",
+          "drama",
+          "Drama",
+          "dramaID",
+          "dramas",
+          "emptyState",
+          "encode",
+          "envelope",
+          "episode",
+          "episodeStatus",
+          "errorDescription",
+          "featured",
+          "freeEpisodeCount",
+          "history",
+          "http",
+          "ink",
+          "invalidResponse",
+          "let",
+          "load",
+          "makeUIViewController",
+          "page",
+          "paper",
+          "player",
+          "post",
+          "restore",
+          "restorePurchases",
+          "retry",
+          "scenePhase",
+          "search",
+          "seconds",
+          "seek",
+          "selectedEpisode",
+          "selectEpisode",
+          "selection",
+          "self",
+          "server",
+          "size",
+          "start",
+          "store",
+          "stored",
+          "toggleControls",
+          "togglePlayback",
+          "updateUIViewController",
+          "videoURL"
+        ],
+        "primary": 390
+      },
+      "exactAssetDuplicates": [],
+      "fileCounts": {
+        "code": 51,
+        "image": 27,
+        "project": 4,
+        "resource-text": 24,
+        "total": 106
+      },
+      "metrics": {
+        "allCode": {
+          "12": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 66,
+                "ratio": 0.12313432835820895,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 114,
+                "ratio": 0.11046511627906977,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "LanGuoNext/Domain/Models/Account.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 96,
+                "ratio": 0.06956521739130435,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Legal/auto-renewal-agreement.html",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 44,
+                "ratio": 0.062146892655367235,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 24,
+                "ratio": 0.058823529411764705,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 80,
+                "ratio": 0.05706134094151213,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Shell/DramaCard.swift",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 68,
+                "ratio": 0.0567139282735613,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Legal/auto-renewal-agreement.html",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 44,
+                "ratio": 0.05269461077844311,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Support/ScreenCaptureShield.swift",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 12,
+                "ratio": 0.049586776859504134,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 12,
+                "ratio": 0.041666666666666664,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 124,
+                "ratio": 0.03993558776167472,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Player/DramaPlayerView.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 130,
+                "ratio": 0.03201970443349754,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "LanGuoNext/App/AppEntryView.swift",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 14,
+                "ratio": 0.022838499184339316,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Player/DramaPlayerView.swift",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 17,
+                "ratio": 0.02257636122177955,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Persistence/AppStorageStore.swift",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 15,
+                "ratio": 0.014204545454545454,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Playback/PlaybackController.swift",
+                "file": "TaleForkTests/TaleForkTests.swift",
+                "matched": 27,
+                "ratio": 0.011508951406649617,
+                "tokens": 2346
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/audit_app_store_43.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1979
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/compare_code_similarity.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 639
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/generate_project.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2722
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/render_icon.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 541
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkUITests/TaleForkSceneNotesUITests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1045
+              }
+            ],
+            "matched": 1618,
+            "ratio": 0.05543373989310676,
+            "tokens": 29188
+          },
+          "24": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Domain/Models/Account.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 96,
+                "ratio": 0.06956521739130435,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Playback/PlaybackController.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 39,
+                "ratio": 0.00960591133004926,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/audit_app_store_43.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1979
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/compare_code_similarity.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 639
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/generate_project.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2722
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/render_icon.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 541
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkTests/TaleForkTests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2346
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkUITests/TaleForkSceneNotesUITests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1045
+              }
+            ],
+            "matched": 135,
+            "ratio": 0.00462518843360285,
+            "tokens": 29188
+          },
+          "48": {
+            "files": [
+              {
+                "bestComparison": "-",
+                "file": "Scripts/audit_app_store_43.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1979
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/compare_code_similarity.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 639
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/generate_project.py",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2722
+              },
+              {
+                "bestComparison": "-",
+                "file": "Scripts/render_icon.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 541
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkTests/TaleForkTests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 2346
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleForkUITests/TaleForkSceneNotesUITests.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1045
+              }
+            ],
+            "matched": 0,
+            "ratio": 0.0,
+            "tokens": 29188
+          }
+        },
+        "productionCode": {
+          "12": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 66,
+                "ratio": 0.12313432835820895,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 114,
+                "ratio": 0.11046511627906977,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "LanGuoNext/Domain/Models/Account.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 96,
+                "ratio": 0.06956521739130435,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Legal/auto-renewal-agreement.html",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 44,
+                "ratio": 0.062146892655367235,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 24,
+                "ratio": 0.058823529411764705,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 80,
+                "ratio": 0.05706134094151213,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Shell/DramaCard.swift",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 68,
+                "ratio": 0.0567139282735613,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Legal/auto-renewal-agreement.html",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 44,
+                "ratio": 0.05269461077844311,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Support/ScreenCaptureShield.swift",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 12,
+                "ratio": 0.049586776859504134,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 12,
+                "ratio": 0.041666666666666664,
+                "tokens": 288
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Theater/TheaterView.swift",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 124,
+                "ratio": 0.03993558776167472,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Player/DramaPlayerView.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 130,
+                "ratio": 0.03201970443349754,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "LanGuoNext/App/AppEntryView.swift",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 14,
+                "ratio": 0.022838499184339316,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "LanGuoNext/Features/Player/DramaPlayerView.swift",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 17,
+                "ratio": 0.02257636122177955,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Persistence/AppStorageStore.swift",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 15,
+                "ratio": 0.014204545454545454,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              }
+            ],
+            "matched": 1591,
+            "ratio": 0.07988551918055835,
+            "tokens": 19916
+          },
+          "24": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Domain/Models/Account.swift",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 96,
+                "ratio": 0.06956521739130435,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "LanGuoNext/Core/Playback/PlaybackController.swift",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 39,
+                "ratio": 0.00960591133004926,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 288
+              }
+            ],
+            "matched": 135,
+            "ratio": 0.006778469572203254,
+            "tokens": 19916
+          },
+          "48": {
+            "files": [
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/AppRootView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 494
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/App/TaleForkApp.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 242
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/OfflineCatalogService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 282
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/ProgressStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1056
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Data/TaleForkService.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1380
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/DesignSystem/TaleForkTheme.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1199
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/DramaModels.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 456
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Domain/SceneMark.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 269
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Explore/ExploreView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 3105
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipAccess.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 32
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipPaywallView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 613
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Membership/MembershipStore.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 224
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Onboarding/OnboardingView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1032
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/MomentPlayerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 4060
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Player/PortraitVideoCanvas.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 115
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkComposerView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 365
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneMarkRow.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 536
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/SceneNotes/SceneNotesView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 408
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Settings/StoryStudioView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 1402
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Features/Vault/VaultView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 753
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/privacy-policy.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 835
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Resources/Legal/terms-of-use.html",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 708
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/Haptics.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 62
+              },
+              {
+                "bestComparison": "-",
+                "file": "TaleFork/Shared/LocalLegalView.swift",
+                "matched": 0,
+                "ratio": 0.0,
+                "tokens": 288
+              }
+            ],
+            "matched": 0,
+            "ratio": 0.0,
+            "tokens": 19916
+          }
+        },
+        "projectFiles": {
+          "16": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Resources/PrivacyInfo.xcprivacy",
+                "file": "TaleFork/Resources/PrivacyInfo.xcprivacy",
+                "matched": 202,
+                "ratio": 1.0,
+                "tokens": 202
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Info.plist",
+                "file": "TaleFork/Resources/Info.plist",
+                "matched": 232,
+                "ratio": 0.6823529411764706,
+                "tokens": 340
+              },
+              {
+                "bestComparison": "LanGuoNext.xcodeproj/project.pbxproj",
+                "file": "TaleFork.xcodeproj/project.pbxproj",
+                "matched": 2074,
+                "ratio": 0.610718492343934,
+                "tokens": 3396
+              },
+              {
+                "bestComparison": "LanGuoNext.xcodeproj/xcshareddata/xcschemes/LanGuoNext.xcscheme",
+                "file": "TaleFork.xcodeproj/xcshareddata/xcschemes/TaleFork.xcscheme",
+                "matched": 159,
+                "ratio": 0.39949748743718594,
+                "tokens": 398
+              }
+            ],
+            "matched": 2667,
+            "ratio": 0.6150830258302583,
+            "tokens": 4336
+          },
+          "32": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Resources/PrivacyInfo.xcprivacy",
+                "file": "TaleFork/Resources/PrivacyInfo.xcprivacy",
+                "matched": 170,
+                "ratio": 0.8415841584158416,
+                "tokens": 202
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Info.plist",
+                "file": "TaleFork/Resources/Info.plist",
+                "matched": 210,
+                "ratio": 0.6176470588235294,
+                "tokens": 340
+              },
+              {
+                "bestComparison": "LanGuoNext.xcodeproj/xcshareddata/xcschemes/LanGuoNext.xcscheme",
+                "file": "TaleFork.xcodeproj/xcshareddata/xcschemes/TaleFork.xcscheme",
+                "matched": 130,
+                "ratio": 0.32663316582914576,
+                "tokens": 398
+              },
+              {
+                "bestComparison": "LanGuoNext.xcodeproj/project.pbxproj",
+                "file": "TaleFork.xcodeproj/project.pbxproj",
+                "matched": 488,
+                "ratio": 0.143698468786808,
+                "tokens": 3396
+              }
+            ],
+            "matched": 998,
+            "ratio": 0.2301660516605166,
+            "tokens": 4336
+          },
+          "8": {
+            "files": [
+              {
+                "bestComparison": "LanGuoNext/Resources/PrivacyInfo.xcprivacy",
+                "file": "TaleFork/Resources/PrivacyInfo.xcprivacy",
+                "matched": 202,
+                "ratio": 1.0,
+                "tokens": 202
+              },
+              {
+                "bestComparison": "LanGuoNext/Resources/Info.plist",
+                "file": "TaleFork/Resources/Info.plist",
+                "matched": 289,
+                "ratio": 0.85,
+                "tokens": 340
+              },
+              {
+                "bestComparison": "LanGuoNext.xcodeproj/project.pbxproj",
+                "file": "TaleFork.xcodeproj/project.pbxproj",
+                "matched": 2720,
+                "ratio": 0.800942285041225,
+                "tokens": 3396
+              },
+              {
+                "bestComparison": "LanGuoNext.xcodeproj/xcshareddata/xcschemes/LanGuoNext.xcscheme",
+                "file": "TaleFork.xcodeproj/xcshareddata/xcschemes/TaleFork.xcscheme",
+                "matched": 283,
+                "ratio": 0.7110552763819096,
+                "tokens": 398
+              }
+            ],
+            "matched": 3494,
+            "ratio": 0.8058118081180812,
+            "tokens": 4336
+          }
+        }
+      },
+      "name": "LanGuoNext",
+      "topology": {
+        "assetCatalogNames": [
+          "AccentColor.colorset",
+          "AppIcon.appiconset",
+          "AppMark.imageset"
+        ],
+        "codeBasenames": [
+          "Account.swift",
+          "AccountRepository.swift",
+          "APIEndpoint.swift",
+          "APIModels.swift",
+          "AppEntryView.swift",
+          "AppModel.swift",
+          "AppShellView.swift",
+          "AppStorageStore.swift",
+          "AuthViewModel.swift",
+          "auto-renewal-agreement.html",
+          "ContractTests.swift",
+          "Drama.swift",
+          "DramaCard.swift",
+          "DramaPlayerView.swift",
+          "DramaRepository.swift",
+          "DramaTheme.swift",
+          "DramileApp.swift",
+          "EpisodePickerView.swift",
+          "ExternalSDKBridge.swift",
+          "generate_project.rb",
+          "HistoryView.swift",
+          "HomeViewModel.swift",
+          "HTTPClient.swift",
+          "ImmersiveFeedView.swift",
+          "LoadState.swift",
+          "LocalLegalDocument.swift",
+          "LoginView.swift",
+          "measure_similarity.rb",
+          "payment-agreement.html",
+          "PlaybackController.swift",
+          "PlayerSurface.swift",
+          "privacy-policy.html",
+          "probe_backend.rb",
+          "ProfileView.swift",
+          "ProfileViewModel.swift",
+          "RemoteImage.swift",
+          "ResponsePayloads.swift",
+          "ScreenCaptureShield.swift",
+          "SearchView.swift",
+          "SearchViewModel.swift",
+          "SettingsView.swift",
+          "ShareSheet.swift",
+          "StatePlaceholder.swift",
+          "StorePurchaseService.swift",
+          "TheaterView.swift",
+          "TheaterViewModel.swift",
+          "user-agreement.html",
+          "VIPView.swift",
+          "VIPViewModel.swift",
+          "WatchlistView.swift",
+          "WatchlistViewModel.swift"
+        ],
+        "projectNames": [
+          "LanGuoNext"
+        ],
+        "schemeNames": [
+          "LanGuoNext"
+        ]
+      }
+    }
+  ],
+  "primary": {
+    "configuration": {
+      "ASSETCATALOG_COMPILER_APPICON_NAME": [
+        "AppIcon"
+      ],
+      "CFBundleDisplayName": [
+        "\"TaleFork\""
+      ],
+      "CFBundleIdentifier": [
+        "\"$(PRODUCT_BUNDLE_IDENTIFIER)\""
+      ],
+      "CFBundleName": [
+        "\"$(PRODUCT_NAME)\""
+      ],
+      "CURRENT_PROJECT_VERSION": [
+        "1"
+      ],
+      "DEVELOPMENT_TEAM": [
+        ""
+      ],
+      "INFOPLIST_FILE": [
+        "TaleFork/Resources/Info.plist"
+      ],
+      "IPHONEOS_DEPLOYMENT_TARGET": [
+        "18.0"
+      ],
+      "MARKETING_VERSION": [
+        "1.0.0"
+      ],
+      "PRODUCT_BUNDLE_IDENTIFIER": [
+        "com.talefork.storypaths",
+        "com.talefork.storypaths.tests",
+        "com.talefork.storypaths.uitests"
+      ],
+      "PRODUCT_NAME": [
+        "$(TARGET_NAME)"
+      ],
+      "SUPPORTED_PLATFORMS": [
+        "iphoneos iphonesimulator"
+      ],
+      "SWIFT_VERSION": [
+        "6.0"
+      ],
+      "TARGETED_DEVICE_FAMILY": [
+        "1"
+      ]
+    },
+    "fileCounts": {
+      "binary": 1,
+      "code": 30,
+      "image": 2,
+      "project": 4,
+      "resource-text": 13,
+      "total": 50
+    },
+    "networkLiterals": [
+      "after-the-last-train",
+      "CFBundleShortVersionString",
+      "CFBundleVersion",
+      "Content-Type",
+      "DELETE",
+      "deviceSeed",
+      "E6A84C",
+      "E7796B",
+      "fil",
+      "hardwareFamily",
+      "https://app.duanjufafafa.fun/",
+      "languageTag",
+      "lantern-room",
+      "maximumStories",
+      "OFFLINE-PREVIEW",
+      "POST",
+      "READY",
+      "reels",
+      "releaseBuild",
+      "releaseName",
+      "searchText",
+      "single-scene-preview",
+      "stories",
+      "tale-gateway/v2/heartbeat",
+      "tale-gateway/v2/identity/device-pass",
+      "tale-gateway/v2/launch/manifest",
+      "tale-gateway/v2/screenings/lineup",
+      "tale-gateway/v2/screenings/search",
+      "talefork-ios-r2",
+      "TALEFORK_SERVICE_BASE_URL",
+      "X-TaleFork-Edition",
+      "X-TaleFork-Pass",
+      "zh-Hans",
+      "zh-Hant",
+      "zh-HK"
+    ],
+    "runtimeFindings": {
+      "payments": [
+        "TaleFork/Features/Explore/ExploreView.swift:342: : Text(\"membership.vip.badge\")",
+        "TaleFork/Features/Explore/ExploreView.swift:367: Label(\"membership.vip.badge\", systemImage: \"lock.fill\")",
+        "TaleFork/Features/Membership/MembershipAccess.swift:4: static let weeklyProductID = \"com.talefork.storypaths.vip.weekly\"",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:1: import StoreKit",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:7: @State private var purchaseMessage: LocalizedStringKey?",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:14: SubscriptionStoreView(productIDs: [MembershipAccess.weeklyProductID])",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:15: .subscriptionStoreControlStyle(.buttons)",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:16: .subscriptionStoreButtonLabel(.multiline)",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:20: .subscriptionStorePolicyDestination(for: .privacyPolicy) {",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:23: .subscriptionStorePolicyDestination(for: .termsOfService) {",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:32: purchaseMessage = \"membership.purchase.pending\"",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:36: purchaseMessage = \"membership.purchase.unverified\"",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:38: purchaseMessage = \"membership.purchase.failed\"",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:40: purchaseMessage = \"membership.purchase.failed\"",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:57: .alert(\"membership.purchase.status\", isPresented: purchaseMessageBinding) {",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:58: Button(\"common.done\") { purchaseMessage = nil }",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:60: if let purchaseMessage { Text(purchaseMessage) }",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:92: private var purchaseMessageBinding: Binding<Bool> {",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:94: get: { purchaseMessage != nil },",
+        "TaleFork/Features/Membership/MembershipPaywallView.swift:95: set: { if !$0 { purchaseMessage = nil } }",
+        "TaleFork/Features/Membership/MembershipStore.swift:2: import StoreKit",
+        "TaleFork/Features/Player/MomentPlayerView.swift:587: Label(\"membership.vip.badge\", systemImage: \"lock.fill\")"
+      ]
+    },
+    "topology": {
+      "assetCatalogNames": [
+        "AccentColor.colorset",
+        "AppIcon.appiconset",
+        "LaunchBackground.colorset",
+        "TaleForkBrandMark.imageset"
+      ],
+      "codeBasenames": [
+        "AppRootView.swift",
+        "audit_app_store_43.py",
+        "compare_code_similarity.py",
+        "DramaModels.swift",
+        "ExploreView.swift",
+        "generate_project.py",
+        "Haptics.swift",
+        "LocalLegalView.swift",
+        "MembershipAccess.swift",
+        "MembershipPaywallView.swift",
+        "MembershipStore.swift",
+        "MomentPlayerView.swift",
+        "OfflineCatalogService.swift",
+        "OnboardingView.swift",
+        "PortraitVideoCanvas.swift",
+        "privacy-policy.html",
+        "ProgressStore.swift",
+        "render_icon.swift",
+        "SceneMark.swift",
+        "SceneMarkComposerView.swift",
+        "SceneMarkRow.swift",
+        "SceneNotesView.swift",
+        "StoryStudioView.swift",
+        "TaleForkApp.swift",
+        "TaleForkSceneNotesUITests.swift",
+        "TaleForkService.swift",
+        "TaleForkTests.swift",
+        "TaleForkTheme.swift",
+        "terms-of-use.html",
+        "VaultView.swift"
+      ],
+      "projectNames": [
+        "TaleFork"
+      ],
+      "schemeNames": [
+        "TaleFork"
+      ]
+    }
+  },
+  "scope": {
+    "excluded": [
+      ".build",
+      ".git",
+      "Build",
+      "Carthage",
+      "DerivedData",
+      "Pods",
+      "__pycache__",
+      "node_modules",
+      "vendor",
+      "xcuserdata"
+    ],
+    "included": [
+      "repository-owned code",
+      "tests",
+      "scripts",
+      "Xcode projects and schemes",
+      "plists and localizations",
+      "binary asset hashes"
+    ]
+  }
+}

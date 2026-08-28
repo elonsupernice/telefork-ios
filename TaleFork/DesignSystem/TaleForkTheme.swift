@@ -96,7 +96,7 @@ struct DramaPoster: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL)
+                BundleImage(assetName: drama.posterImageName, remoteURL: drama.coverURL)
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: height)
                     .clipped()
@@ -130,7 +130,7 @@ struct DramaPoster: View {
 }
 
 struct BundleImage: View {
-    let name: String
+    let assetName: String
     var remoteURL: URL? = nil
 
     @ViewBuilder
@@ -144,7 +144,7 @@ struct BundleImage: View {
                 @unknown default: artworkFallback
                 }
             }
-        } else if let url = Bundle.main.url(forResource: name, withExtension: nil), let image = UIImage(contentsOfFile: url.path) {
+        } else if let url = Bundle.main.url(forResource: assetName, withExtension: nil), let image = UIImage(contentsOfFile: url.path) {
             Image(uiImage: image).resizable()
         } else {
             artworkFallback

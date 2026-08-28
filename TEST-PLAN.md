@@ -1,53 +1,56 @@
-# TaleFork 第一版测试计划
+# TaleFork 测试计划
 
-## 自动化
+## 测试分层
 
-- 三套本地化资源键一致且数量达到产品基线
-- 在线访客注册能取得非空用户 ID
-- 在线目录至少返回一部短剧，第一集视频地址可访问并被 AVFoundation 识别
-- 剧集 ID 唯一且入口剧集存在
-- 选择剧集不会误记为已看；有效播放达到阈值后才进入观看记录
-- 当前剧集与播放秒数在重启后可恢复
-- 收藏、历史和偏好可持久化
-- 删除本机账户资料会清除 ID、本机进度、收藏、历史、偏好和引导状态
+1. **静态检查**：工程标识、资源、隐私清单、本地化键、运行时风险词和全量相似度。
+2. **无签名构建**：Debug iPhone Simulator、Release iPhoneOS、Unit/UI test bundle。
+3. **离线单元测试**：只使用 fixture、fake service 和独立 UserDefaults suite。
+4. **离线 UI 测试**：Debug 本地目录、合成播放时钟和自动重置的本机状态，不连接线上服务。
+5. **线上服务测试**：会注册匿名访客、请求目录和视频，必须显式设置 `TALEFORK_RUN_LIVE_TESTS=1`；本轮禁止运行。
+6. **真机/TestFlight**：需要独立签名资产，本轮未运行。
 
-## 模拟器矩阵
+## 已自动化覆盖
 
-- 小屏：iPhone SE（第 3 代）或同级 375×667 逻辑尺寸
-- 标准屏：普通尺寸全面屏 iPhone
-- 大屏：当前 Pro Max 模拟器
-- 浅色、深色、特大字体、减少动画
-- 小屏配合最大辅助字体，确认首次引导正文可滚动且不被底部按钮遮挡
-- 播放页重点检查顶部物理安全区、灵动岛、底部 Home Indicator 和横向内容边距
+- iPhone 宽度与横向边距边界。
+- fixture 剧集顺序、ID 唯一性、入口剧集和 `stories/{storyKey}/reels/{chapter}/playback.mp4` 媒体路径。
+- `en` / `ja` / `zh-Hans` / `zh-Hant` 本地化键集一致。
+- 目录刷新失败时保留既有数据；取消的旧搜索不能覆盖新结果。
+- 播放位置、历史、收藏、场记和偏好持久化。
+- 选集不误记为已看，播放达到阈值后才记录。
+- 场记类型、剧集、备注和精确秒数保存；恢复后设置原剧集/秒数。
+- 删除本机账户同时清除场记、进度、收藏、历史和引导状态。
+- 第 10 集保持免费，第 11 集及之后需要 VIP；四套会员本地化键集一致。
+- 放映台 / 场记 / 片单 / Studio 四个一级入口可达。
+- 播放器保存场记，重启 App 后读取并返回对应瞬间。
 
-## 人工主流程
+## 最终结果（2026-08-26）
 
-1. 首次启动完成两步引导。
-2. 加载在线目录，进入任意短剧详情并播放第一集。
-3. 播放超过 3 秒后退出，确认首页“继续观看”恢复同一集与接近的播放位置。
-4. 在详情和播放器选择另一集，确认选集本身不会提前计为已看。
-5. 检查暂停、前后 10 秒、拖动、静音、自动下一集、后台暂停和网络失败重试。
-6. 在进度页检查实际剧名、当前集和已看状态；在片库收藏并取消收藏。
-7. 在设置页检查真实匿名用户 ID、三份播放偏好、隐私政策和使用条款。
-8. 执行删除账户资料，确认退出当前匿名会话并清除所有本机状态。
+- iPhone 17 Pro / iOS 26.5 模拟器。
+- Unit：9 passed、1 个线上 opt-in 测试 skipped、0 failed。
+- UI：2 passed、0 failed。
+- Release iPhoneOS、`CODE_SIGNING_ALLOWED=NO`：build succeeded。
+- 结果包：`/tmp/codex-talefork-unit-final2.xcresult`、`/tmp/codex-talefork-ui-final4.xcresult`。
+- 2026-08-26 媒体路径切换后：Debug/Release build succeeded，Unit/UI `build-for-testing` succeeded；遵守“不安装”边界，未重跑测试。
+- 2026-08-26 Mobile Contract v2 切换后：Debug Simulator、Release iPhoneOS 无签名构建和 Unit/UI `build-for-testing` 均成功；遵守“不安装、不访问线上 API”边界，未执行测试。
 
-## 发布前专项
+## VIP 增量结果（2026-08-27）
 
-- 对目录全部视频 URL 做抽样或全量可达性检查，不只验证第一集
-- 使用独立新开发者团队验证 Bundle ID、Team ID、证书、描述文件、Entitlements 和 App 图标
-- Archive、Validate App、TestFlight 安装和真机网络切换测试
-- 对照 App Store 隐私问卷、隐私清单、隐私政策和实际请求字段
-- 服务端永久删除账户接口验证通过，并记录可审计的成功/失败状态
+- Debug Simulator build succeeded。
+- Unit：10 passed、1 个必须显式开启的线上测试 skipped、0 failed；未访问线上 API、未注册游客、未播放线上内容。
+- Release iPhoneOS、`CODE_SIGNING_ALLOWED=NO`：build succeeded。
+- StoreKit 静态配置：1 个产品、周期 `P1W`、本地测试价 `9.9`、产品 ID `com.talefork.storypaths.vip.weekly`。
+- Release App 未包含 `.storekit` 测试配置；Swift 未硬编码显示价格，未命中 WKWebView、支付宝或 checkout 支付实现。
 
-## 2026-08-10 本轮验证记录
+## 推送前完整结果（2026-08-29）
 
-- 9 项自动化测试通过，包含 iPhone 宽度边距边界、线上访客、目录、视频可达、真实播放时间推进、失败重载保留既有目录，以及取消的旧搜索不覆盖新结果
-- iOS 18.0 Debug 模拟器构建和无签名 Release 设备构建通过
-- 已在 iPhone SE（第 3 代，375×667）检查首页、设置页和首次引导；最大辅助字体下底部操作不遮挡滚动正文，用户 ID 和注销操作可完整显示
-- 已在标准全面屏 iPhone 17e 检查进度页、真实播放器、返回、选集和底部播放控件；无横向溢出或物理安全区遮挡
-- 已在 iPhone 17 Pro Max 检查首页、片库和设置页；大屏内容宽度、浮动底部导航和滚动底部留白正常
-- 已以无法连接的测试服务地址验证首页失败原因、空状态与重新连接入口
-- 已在简体中文 iPhone 17e 模拟器验证界面回退为繁体中文，并通过系统可访问性直接点击播放器“返回”，确认测试播放器退出并回到正常剧场
-- 已在 iPhone 17e 模拟器验证新版“竖屏短剧 + 播放 + 剧情分流”图标；桌面圆角裁切主体完整，App 首页与设置页使用相同品牌标记
-- 已生成 TaleFork / Dramile 精确 Swift token 克隆报告
-- 尚未完成：真实 iPhone、TestFlight、断网/弱网矩阵、VoiceOver 全流程、独立团队签名和服务端永久删除账户
+- iPhone 17 / iOS 26.5：Unit 11 passed、1 个线上 opt-in 测试 skipped、0 failed；UI 5 passed、0 failed。
+- UI 追加覆盖界面宽度适配和首页隐藏单集短剧；搜索范围不受首页过滤影响。
+- Release iPhoneOS 无签名构建成功；未访问线上 API、未注册游客、未签名、未 Archive 或打包。
+- 结果包：`/tmp/talefork-push-tests/Logs/Test/Test-TaleFork-2026.08.28_23-59-23-+0800.xcresult`。
+
+## 发布前仍需人工矩阵
+
+- 小屏、标准屏、Pro Max；浅色、深色、最大辅助字体、减少动画。
+- VoiceOver 完整走查放映台、播放器、场记编辑器、场记列表和删除流程。
+- 弱网/断网、目录更新后剧集缺失、视频无效和服务恢复。
+- 真实 iPhone、线上目录/视频（获授权后）、Archive、Validate App、TestFlight 和审核环境。

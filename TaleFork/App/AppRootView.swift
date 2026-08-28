@@ -17,14 +17,14 @@ struct AppRootView: View {
     private var appContent: some View {
 #if DEBUG
         switch ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] {
-        case "remote-player" where isShowingPlaybackCheck:
-            RemotePlaybackCheckView {
+        case "playback-check" where isShowingPlaybackCheck:
+            PlaybackCheckView {
                 isShowingPlaybackCheck = false
             }
         case "onboarding":
             OnboardingView()
-        case "discover", "paths", "vault", "settings":
-            AppShellView()
+        case "showcase", "scene-notes", "collection", "studio":
+            TaleForkWorkspaceView()
         default:
             regularContent
         }
@@ -36,7 +36,7 @@ struct AppRootView: View {
     @ViewBuilder
     private var regularContent: some View {
         if store.hasCompletedOnboarding {
-            AppShellView()
+            TaleForkWorkspaceView()
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
         } else {
             OnboardingView()
@@ -46,14 +46,14 @@ struct AppRootView: View {
 }
 
 #if DEBUG
-private struct RemotePlaybackCheckView: View {
+private struct PlaybackCheckView: View {
     @Environment(CatalogStore.self) private var catalog
     let onExit: () -> Void
 
     var body: some View {
         Group {
             if let drama = catalog.featured {
-                DramaPlayerView(drama: drama, onExit: onExit)
+                MomentPlayerView(drama: drama, onExit: onExit)
             } else if let error = catalog.errorMessage {
                 ContentUnavailableView("discover.connection.title", systemImage: "wifi.exclamationmark", description: Text(error))
             } else {
@@ -66,16 +66,16 @@ private struct RemotePlaybackCheckView: View {
 }
 #endif
 
-struct AppShellView: View {
-    @State private var selection: AppTab
+struct TaleForkWorkspaceView: View {
+    @State private var selection: WorkspaceTab
 
     init() {
-        var initialTab = AppTab.discover
+        var initialTab = WorkspaceTab.showcase
 #if DEBUG
         switch ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] {
-        case "paths": initialTab = .paths
-        case "vault": initialTab = .vault
-        case "settings": initialTab = .settings
+        case "scene-notes": initialTab = .sceneNotes
+        case "collection": initialTab = .collection
+        case "studio": initialTab = .studio
         default: break
         }
 #endif
@@ -84,29 +84,29 @@ struct AppShellView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            NavigationStack { ExploreView() }
-                .tabItem { Label("tab.discover", systemImage: "sparkles.rectangle.stack") }
-                .tag(AppTab.discover)
+            Tab("tab.showcase", systemImage: "sparkles.tv", value: WorkspaceTab.showcase) {
+                NavigationStack { ExploreView() }
+            }
 
-            NavigationStack { PathsView() }
-                .tabItem { Label("tab.paths", systemImage: "clock.arrow.circlepath") }
-                .tag(AppTab.paths)
+            Tab("tab.scene.notes", systemImage: "bookmark.square", value: WorkspaceTab.sceneNotes) {
+                NavigationStack { SceneNotesView() }
+            }
 
-            NavigationStack { VaultView() }
-                .tabItem { Label("tab.vault", systemImage: "heart.text.square") }
-                .tag(AppTab.vault)
+            Tab("tab.collection", systemImage: "rectangle.stack", value: WorkspaceTab.collection) {
+                NavigationStack { VaultView() }
+            }
 
-            NavigationStack { SettingsView() }
-                .tabItem { Label("tab.settings", systemImage: "slider.horizontal.3") }
-                .tag(AppTab.settings)
+            Tab("tab.studio", systemImage: "slider.horizontal.3", value: WorkspaceTab.studio) {
+                NavigationStack { StoryStudioView() }
+            }
         }
         .tint(TaleForkTheme.accentText)
     }
 }
 
-private enum AppTab: Hashable {
-    case discover
-    case paths
-    case vault
-    case settings
+private enum WorkspaceTab: Hashable {
+    case showcase
+    case sceneNotes
+    case collection
+    case studio
 }

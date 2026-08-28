@@ -1,8 +1,9 @@
 import AVFoundation
 import SwiftUI
 
-struct DramaPlayerView: View {
+struct MomentPlayerView: View {
     @Environment(ProgressStore.self) private var store
+    @Environment(MembershipStore.self) private var membership
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     let drama: Drama
@@ -12,6 +13,8 @@ struct DramaPlayerView: View {
     @State private var currentEpisodeID: String
     @State private var showCompletion = false
     @State private var showEpisodePicker = false
+    @State private var showSceneMarkComposer = false
+    @State private var showMembership = false
     @State private var controlsVisible = true
     @State private var playbackFailed = false
     @State private var isBuffering = true
@@ -21,6 +24,9 @@ struct DramaPlayerView: View {
     @State private var durationSeconds = 1.0
     @State private var pendingResumeSeconds: Double?
     @State private var lastPersistedSecond = -1
+#if DEBUG
+    @State private var usesOfflinePreviewMedia = false
+#endif
 
     private let playbackClock = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
@@ -64,6 +70,12 @@ struct DramaPlayerView: View {
             controlsVisible = true
             persistPlaybackPosition()
         }
+        .onChange(of: membership.isSubscribed) { _, isSubscribed in
+            guard isSubscribed,
+                  let episode,
+                  MembershipAccess.requiresSubscription(forEpisodeNumber: episode.number) else { return }
+            loadCurrentEpisode()
+        }
         .onReceive(playbackClock) { _ in refreshPlaybackState() }
         .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)) { notification in
             guard notification.object as? AVPlayerItem === player.currentItem else { return }
@@ -80,7 +92,27 @@ struct DramaPlayerView: View {
                 withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) { showCompletion = true; controlsVisible = true }
             }
         }
-        .sheet(isPresented: $showEpisodePicker) { EpisodePickerSheet(drama: drama, currentEpisodeID: currentEpisodeID) { selectEpisode($0) } }
+        .sheet(isPresented: $showEpisodePicker) {
+            EpisodePickerSheet(
+                drama: drama,
+                currentEpisodeID: currentEpisodeID,
+                isSubscribed: membership.isSubscribed
+            ) { selectEpisode($0) }
+        }
+        .sheet(isPresented: $showSceneMarkComposer) {
+            if let episode {
+                SceneMarkComposerView(
+                    drama: drama,
+                    episode: episode,
+                    positionSeconds: playbackSeconds,
+                    onSave: saveSceneMark
+                )
+                .presentationDetents([.medium, .large])
+            }
+        }
+        .sheet(isPresented: $showMembership) {
+            MembershipPaywallView()
+        }
     }
 
     private var episode: DramaEpisode? { drama.episode(id: currentEpisodeID) }
@@ -182,12 +214,13 @@ struct DramaPlayerView: View {
                 Button { togglePlayback() } label: {
                     Label(isPlaying ? "player.pause" : "player.play", systemImage: isPlaying ? "pause.fill" : "play.fill")
                 }
-                Button {
-                    TactileFeedback.tap(enabled: store.preferences.tactileFeedbackEnabled)
-                    store.toggleFavorite(drama)
-                } label: {
-                    Label(store.isFavorite(drama) ? "player.saved" : "player.save", systemImage: store.isFavorite(drama) ? "heart.fill" : "heart")
+                Button("scene.mark.player.action", systemImage: "bookmark.square") {
+                    player.pause()
+                    isPlaying = false
+                    controlsVisible = true
+                    showSceneMarkComposer = true
                 }
+                .accessibilityIdentifier("scene-mark-player-action")
                 Button { showEpisodePicker = true } label: { Label("player.episodes", systemImage: "list.number") }
                 Spacer(minLength: 0)
                 Button { toggleMute() } label: {
@@ -252,6 +285,7 @@ struct DramaPlayerView: View {
         }
         .foregroundStyle(.white)
         .accessibilityLabel(Text("common.back"))
+        .accessibilityIdentifier("player-back-action")
     }
 
     private var completionOverlay: some View {
@@ -340,6 +374,14 @@ struct DramaPlayerView: View {
 
     private func loadCurrentEpisode() {
         guard let episode else { playbackFailed = true; isBuffering = false; return }
+        guard membership.canAccess(episodeNumber: episode.number) else {
+            player.pause()
+            isPlaying = false
+            isBuffering = false
+            controlsVisible = true
+            requestMembership()
+            return
+        }
         let bundledURL = Bundle.main.url(forResource: episode.clipName, withExtension: "mp4")
         guard let url = episode.videoURL ?? bundledURL else { playbackFailed = true; isBuffering = false; return }
         showCompletion = false
@@ -351,6 +393,18 @@ struct DramaPlayerView: View {
         lastPersistedSecond = -1
         let savedPosition = store.run(for: drama).playbackSeconds[episode.id] ?? 0
         pendingResumeSeconds = savedPosition > 0 ? savedPosition : nil
+#if DEBUG
+        if url.scheme == "talefork-preview" {
+            usesOfflinePreviewMedia = true
+            playbackSeconds = savedPosition
+            pendingResumeSeconds = nil
+            isBuffering = false
+            isPlaying = true
+            store.selectEpisode(drama: drama, episodeID: episode.id)
+            return
+        }
+        usesOfflinePreviewMedia = false
+#endif
         do {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.playback, mode: .moviePlayback)
@@ -379,10 +433,30 @@ struct DramaPlayerView: View {
     }
 
     private func selectEpisode(_ episodeID: String) {
+        guard let selectedEpisode = drama.episode(id: episodeID),
+              membership.canAccess(episodeNumber: selectedEpisode.number) else {
+            requestMembership()
+            return
+        }
         persistPlaybackPosition()
         currentEpisodeID = episodeID
         showEpisodePicker = false
         loadCurrentEpisode()
+    }
+
+    private func requestMembership() {
+        player.pause()
+        isPlaying = false
+        controlsVisible = true
+        if showEpisodePicker {
+            showEpisodePicker = false
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(250))
+                showMembership = true
+            }
+        } else {
+            showMembership = true
+        }
     }
 
     private func togglePlayback() {
@@ -407,6 +481,18 @@ struct DramaPlayerView: View {
         player.isMuted = isMuted
     }
 
+    private func saveSceneMark(kind: SceneMarkKind, note: String) {
+        guard let episode else { return }
+        store.addSceneMark(
+            drama: drama,
+            episode: episode,
+            position: playbackSeconds,
+            kind: kind,
+            note: note
+        )
+        TactileFeedback.success(enabled: store.preferences.tactileFeedbackEnabled)
+    }
+
     private func seekRelative(_ offset: Double) {
         seek(to: playbackSeconds + offset)
     }
@@ -419,6 +505,15 @@ struct DramaPlayerView: View {
     }
 
     private func refreshPlaybackState() {
+#if DEBUG
+        if usesOfflinePreviewMedia {
+            isBuffering = false
+            if isPlaying {
+                playbackSeconds = min(playbackSeconds + 0.5, durationSeconds)
+            }
+            return
+        }
+#endif
         if player.currentItem?.status == .failed {
 #if DEBUG
             let itemError = player.currentItem?.error?.localizedDescription ?? "unknown player item error"
@@ -472,6 +567,7 @@ private struct EpisodePickerSheet: View {
     @Environment(\.dismiss) private var dismiss
     let drama: Drama
     let currentEpisodeID: String
+    let isSubscribed: Bool
     let onSelect: (String) -> Void
 
     var body: some View {
@@ -487,7 +583,13 @@ private struct EpisodePickerSheet: View {
                             Text(String(format: String(localized: "player.episode.format"), episode.number)).font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
-                        if episode.id == currentEpisodeID { Image(systemName: "waveform").foregroundStyle(TaleForkTheme.mint) }
+                        if MembershipAccess.requiresSubscription(forEpisodeNumber: episode.number), !isSubscribed {
+                            Label("membership.vip.badge", systemImage: "lock.fill")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(TaleForkTheme.coral)
+                        } else if episode.id == currentEpisodeID {
+                            Image(systemName: "waveform").foregroundStyle(TaleForkTheme.mint)
+                        }
                     }.foregroundStyle(.primary)
                 }
                 .accessibilityLabel(Text(String(
@@ -495,8 +597,12 @@ private struct EpisodePickerSheet: View {
                     episode.number,
                     episode.title.resolved
                 )))
-                .accessibilityValue(episode.id == currentEpisodeID ? Text("paths.current") : Text(""))
-                .accessibilityHint(Text("drama.episode.open.hint"))
+                .accessibilityValue(episode.id == currentEpisodeID ? Text("player.current.episode") : Text(""))
+                .accessibilityHint(Text(
+                    MembershipAccess.requiresSubscription(forEpisodeNumber: episode.number) && !isSubscribed
+                        ? "membership.locked.hint"
+                        : "drama.episode.open.hint"
+                ))
             }
             .navigationTitle("player.episodes")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("common.done") { dismiss() } } }

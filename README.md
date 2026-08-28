@@ -1,38 +1,34 @@
 # TaleFork
 
-TaleFork 是一款为 iPhone 重新设计的竖屏短剧应用。它通过线上内容服务加载短剧目录与视频，用独立的视觉系统组织发现、播放、续看、进度和收藏体验。
+TaleFork 是一款把“看短剧”与“记住某个故事瞬间”放在同一条流程里的 iPhone 竖屏应用。用户可以在播放时暂停并建立“故事场记”，标记转折、台词、线索或待重看片段，随后从场记回到原剧集的精确秒数。
 
-## 产品身份
+## 产品与工程身份
 
-- 产品名称：TaleFork
-- 产品标语：好故事，下一幕见
+- App / Target / Scheme / Product：`TaleFork`
 - Bundle Identifier：`com.talefork.storypaths`
-- 平台：iPhone（竖屏）
-- 最低系统：iOS 18.0
-- 当前版本：1.0.0（Build 1）
+- 定位：短剧放映与个人故事场记
+- 平台：iPhone 竖屏，iOS 18.0+
+- 版本：1.0.0（Build 1）
 - 技术：Swift 6、SwiftUI、AVFoundation、Observation
+- 顶层导航：放映台 / 场记 / 片单 / Studio
 
-## 第一版功能
+## 核心功能
 
-- 两步首次启动引导
-- 线上短剧目录、关键词搜索与剧集详情
-- 竖屏沉浸播放器、播放/暂停、前后 10 秒、拖动、静音、选集和自动连播
-- 真实续播：按短剧和剧集保存播放秒数，首页和详情页从上次位置继续
-- 观看进度时间线、收藏短剧与观看记录
-- 系统/浅色/深色外观、触感、减少装饰动画与自动连播设置
-- 断网与服务失败提示、重新连接、搜索请求防串线及已加载目录保留
-- VoiceOver 控件名称、播放进度朗读、Magic Tap 播放/暂停与最大辅助字体滚动布局
-- 服务端匿名访客 ID 展示、本机资料清理、本地隐私政策与使用条款
-- 繁体中文、英文、日文 App 界面；简体中文系统与其他未支持语言默认显示繁体中文；服务端返回的剧名和剧情内容保持原文
+- 线上短剧目录、搜索、详情、选集和竖屏播放。
+- 播放位置、历史、收藏和自动连播。
+- 故事场记：在播放器记录类型、剧集、秒数、快照信息和 120 字内的个人备注。
+- 场记在本机持久化；目录可用时可返回对应剧集的精确时刻，目录不可用时仍保留文字记录。
+- 本机数据清理同时删除场记、进度、收藏、历史和偏好。
+- 繁体中文、简体中文、英文和日文界面。
 
-## 数据与商业模式
+## 数据与商业边界
 
-第一版免费，不含会员、内购、广告、归因或分析 SDK，也不含支付宝、微信或其他第三方支付。短剧目录和视频需要联网。App 会向内容服务发送提供匿名会话和兼容内容所需的技术信息；观看进度、收藏和偏好保存在设备上。实际数据项以 `PrivacyInfo.xcprivacy` 与隐私政策为准。
+第 1～10 集可免费观看，第 11 集起需要通过 Apple StoreKit 2 开通 TaleFork VIP 每周自动续费会员；仅保留一个订阅套餐，不接入第三方支付、广告或归因 SDK。界面价格读取 Apple 返回的本地化价格，本地 StoreKit 配置使用 US$9.90，正式价格必须在 App Store Connect 选择并以购买页显示为准。目录和视频依赖线上内容服务；场记、播放进度、收藏和偏好存储在设备上。实际申报必须与 `PrivacyInfo.xcprivacy`、公开隐私政策和服务端真实行为一致。
 
-## 独立发布边界
+## 工程与验证
 
-TaleFork 使用独立名称、包名、工程结构、数据模型、页面布局、配色、交互与图标。服务端媒体接口及其必要请求字段属于兼容契约，不代表复用 Dramile 的产品实现。工程未绑定 Apple Developer Team；正式签名、App ID、证书、描述文件和 App Store Connect 记录必须由另一套独立开发者团队创建。
+`Scripts/generate_project.py` 从 TaleFork 自身的 App、Data、Domain、DesignSystem、Features、Shared 和 Resources 分组生成 `TaleFork.xcodeproj`。工程包含 1 个 App target、Unit Tests 和 UI Tests，未绑定 Apple Developer Team。
 
-## 构建与验证
+2026-08-29 已在 iPhone 17 / iOS 26.5 模拟器运行完整离线测试：Unit 11 passed、1 个线上 opt-in 测试 skipped；UI 5 passed。Release iPhoneOS 无签名构建成功。验证过程没有请求线上 API、注册访客或播放线上内容，也没有签名、Archive 或打包。
 
-使用 Xcode 打开 `TaleFork.xcodeproj`，选择 iOS 18 或更高版本的 iPhone 模拟器运行。`Scripts/generate_project.py` 用于生成工程，自动化测试位于 `TaleForkTests`。发布前还必须完成真机、TestFlight、服务端账号永久删除接口以及 App Store 隐私资料验证。
+详细的 4.3 证据、元数据方案和外部阻塞见 `APP-STORE-4.3-DIFFERENTIATION.md`；全量代码/字段/工程对比见 `APP-STORE-4.3-FULL-AUDIT.md`。这些工作只能降低 Guideline 4.3(a)/(b) 风险，不代表 Apple 会批准上架。

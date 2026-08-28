@@ -142,6 +142,8 @@ def analyze(primary: list[SourceUnit], comparison: list[SourceUnit], width: int)
 def markdown_report(
     primary_root: Path,
     comparison_root: Path,
+    primary_name: str,
+    comparison_name: str,
     width: int,
     long_width: int,
     overall: dict[str, object],
@@ -155,7 +157,7 @@ def markdown_report(
     rows = overall["files"]
     assert isinstance(rows, list)
     lines = [
-        "# TaleFork / Dramile Swift 代码相似度审计",
+        f"# {primary_name} / {comparison_name} Swift 代码相似度审计",
         "",
         f"生成日期：{dt.date.today().isoformat()}",
         "",
@@ -172,14 +174,14 @@ def markdown_report(
         "",
         "## 结果",
         "",
-        "| 范围 | TaleFork token 数 | 短片段命中/覆盖率 | 长片段命中/覆盖率 | 深度命中/覆盖率 |",
+        f"| 范围 | {primary_name} token 数 | 短片段命中/覆盖率 | 长片段命中/覆盖率 | 深度命中/覆盖率 |",
         "| --- | ---: | ---: | ---: | ---: |",
         f"| 全部 App Swift 源码 | {overall['tokens']} | {overall['matched']} / {overall['ratio']:.2%} | {long_overall['matched']} / {long_overall['ratio']:.2%} | {deep_overall['matched']} / {deep_overall['ratio']:.2%} |",
         f"| 排除必要网络协议层 | {product['tokens']} | {product['matched']} / {product['ratio']:.2%} | {long_product['matched']} / {long_product['ratio']:.2%} | {deep_product['matched']} / {deep_product['ratio']:.2%} |",
         "",
-        "## TaleFork 文件级最高匹配",
+        f"## {primary_name} 文件级最高匹配",
         "",
-        "| TaleFork 文件 | 最接近的 Dramile 文件 | 该文件精确覆盖率 | 命中/总 token |",
+        f"| {primary_name} 文件 | 最接近的 {comparison_name} 文件 | 该文件精确覆盖率 | 命中/总 token |",
         "| --- | --- | ---: | ---: |",
     ]
     for ratio, matched, total, path, best in rows[:12]:
@@ -197,7 +199,9 @@ def markdown_report(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("primary", type=Path, help="TaleFork Swift source root")
-    parser.add_argument("comparison", type=Path, help="Dramile Swift source root")
+    parser.add_argument("comparison", type=Path, help="comparison Swift source root")
+    parser.add_argument("--primary-name", default="TaleFork", help="primary product label used in the report")
+    parser.add_argument("--comparison-name", default="Comparison", help="comparison product label used in the report")
     parser.add_argument("--width", type=int, default=12, help="exact token shingle width")
     parser.add_argument("--long-width", type=int, default=24, help="long exact token shingle width")
     parser.add_argument("--deep-width", type=int, default=48, help="deep exact token shingle width")
@@ -227,6 +231,8 @@ def main() -> None:
     report = markdown_report(
         args.primary,
         args.comparison,
+        args.primary_name,
+        args.comparison_name,
         args.width,
         args.long_width,
         overall,

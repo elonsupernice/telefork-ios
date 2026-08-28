@@ -26,7 +26,7 @@ struct Drama: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let title: LocalizedCopy
     let subtitle: LocalizedCopy
-    let synopsis: LocalizedCopy
+    let storySummary: LocalizedCopy
     let posterImageName: String
     var coverURL: URL? = nil
     let accentHex: String

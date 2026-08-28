@@ -1,0 +1,84 @@
+{
+  "identifier" : "7AEAB79F-E4F3-4A59-9BE5-2F4D4E8B73B6",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "0B3A3F30-94D2-4CA3-A2CE-20F21EE3E5D5",
+      "localizations" : [
+
+      ],
+      "name" : "TaleFork VIP",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.9",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "2D98FE72-8646-49E5-A0E6-238ED080F509",
+          "localizations" : [
+            {
+              "description" : "Unlocks Episode 11 and every episode after it. Renews automatically every week until cancelled.",
+              "displayName" : "TaleFork VIP Weekly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "解锁第 11 集及之后的全部剧集。每周自动续费，取消后停止续费。",
+              "displayName" : "TaleFork VIP 每周会员",
+              "locale" : "zh_CN"
+            },
+            {
+              "description" : "解鎖第 11 集及之後的全部劇集。每週自動續訂，取消後停止續訂。",
+              "displayName" : "TaleFork VIP 每週會員",
+              "locale" : "zh_HK"
+            },
+            {
+              "description" : "第11話以降の全エピソードを視聴できます。解約するまで毎週自動更新されます。",
+              "displayName" : "TaleFork VIP 週間メンバーシップ",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "com.talefork.storypaths.vip.weekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "TaleFork VIP Weekly",
+          "subscriptionGroupID" : "0B3A3F30-94D2-4CA3-A2CE-20F21EE3E5D5"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

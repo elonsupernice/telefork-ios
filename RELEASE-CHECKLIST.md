@@ -1,48 +1,42 @@
 # TaleFork 独立发布清单
 
-该清单用于确保 TaleFork 首次发布使用独立开发者资产，并真实描述在线短剧功能。技术差异只能降低 4.3 风险，不能保证审核结果。
+> 客户端差异化只能降低 Guideline 4.3(a)/(b) 风险，不能保证 Apple 审核结果。
 
-## Apple 资产
+## 独立身份与签名
 
-- [ ] TaleFork 独立 Apple Developer Program 团队已开通
-- [ ] 独立 Team 创建 App ID：`com.talefork.storypaths`
-- [ ] Apple Distribution 证书和 App Store 描述文件均由独立 Team 签发
-- [ ] Xcode `DEVELOPMENT_TEAM` 只选择独立 Team
-- [ ] Archive 的 Team ID、Bundle ID、证书、描述文件和 Entitlements 已核对
-- [ ] 未导入或使用 Dramile 团队的证书、私钥、描述文件或 App Store Connect 记录
+- [ ] TaleFork 独立 Apple Developer Program 团队已确定。
+- [ ] 在该团队内创建 App ID `com.talefork.storypaths`。
+- [ ] Distribution 证书、私钥、描述文件、Team ID 和 App Store Connect 记录均为 TaleFork 独立资产。
+- [ ] Archive 中的 Product Name、Bundle ID、Team ID、Entitlements、URL Scheme、Associated Domains、App Groups 和 Push 能力逐项复核。
+- [ ] 不导入 DRAMILE、蓝果或其他 App 的证书、私钥、描述文件或已建 App 记录。
 
-## App Store Connect
+## 产品与内容
 
-- [ ] 使用独立 Team 创建全新 App 记录
-- [ ] 名称、副标题、描述、关键词、图标和截图均为 TaleFork 内容
-- [ ] 主类别按实际短剧内容选择 Entertainment
-- [ ] 价格为免费，无 App 内购
-- [ ] App Privacy 如实申报设备标识符和其他实际收集项；不得填写“不收集数据”
-- [ ] 隐私政策、技术支持和营销 URL 使用 TaleFork 独立公开站点
-- [ ] 隐私政策中的联系人、运营主体、删除流程和数据保留规则已填写，不使用占位文案
-- [ ] 年龄分级按线上目录可能出现的暴力、恐怖、性暗示等内容如实填写
+- [ ] 场记作为真实主流程通过真机回归，不是截图用空壳页。
+- [ ] 内容目录、每部剧、封面、视频、字幕和宣传素材的权利文件可追溯。
+- [ ] 书面说明 TaleFork 内容与 DRAMILE/蓝果/其他已上架 App 是否重合、为何重合、授权主体与独立产品关系。
+- [ ] 目录与 API 为 TaleFork 可维护的服务契约，不把更换 API 域名当作产品差异。
 
-## 账号删除与隐私
+## 视觉与元数据
 
-- [ ] 设置页展示匿名用户 ID
-- [ ] 本机删除流程能清除匿名身份、进度、收藏、历史和偏好
-- [ ] 服务端已提供并接入永久删除接口，失败可重试且有明确结果
-- [ ] 隐私清单、网络请求、App Store 隐私问卷和政策文本一致
-- [ ] 已确认内容服务是否记录搜索词、IP、请求日志或播放行为，并据此更新申报
+- [ ] App Icon、启动背景、站内品牌标记经设计最终确认，且权利归属清晰。
+- [ ] 截图从本次 TaleFork 真实构建重新采集，不复用旧 App 截图、相框、文案或封面排版。
+- [ ] 截图序列覆盖：放映台、播放中标记、场记编辑器、场记列表/精确回看、片单与本机隐私。
+- [ ] 名称、副标题、描述、关键词、预览、审核备注、营销文案均以 TaleFork 当前功能重新制作。
+- [ ] 支持 URL、隐私政策 URL、营销 URL、联系人和运营主体均独立、公开可访问且非占位。
 
-## 技术验证
+## 隐私、账户和商业
 
-- [ ] iOS 18+ Release Archive 成功并通过 Validate App
-- [ ] TestFlight 在小屏、标准屏和 Pro Max iPhone 安装与播放正常
-- [ ] 顶部物理安全区和底部 Home Indicator 与播放器控制背景连续
-- [ ] 三套语言、深色模式、搜索、选集、续播、进度、收藏和删除本机资料正常
-- [ ] App 图标在构建上传处理后正常显示
-- [ ] 审核备注说明在线短剧、匿名访客机制、免费无支付，以及必要的测试步骤
-- [ ] 审核人员无需手机号、短信验证码或付费即可验证首发内容
+- [ ] 服务端提供永久删除匿名账户与关联数据的契约，App 显示成功/失败/重试状态。
+- [ ] `PrivacyInfo.xcprivacy`、Required Reason API、App Privacy 问卷、隐私政策和真实请求字段一致。
+- [ ] 确认服务端对设备标识、IP、日志、搜索词和播放行为的收集/保留/关联方式。
+- [ ] 第 1～10 集免费、第 11 集起需要 VIP，与客户端锁定规则及审核说明一致；无广告或第三方支付。
+- [ ] App Store Connect 仅建立 `com.talefork.storypaths.vip.weekly` 一个自动续费订阅，周期 1 周，选择目标美元价格点并完成本地化、审核截图和可售区域。
+- [ ] 购买页从 StoreKit 读取本地化价格，清楚说明每周自动续费，并提供恢复购买、隐私政策和使用条款入口。
 
-## 4.3 差异审计
+## 构建、安装和审核
 
-- [ ] 名称、包名、图标、截图、商店文案和网站均为 TaleFork 独立资产
-- [ ] 页面信息架构、视觉语言、播放器、进度模型和源码结构与 Dramile 明显不同
-- [ ] 代码相似度报告已生成；必要的服务端协议字段与系统样板已单独说明
-- [ ] 不通过简单改名、换色或复制旧商店素材来冒充新产品
+- [ ] 使用 Apple 提交时要求的 Xcode / SDK 完成 Archive 和 Validate App。
+- [ ] 小屏、标准屏、Pro Max 真机及 TestFlight 完成主流程、弱网、VoiceOver 和动态字体回归。
+- [ ] 审核服务可用，审核人员无需手机号、验证码或付费即可看到目录并验证场记。
+- [ ] 审核备注清楚说明匿名访客、线上内容、场记本地存储、第 1～10 集免费、第 11 集起的 Apple 周订阅及完整测试路径。

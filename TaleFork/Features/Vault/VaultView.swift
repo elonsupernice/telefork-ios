@@ -22,7 +22,7 @@ struct VaultView: View {
                 .padding(.bottom, 112)
                 .frame(maxWidth: 720).frame(maxWidth: .infinity)
             }.background(PaperBackground())
-        }.navigationTitle("tab.vault").navigationBarTitleDisplayMode(.inline)
+        }.navigationTitle("tab.collection").navigationBarTitleDisplayMode(.large)
     }
 
     @ViewBuilder private var historyContent: some View {
@@ -58,7 +58,7 @@ struct VaultView: View {
 
     private func libraryRow(drama: Drama, entry: WatchHistoryEntry?) -> some View {
         HStack(spacing: 14) {
-            BundleImage(name: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(width: 84, height: 112).clipped().clipShape(RoundedRectangle(cornerRadius: 14))
+            BundleImage(assetName: drama.posterImageName, remoteURL: drama.coverURL).scaledToFill().frame(width: 84, height: 112).clipped().clipShape(RoundedRectangle(cornerRadius: 14))
             VStack(alignment: .leading, spacing: 6) {
                 Text(drama.title.resolved).font(.headline)
                 if let entry, let episode = drama.episode(id: entry.episodeID) {
