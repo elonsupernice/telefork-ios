@@ -18,13 +18,6 @@ workflows:
       xcode: latest
 
     scripts:
-      - name: Fetch or create App Store signing files
-        script: |
-          set -euo pipefail
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
-
       - name: Verify TaleFork release identity
         script: |
           set -euo pipefail
