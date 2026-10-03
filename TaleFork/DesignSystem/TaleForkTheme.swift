@@ -132,6 +132,9 @@ struct DramaPoster: View {
 struct BundleImage: View {
     let assetName: String
     var remoteURL: URL? = nil
+    // Callers may match a scoped surface without changing the app-wide theme.
+    var placeholderColors: [Color] = [TaleForkTheme.ink, TaleForkTheme.violet]
+    var placeholderTint: Color? = nil
 
     @ViewBuilder
     var body: some View {
@@ -140,7 +143,7 @@ struct BundleImage: View {
                 switch phase {
                 case let .success(image): image.resizable()
                 case .failure: artworkFallback
-                case .empty: artworkFallback.overlay { ProgressView().tint(.white) }
+                case .empty: artworkFallback.overlay { ProgressView().tint(placeholderTint ?? .white) }
                 @unknown default: artworkFallback
                 }
             }
@@ -152,8 +155,8 @@ struct BundleImage: View {
     }
 
     private var artworkFallback: some View {
-        Rectangle().fill(LinearGradient(colors: [TaleForkTheme.ink, TaleForkTheme.violet], startPoint: .topLeading, endPoint: .bottomTrailing))
-            .overlay { Image(systemName: "play.rectangle.fill").font(.largeTitle).foregroundStyle(.white.opacity(0.35)) }
+        Rectangle().fill(LinearGradient(colors: placeholderColors, startPoint: .topLeading, endPoint: .bottomTrailing))
+            .overlay { Image(systemName: "play.rectangle.fill").font(.largeTitle).foregroundStyle(placeholderTint ?? .white.opacity(0.35)) }
     }
 }
 
