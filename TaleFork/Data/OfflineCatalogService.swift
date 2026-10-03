@@ -42,7 +42,7 @@ final class OfflineCatalogService: CatalogServing {
 
     func deleteAccount() async throws {}
 
-    func clearLocalIdentity() {}
+    func clearLocalIdentity() async throws {}
 
     private static func makeDrama(
         id: String,
