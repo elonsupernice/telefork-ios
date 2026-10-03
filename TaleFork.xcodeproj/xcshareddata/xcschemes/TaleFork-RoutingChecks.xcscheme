@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme LastUpgradeVersion="2660" version="1.7">
+  <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES">
+    <BuildActionEntries>
+      <BuildActionEntry buildForTesting="YES" buildForRunning="YES" buildForProfiling="NO" buildForArchiving="NO" buildForAnalyzing="YES">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="B902F7C2327297FC583709E1" BuildableName="TaleFork.app" BlueprintName="TaleFork" ReferencedContainer="container:TaleFork.xcodeproj"/>
+      </BuildActionEntry>
+    </BuildActionEntries>
+  </BuildAction>
+  <TestAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.PosixSpawn" shouldUseLaunchSchemeArgsEnv="YES">
+    <Testables>
+      <TestableReference skipped="NO" parallelizable="NO">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="6A1E24F1D627678E5C8106C0" BuildableName="TaleForkTests.xctest" BlueprintName="TaleForkTests" ReferencedContainer="container:TaleFork.xcodeproj"/>
+      </TestableReference>
+      <TestableReference skipped="NO" parallelizable="NO">
+        <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="28A4E0DF68D51C06D760C3DD" BuildableName="TaleForkUITests.xctest" BlueprintName="TaleForkUITests" ReferencedContainer="container:TaleFork.xcodeproj"/>
+      </TestableReference>
+    </Testables>
+  </TestAction>
+  <LaunchAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.PosixSpawn" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugDocumentVersioning="YES" allowLocationSimulation="YES">
+    <BuildableProductRunnable runnableDebuggingMode="0">
+      <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="B902F7C2327297FC583709E1" BuildableName="TaleFork.app" BlueprintName="TaleFork" ReferencedContainer="container:TaleFork.xcodeproj"/>
+    </BuildableProductRunnable>
+    <EnvironmentVariables>
+      <EnvironmentVariable key="TALEFORK_SERVICE_BASE_URL" value="http://127.0.0.1:18642/" isEnabled="YES"/>
+      <EnvironmentVariable key="TALEFORK_OFFLINE_CATALOG" value="1" isEnabled="YES"/>
+    </EnvironmentVariables>
+    <StoreKitConfigurationFileReference identifier="../../TaleFork/Resources/StoreKit/TaleFork.storekit"/>
+  </LaunchAction>
+</Scheme>
