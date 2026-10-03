@@ -110,7 +110,7 @@ struct MomentPlayerView: View {
                 .presentationDetents([.medium, .large])
             }
         }
-        .sheet(isPresented: $showMembership) {
+        .fullScreenCover(isPresented: $showMembership) {
             MembershipPaywallView()
         }
     }
