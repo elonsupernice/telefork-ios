@@ -1,2 +1,2 @@
 "CFBundleDisplayName" = "TaleFork";
-
+"NSUserTrackingUsageDescription" = "允許 TaleFork 使用廣告追蹤權限，以衡量 Facebook 廣告帶來的安裝與訂閱成效。你也可以選擇不允許。";
