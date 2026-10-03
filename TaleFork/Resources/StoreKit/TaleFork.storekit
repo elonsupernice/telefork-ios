@@ -43,7 +43,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "9.9",
+          "displayPrice" : "19.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "2D98FE72-8646-49E5-A0E6-238ED080F509",
@@ -72,7 +72,78 @@
           "productID" : "com.talefork.storypaths.vip.weekly",
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "TaleFork VIP Weekly",
-          "subscriptionGroupID" : "0B3A3F30-94D2-4CA3-A2CE-20F21EE3E5D5"
+          "subscriptionGroupID" : "0B3A3F30-94D2-4CA3-A2CE-20F21EE3E5D5",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "29.9",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "7B3C506D-CC97-48C3-A2C8-791C59DC9007",
+          "localizations" : [
+            {
+              "description" : "Unlocks Episode 11 and every episode after it. Renews automatically every month until cancelled.",
+              "displayName" : "TaleFork VIP Monthly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "解锁第 11 集及之后的全部剧集。每月自动续费，取消后停止续费。",
+              "displayName" : "TaleFork VIP 每月会员",
+              "locale" : "zh_CN"
+            },
+            {
+              "description" : "解鎖第 11 集及之後的全部劇集。每月自動續訂，取消後停止續訂。",
+              "displayName" : "TaleFork VIP 每月會員",
+              "locale" : "zh_HK"
+            },
+            {
+              "description" : "第11話以降の全エピソードを視聴できます。解約するまで毎月自動更新されます。",
+              "displayName" : "TaleFork VIP 月間メンバーシップ",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "com.talefork.storypaths.vip.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "TaleFork VIP Monthly",
+          "subscriptionGroupID" : "0B3A3F30-94D2-4CA3-A2CE-20F21EE3E5D5",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "49.9",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "CF79E0A3-4702-4559-85F2-88D1BC0F1B72",
+          "localizations" : [
+            {
+              "description" : "Unlocks Episode 11 and every episode after it. Renews automatically every three months until cancelled.",
+              "displayName" : "TaleFork VIP Quarterly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "解锁第 11 集及之后的全部剧集。每三个月自动续费，取消后停止续费。",
+              "displayName" : "TaleFork VIP 季度会员",
+              "locale" : "zh_CN"
+            },
+            {
+              "description" : "解鎖第 11 集及之後的全部劇集。每三個月自動續訂，取消後停止續訂。",
+              "displayName" : "TaleFork VIP 季度會員",
+              "locale" : "zh_HK"
+            },
+            {
+              "description" : "第11話以降の全エピソードを視聴できます。解約するまで3か月ごとに自動更新されます。",
+              "displayName" : "TaleFork VIP 3か月メンバーシップ",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "com.talefork.storypaths.vip.quarterly",
+          "recurringSubscriptionPeriod" : "P3M",
+          "referenceName" : "TaleFork VIP Quarterly",
+          "subscriptionGroupID" : "0B3A3F30-94D2-4CA3-A2CE-20F21EE3E5D5",
+          "type" : "RecurringSubscription"
         }
       ]
     }
