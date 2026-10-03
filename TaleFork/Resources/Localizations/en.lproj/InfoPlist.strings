@@ -1,2 +1,2 @@
 "CFBundleDisplayName" = "TaleFork";
-
+"NSUserTrackingUsageDescription" = "Allow TaleFork to use advertising tracking permission to measure installs and subscription results from Facebook ads. You can choose not to allow it.";
