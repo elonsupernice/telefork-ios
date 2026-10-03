@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct TaleForkApp: App {
+    @UIApplicationDelegateAdaptor(TaleForkApplicationDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @State private var store: ProgressStore
     @State private var catalog: CatalogStore
@@ -32,6 +33,20 @@ struct TaleForkApp: App {
                 .environment(membership)
                 .preferredColorScheme(preferredScheme)
                 .task { await membership.refreshEntitlements() }
+                .onOpenURL { url in
+                    _ = appDelegate.application(UIApplication.shared, open: url)
+                }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    guard let url = activity.webpageURL else { return }
+                    _ = appDelegate.application(UIApplication.shared, open: url)
+                }
+                .task(id: scenePhase) {
+                    guard scenePhase == .active else { return }
+                    MetaAttribution.shared.activate()
+                    await MetaAttribution.shared.requestTrackingAuthorizationIfNeeded()
+                    guard !Task.isCancelled else { return }
+                    await TaleForkService.shared.bindSDKContextIfAvailable()
+                }
                 .onChange(of: scenePhase) { _, phase in
                     guard phase == .active else { return }
                     Task { await membership.refreshEntitlements() }
