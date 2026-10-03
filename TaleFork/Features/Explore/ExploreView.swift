@@ -83,7 +83,7 @@ struct ExploreView: View {
         .fullScreenCover(item: $playerDrama) { drama in
             MomentPlayerView(drama: drama)
         }
-        .sheet(isPresented: $showMembership) {
+        .fullScreenCover(isPresented: $showMembership) {
             MembershipPaywallView()
         }
         .task { await catalog.load() }
@@ -303,7 +303,7 @@ struct DramaDetailView: View {
         }
         .background(PaperBackground()).navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $showPlayer) { MomentPlayerView(drama: drama) }
-        .sheet(isPresented: $showMembership) { MembershipPaywallView() }
+        .fullScreenCover(isPresented: $showMembership) { MembershipPaywallView() }
     }
 
     private var episodeList: some View {
