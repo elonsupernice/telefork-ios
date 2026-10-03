@@ -1,4 +1,59 @@
 workflows:
+  talefork-simulator:
+    name: TaleFork Simulator H5 Check
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      vars:
+        XCODE_PROJECT: TaleFork.xcodeproj
+        XCODE_SCHEME: TaleFork
+      xcode: latest
+    scripts:
+      - name: Build unsigned simulator app only
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+          xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/simulator \
+            ARCHS=arm64 CODE_SIGNING_ALLOWED=NO build
+          mkdir -p build/simulator-artifact
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/simulator/Build/Products/Debug-iphonesimulator/TaleFork.app \
+            build/simulator-artifact/TaleFork-simulator.zip
+          git rev-parse HEAD > build/simulator-artifact/source-commit.txt
+      - name: Verify membership entry and retention on cloud simulator
+        script: |
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+          SIMULATOR_UDID="$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          devices = [device for runtime, entries in json.load(sys.stdin)["devices"].items()
+                     if ".iOS-" in runtime for device in entries
+                     if device.get("isAvailable") and device["name"].startswith("iPhone")]
+          selected = next((device for device in devices if device["name"] == "iPhone 17"),
+                          next(iter(devices), None))
+          if selected is None:
+              raise SystemExit("No available iPhone simulator")
+          print(selected["udid"])
+          ')"
+          xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" \
+            -configuration Debug -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+            -derivedDataPath build/simulator CODE_SIGNING_ALLOWED=NO \
+            -parallel-testing-enabled NO \
+            -only-testing:TaleForkTests \
+            -only-testing:TaleForkUITests/TaleForkSceneNotesUITests/testEpisodeElevenIsLockedAndOpensVIPPaywall \
+            -only-testing:TaleForkUITests/TaleForkSceneNotesUITests/testOnboardingOpensMembershipAndCloseShowsRetention \
+            -resultBundlePath build/simulator-checks.xcresult test \
+            | tee build/simulator-checks.log
+    artifacts:
+      - build/simulator-artifact/TaleFork-simulator.zip
+      - build/simulator-artifact/source-commit.txt
+      - build/simulator-checks.xcresult
+      - build/simulator-checks.log
+
   talefork-app-store:
     name: TaleFork App Store
     instance_type: mac_mini_m2
@@ -56,5 +111,5 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        submit_to_testflight: false
         submit_to_app_store: false
