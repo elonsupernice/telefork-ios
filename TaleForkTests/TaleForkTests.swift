@@ -1,6 +1,108 @@
 import AVFoundation
+import SwiftUI
 import XCTest
+#if targetEnvironment(simulator)
+import StoreKit
+import StoreKitTest
+#endif
 @testable import TaleFork
+
+@MainActor
+final class AttributionSDKConfigurationTests: XCTestCase {
+    func testSDKContextCannotClaimABusinessEventOrGrantAdvertisingConsent() throws {
+        let context = SDKContextReport(metaAnonymousID: nil, firebaseAppInstanceID: "sdk-fixture-instance",
+            metaAdvertiserTrackingEnabled: false, metaApplicationTrackingEnabled: false,
+            googleAnalyticsStorageGranted: true, googleAdUserDataGranted: false,
+            googleAdPersonalizationGranted: false, appVersion: "1.0", appBuild: "1",
+            osVersion: "26.5", deviceModel: "iPhone", locale: "zh_HK", firebaseSessionID: 12345,
+            firebaseAppID: "1:765585726405:ios:20ae4441a19fc5bb1cc9ac")
+        let fields = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(context)) as? [String: Any])
+        XCTAssertEqual(fields["firebaseAppInstanceID"] as? String, "sdk-fixture-instance")
+        XCTAssertEqual(fields["firebaseSessionID"] as? Int64, 12345)
+        XCTAssertEqual(fields["firebaseAppID"] as? String, "1:765585726405:ios:20ae4441a19fc5bb1cc9ac")
+        XCTAssertNil(fields["metaAnonymousID"])
+        XCTAssertEqual(fields["googleAdUserDataGranted"] as? Bool, false)
+        XCTAssertEqual(fields["googleAdPersonalizationGranted"] as? Bool, false)
+        for forbidden in ["kind", "eventID", "eventTime", "value", "currency", "transactionID", "viewerId"] {
+            XCTAssertNil(fields[forbidden])
+        }
+    }
+
+    func testMissingFirebaseInitializationHasNoSyntheticInstanceID() async {
+        // XCTest suppresses SDK initialization; no device seed or UUID fallback.
+        XCTAssertFalse(FirebaseAttribution.shared.isConfigured)
+        FirebaseAttribution.shared.recordScreen(name: "fixture", screenClass: "XCTest")
+        XCTAssertFalse(FirebaseAttribution.shared.isConfigured)
+        XCTAssertNil(FirebaseAttribution.shared.appInstanceID)
+        XCTAssertNil(FirebaseAttribution.shared.appID)
+        let sessionID = await FirebaseAttribution.shared.sessionID()
+        XCTAssertNil(sessionID)
+    }
+
+    func testMetaConfigurationFailsClosedWithoutRealClientToken() {
+        XCTAssertFalse(MetaAttribution.hasClientConfiguration([:]))
+        XCTAssertFalse(MetaAttribution.hasClientConfiguration([
+            "FacebookAppID": "2221984505012142", "FacebookClientToken": "  "
+        ]))
+        XCTAssertFalse(MetaAttribution.hasClientConfiguration([
+            "FacebookAppID": "2221984505012142", "FacebookClientToken": "$(TALEFORK_META_CLIENT_TOKEN)"
+        ]))
+        XCTAssertFalse(MetaAttribution.hasClientConfiguration([
+            "FacebookAppID": "other-app", "FacebookClientToken": "fixture-client-token"
+        ]))
+        XCTAssertTrue(MetaAttribution.hasClientConfiguration([
+            "FacebookAppID": "2221984505012142", "FacebookClientToken": "fixture-client-token"
+        ]))
+    }
+
+    func testBundledMetaConfigurationIsResolvedWithoutServerCredentials() throws {
+        let info = try XCTUnwrap(Bundle.main.infoDictionary)
+        XCTAssertTrue(MetaAttribution.hasClientConfiguration(info))
+        let token = try XCTUnwrap(info["FacebookClientToken"] as? String)
+        // A client token is public SDK configuration, not an app secret or CAPI token.
+        XCTAssertEqual(token.count, 32)
+        XCTAssertTrue(token.allSatisfy(\.isHexDigit))
+        for forbidden in ["FacebookAppSecret", "MetaCAPIAccessToken", "TELEFOKR_META_ACCESS_TOKEN"] {
+            XCTAssertNil(info[forbidden])
+        }
+        XCTAssertEqual(info["FacebookAutoLogAppEventsEnabled"] as? Bool, false)
+        XCTAssertEqual(info["FacebookAdvertiserIDCollectionEnabled"] as? Bool, false)
+    }
+
+    func testFixtureRunsCannotBecomeProductionAdEvents() {
+        XCTAssertTrue(AttributionRuntime.shouldCollect(environment: [:]))
+        for environment in [
+            ["TALEFORK_ANALYTICS_DISABLED": "1"],
+            ["TALEFORK_OFFLINE_CATALOG": "1"],
+            ["TALEFORK_UI_SCREEN": "membership"],
+            ["XCTestConfigurationFilePath": "fixture.xctestconfiguration"],
+            ["XCODE_RUNNING_FOR_PREVIEWS": "1"]
+        ] {
+            XCTAssertFalse(AttributionRuntime.shouldCollect(environment: environment))
+        }
+    }
+
+    func testXCTestCannotStartMetaOrRequestTrackingAuthorization() async {
+        MetaAttribution.shared.start()
+        MetaAttribution.shared.activate()
+        await MetaAttribution.shared.requestTrackingAuthorizationIfNeeded()
+        XCTAssertFalse(MetaAttribution.shared.isConfigured)
+        XCTAssertTrue(MetaAttribution.shared.context.anonymousID.isEmpty)
+    }
+
+    func testFirebaseConfigMatchesOnlyThisApp() throws {
+        let url = try XCTUnwrap(Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist"))
+        let data = try Data(contentsOf: url)
+        let config = try XCTUnwrap(PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any])
+        XCTAssertEqual(config["BUNDLE_ID"] as? String, Bundle.main.bundleIdentifier)
+        XCTAssertEqual(config["PROJECT_ID"] as? String, "talefork-44656")
+        XCTAssertEqual(config["GOOGLE_APP_ID"] as? String, "1:765585726405:ios:20ae4441a19fc5bb1cc9ac")
+        XCTAssertEqual(Bundle.main.object(forInfoDictionaryKey: "FacebookAutoLogAppEventsEnabled") as? Bool, false)
+        XCTAssertEqual(Bundle.main.object(forInfoDictionaryKey: "FacebookAdvertiserIDCollectionEnabled") as? Bool, false)
+        XCTAssertEqual(Bundle.main.object(forInfoDictionaryKey: "GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED") as? Bool, false)
+        XCTAssertEqual(Bundle.main.object(forInfoDictionaryKey: "FirebaseAutomaticScreenReportingEnabled") as? Bool, false)
+    }
+}
 
 final class DramaModelTests: XCTestCase {
     func testVIPAccessStartsAtEpisodeEleven() {
@@ -53,9 +155,32 @@ final class DramaModelTests: XCTestCase {
     }
 }
 
+final class MembershipPreviewSourceTests: XCTestCase {
+    func testRetentionPreviewUsesHTTPSAndFreeEpisodeOnly() throws {
+        let drama = makeTestDrama()
+        XCTAssertEqual(MembershipPreviewSource.url(for: drama), try XCTUnwrap(drama.episodes.first?.videoURL))
+        let episodes = [
+            DramaEpisode(id: "locked", number: 11, title: .server("Locked"), sceneCaption: .server(""), clipName: "", videoURL: URL(string: "https://example.test/locked.mp4"), durationSeconds: 10),
+            DramaEpisode(id: "fixture", number: 1, title: .server("Fixture"), sceneCaption: .server(""), clipName: "", videoURL: URL(string: "talefork-preview://fake"), durationSeconds: 10)
+        ]
+        let unavailable = Drama(id: drama.id, title: drama.title, subtitle: drama.subtitle, storySummary: drama.storySummary,
+                                posterImageName: drama.posterImageName, coverURL: drama.coverURL, accentHex: drama.accentHex,
+                                availability: drama.availability, entryEpisodeID: episodes[0].id, episodes: episodes)
+        XCTAssertNil(MembershipPreviewSource.url(for: unavailable))
+    }
+}
+
 @MainActor
 final class MembershipConfigurationTests: XCTestCase {
-    func testWeeklySubscriptionConfigurationContract() throws {
+    func testPartialAppleCatalogStillNeedsRefresh() {
+        XCTAssertFalse(MembershipAccess.hasAllProducts(in: []))
+        XCTAssertFalse(MembershipAccess.hasAllProducts(in: [MembershipAccess.weeklyProductID]))
+        XCTAssertFalse(MembershipAccess.hasAllProducts(in: [MembershipAccess.weeklyProductID, MembershipAccess.monthlyProductID]))
+        XCTAssertTrue(MembershipAccess.hasAllProducts(in: Array(MembershipAccess.productIDs.reversed())))
+        XCTAssertFalse(MembershipAccess.hasAllProducts(in: [MembershipAccess.weeklyProductID, MembershipAccess.weeklyProductID, "unrelated.product"]))
+    }
+
+    func testAppleConfigurationIncludesWeekMonthAndQuarter() throws {
         let configurationURL = try XCTUnwrap(
             Bundle(for: MembershipConfigurationTests.self).url(forResource: "TaleFork", withExtension: "storekit")
         )
@@ -68,10 +193,169 @@ final class MembershipConfigurationTests: XCTestCase {
         let weekly = try XCTUnwrap(subscriptions.first)
 
         XCTAssertEqual(weekly["productID"] as? String, "com.talefork.storypaths.vip.weekly")
-        XCTAssertEqual(weekly["displayPrice"] as? String, "9.9")
+        XCTAssertEqual(weekly["displayPrice"] as? String, "19.99")
         XCTAssertEqual(weekly["recurringSubscriptionPeriod"] as? String, "P1W")
-        XCTAssertEqual(subscriptions.count, 1)
+        let settings = try XCTUnwrap(configuration["settings"] as? [String: Any])
+        XCTAssertEqual(settings["_locale"] as? String, "en_US")
+        XCTAssertEqual(settings["_storefront"] as? String, "USA")
+        XCTAssertEqual(subscriptions.count, 3)
         XCTAssertEqual(weekly["productID"] as? String, MembershipAccess.weeklyProductID)
+        XCTAssertEqual(subscriptions.map { $0["productID"] as? String }, MembershipAccess.productIDs)
+        XCTAssertEqual(subscriptions.map { $0["recurringSubscriptionPeriod"] as? String }, ["P1W", "P1M", "P3M"])
+        XCTAssertEqual(subscriptions.map { $0["displayPrice"] as? String }, ["19.99", "29.9", "49.9"])
+        XCTAssertTrue(subscriptions.allSatisfy { $0["subscriptionGroupID"] as? String == groups.first?["id"] as? String })
+        XCTAssertTrue(subscriptions.allSatisfy { $0["type"] as? String == "RecurringSubscription" })
+    }
+
+    func testAllConfiguredApplePlansGrantAccessAndFlowStartsAtThreeMinutes() {
+        for id in MembershipAccess.productIDs { XCTAssertTrue(MembershipAccess.isMembershipProduct(id)) }
+        XCTAssertFalse(MembershipAccess.isMembershipProduct("unrelated.product"))
+        XCTAssertTrue(MembershipAccess.isMembershipProduct("com.talefork.storypaths.vip.monthly"))
+        XCTAssertTrue(MembershipAccess.isMembershipProduct("com.talefork.storypaths.vip.quarterly"))
+        XCTAssertEqual(MembershipAccess.periodKey(for: MembershipAccess.monthlyProductID), "membership.apple.monthly")
+        XCTAssertEqual(MembershipAccess.periodKey(for: MembershipAccess.quarterlyProductID), "membership.apple.quarterly")
+        let store = MembershipStore()
+        store.beginPaywallFlow()
+        let original = store.promotionDeadline
+        XCTAssertEqual(store.remainingPromotionSeconds, 180)
+        store.beginPaywallFlow()
+        XCTAssertEqual(store.promotionDeadline, original)
+        store.endPaywallFlow()
+    }
+}
+
+#if targetEnvironment(simulator)
+@MainActor
+final class MembershipStoreKitRuntimeTests: XCTestCase {
+    /// Verifies the actual StoreKit loading path, not just the JSON contents.
+    /// Local testing only; never purchases or clears transactions.
+    func testLocalStoreKitReturnsAllConfiguredMemberships() async throws {
+        let configurationURL = try XCTUnwrap(
+            Bundle(for: MembershipStoreKitRuntimeTests.self).url(forResource: "TaleFork", withExtension: "storekit")
+        )
+        let session = try SKTestSession(contentsOf: configurationURL)
+        let products = try await Product.products(for: MembershipAccess.productIDs)
+        XCTAssertEqual(Set(products.map(\.id)), Set(MembershipAccess.productIDs))
+        XCTAssertTrue(products.allSatisfy { $0.type == .autoRenewable })
+        let expectedPrices: [String: Decimal] = [
+            MembershipAccess.weeklyProductID: Decimal(string: "19.99")!,
+            MembershipAccess.monthlyProductID: Decimal(string: "29.90")!,
+            MembershipAccess.quarterlyProductID: Decimal(string: "49.90")!
+        ]
+        for product in products {
+            XCTAssertEqual(product.price, expectedPrices[product.id])
+        }
+        withExtendedLifetime(session) {}
+    }
+}
+#endif
+
+final class MembershipClientContractTests: XCTestCase {
+    func testClientUsesGenericServerOrchestrationAndAppleEndpoints() {
+        let expected: Set<String> = [
+            "tale-gateway/v2/heartbeat", "tale-gateway/v2/identity/device-pass",
+            "tale-gateway/v2/launch/manifest", "tale-gateway/v2/screenings/lineup",
+            "tale-gateway/v2/screenings/search", "tale-gateway/v2/membership/status",
+            "tale-gateway/v2/membership/offers", "tale-gateway/v2/membership/checkout",
+            "tale-gateway/v2/membership/apple/context", "tale-gateway/v2/membership/apple/transactions",
+            "tale-gateway/v2/analytics/meta-events"
+        ]
+        XCTAssertEqual(Set(ServiceRoute.allCases.map(\.rawValue)), expected)
+    }
+
+    func testExplicitReviewFlagWinsAndMissingConfigurationFailsClosed() {
+        XCTAssertEqual(MembershipPresentationConfiguration(reviewModel: true, showVip: true, allowedHosts: []).route, .appStore)
+        XCTAssertEqual(MembershipPresentationConfiguration(reviewModel: false, showVip: false, allowedHosts: []).route, .hostedPage)
+        XCTAssertEqual(MembershipPresentationConfiguration(reviewModel: nil, showVip: true, allowedHosts: []).route, .hostedPage)
+        XCTAssertEqual(MembershipPresentationConfiguration(reviewModel: nil, showVip: false, allowedHosts: []).route, .appStore)
+        XCTAssertEqual(MembershipPresentationConfiguration(reviewModel: nil, showVip: nil, allowedHosts: []).route, .appStore)
+    }
+
+    func testReturnedPageMustBeHTTPSOnServerAllowedHost() throws {
+        let config = MembershipPresentationConfiguration(reviewModel: false, showVip: true, allowedHosts: ["checkout.example.test"])
+        XCTAssertTrue(config.accepts(try XCTUnwrap(URL(string: "https://checkout.example.test/page?id=123"))))
+        for raw in ["http://checkout.example.test/page", "https://other.example.test/page",
+                    "https://user:pass@checkout.example.test/page", "https://checkout.example.test:8443/page"] {
+            XCTAssertFalse(config.accepts(try XCTUnwrap(URL(string: raw))))
+        }
+    }
+
+    func testOfferDescriptionAndPurchaseDetailsUseSeparateBackendFields() throws {
+        let data = Data(#"{"offers":[{"id":"2019","title":"訂閱會員","displayPrice":"HK$1.00","default":true,"description":"internal-name","vipDesc":"原價 788","trailDesc":"體驗及續訂須知"}]}"#.utf8)
+        let response = try JSONDecoder().decode(HostedMembershipOfferCollection.self, from: data)
+        let offer = try XCTUnwrap(response.offers.first)
+        XCTAssertTrue(offer.isDisplayable)
+        XCTAssertTrue(offer.isDefault)
+        XCTAssertEqual(offer.vipDesc, "原價 788")
+        XCTAssertEqual(offer.trailDesc, "體驗及續訂須知")
+        XCTAssertEqual(offer.displayPrice, "HK$1.00")
+    }
+}
+
+@MainActor
+final class MembershipPaywallLoadingTests: XCTestCase {
+    private func snapshot(review: Bool) -> MembershipPresentationSnapshot {
+        .init(configuration: .init(reviewModel: review, showVip: !review, allowedHosts: []), offers: [])
+    }
+
+    private func waitUntil(_ condition: @MainActor () -> Bool) async throws {
+        let deadline = Date().addingTimeInterval(2)
+        while !condition(), Date() < deadline { try await Task.sleep(for: .milliseconds(5)) }
+        XCTAssertTrue(condition())
+    }
+
+    func testOnOffOnReloadReplacesRouteInsteadOfKeepingAppleCache() async throws {
+        let loader = MembershipPaywallLoader()
+        for review in [true, false, true, false] {
+            loader.load { self.snapshot(review: review) }
+            try await waitUntil { !loader.isLoading }
+            XCTAssertNil(loader.errorMessage)
+            XCTAssertEqual(loader.snapshot?.configuration.route, review ? .appStore : .hostedPage)
+        }
+        loader.cancel()
+    }
+
+    func testTimeoutEndsSpinnerEvenIfFetchIgnoresCancellation() async throws {
+        let loader = MembershipPaywallLoader()
+        var continuation: CheckedContinuation<MembershipPresentationSnapshot, Never>?
+        loader.load(timeout: .milliseconds(30)) {
+            await withCheckedContinuation { continuation = $0 }
+        }
+        try await waitUntil { continuation != nil }
+        try await waitUntil { !loader.isLoading }
+        XCTAssertNotNil(loader.errorMessage)
+        XCTAssertNil(loader.snapshot)
+        continuation?.resume(returning: snapshot(review: false))
+        try await Task.sleep(for: .milliseconds(20))
+        XCTAssertNil(loader.snapshot, "A timed-out response must not replace the error state")
+        loader.cancel()
+    }
+
+    func testRetryIgnoresPreviousLateResponse() async throws {
+        let loader = MembershipPaywallLoader()
+        var continuation: CheckedContinuation<MembershipPresentationSnapshot, Never>?
+        loader.load { await withCheckedContinuation { continuation = $0 } }
+        try await waitUntil { continuation != nil }
+        loader.load { self.snapshot(review: false) }
+        try await waitUntil { !loader.isLoading }
+        continuation?.resume(returning: snapshot(review: true))
+        try await Task.sleep(for: .milliseconds(20))
+        XCTAssertEqual(loader.snapshot?.configuration.route, .hostedPage)
+        XCTAssertNil(loader.errorMessage)
+        loader.cancel()
+    }
+
+    func testFailureCanBeRetriedWithoutFallingBackToApple() async throws {
+        let loader = MembershipPaywallLoader()
+        loader.load { throw URLError(.cannotConnectToHost) }
+        try await waitUntil { !loader.isLoading }
+        XCTAssertNotNil(loader.errorMessage)
+        XCTAssertNil(loader.snapshot)
+        loader.load { self.snapshot(review: false) }
+        try await waitUntil { !loader.isLoading }
+        XCTAssertNil(loader.errorMessage)
+        XCTAssertEqual(loader.snapshot?.configuration.route, .hostedPage)
+        loader.cancel()
     }
 }
 
@@ -175,6 +459,36 @@ final class CatalogStoreTests: XCTestCase {
         XCTAssertFalse(catalog.isSearching)
     }
 }
+
+#if targetEnvironment(simulator)
+final class SimulatorIdentityKeychainTests: XCTestCase {
+    /// Real SecItem access catches missing simulator entitlements (-34018),
+    /// which otherwise prevents the live catalog from making any request.
+    func testAdHocSimulatorCanReadAndUpdateItsOwnKeychain() async throws {
+        let keychain = IdentityKeychain(service: "com.talefork.storypaths.tests.\(UUID().uuidString)")
+        let account = "carousel-regression"
+        do {
+            let missing = try await keychain.read(account)
+            XCTAssertNil(missing)
+            let initial = Data("non-secret-test-fixture".utf8)
+            try await keychain.write(initial, account: account)
+            let stored = try await keychain.read(account)
+            XCTAssertEqual(stored, initial)
+            let updated = Data("updated-test-fixture".utf8)
+            try await keychain.write(updated, account: account)
+            let replacement = try await keychain.read(account)
+            XCTAssertEqual(replacement, updated)
+            try await keychain.delete(account)
+            let removed = try await keychain.read(account)
+            XCTAssertNil(removed)
+        } catch {
+            // Only this test's UUID-scoped fixture is eligible for cleanup.
+            try? await keychain.delete(account)
+            throw error
+        }
+    }
+}
+#endif
 
 @MainActor
 final class ProgressStoreTests: XCTestCase {
@@ -306,7 +620,7 @@ private final class FakeCatalogService: CatalogServing {
 
     func deleteAccount() async throws {}
 
-    func clearLocalIdentity() {}
+    func clearLocalIdentity() async throws {}
 }
 
 private enum FakeServiceError: LocalizedError {
