@@ -5,7 +5,6 @@ struct StoryStudioView: View {
     @Environment(CatalogStore.self) private var catalog
     @Environment(MembershipStore.self) private var membership
     @State private var showResetConfirmation = false
-    @State private var showAccountDeletionConfirmation = false
     @State private var showMembership = false
 
     var body: some View {
@@ -16,23 +15,8 @@ struct StoryStudioView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     settingsHeader
 
-                    SettingsCard(title: "settings.membership", symbol: "crown.fill") {
-                        HStack(spacing: 12) {
-                            Label(
-                                membership.isSubscribed ? "settings.membership.active" : "settings.membership.inactive",
-                                systemImage: membership.isSubscribed ? "checkmark.seal.fill" : "lock.fill"
-                            )
-                            .foregroundStyle(membership.isSubscribed ? TaleForkTheme.mint : .secondary)
-                            Spacer()
-                            Button(membership.isSubscribed ? "settings.membership.manage" : "settings.membership.join") {
-                                showMembership = true
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(TaleForkTheme.coral)
-                        }
-                        Text("settings.membership.detail")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    ProfileMembershipCard(isSubscribed: membership.isSubscribed) {
+                        showMembership = true
                     }
 
                     SettingsCard(title: "settings.account", symbol: "person.crop.circle") {
@@ -46,13 +30,6 @@ struct StoryStudioView: View {
                                 Label("settings.user.id", systemImage: "number")
                                 userIDText
                             }
-                        }
-                        Divider()
-                        Button(role: .destructive) {
-                            showAccountDeletionConfirmation = true
-                        } label: {
-                            Label("settings.delete.account", systemImage: "person.crop.circle.badge.minus")
-                                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                         }
                     }
 
@@ -113,6 +90,16 @@ struct StoryStudioView: View {
                         }
                     }
 
+                    NavigationLink {
+                        AccountSettingsView()
+                    } label: {
+                        settingsRow("settings.general", symbol: "gearshape")
+                            .frame(minHeight: 44)
+                            .padding(18)
+                            .background(.background.opacity(0.78), in: RoundedRectangle(cornerRadius: 22))
+                    }
+                    .accessibilityIdentifier("profile-settings")
+
                     Text("settings.footer")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -138,19 +125,7 @@ struct StoryStudioView: View {
         } message: {
             Text("settings.reset.message")
         }
-        .alert("settings.delete.account.title", isPresented: $showAccountDeletionConfirmation) {
-            Button("common.cancel", role: .cancel) {}
-            Button("settings.delete.account.confirm", role: .destructive) {
-                Task {
-                    guard await catalog.deleteAccount() else { return }
-                    TactileFeedback.success(enabled: store.preferences.tactileFeedbackEnabled)
-                    store.deleteLocalAccount()
-                }
-            }
-        } message: {
-            Text("settings.delete.account.message")
-        }
-        .sheet(isPresented: $showMembership) {
+        .fullScreenCover(isPresented: $showMembership) {
             MembershipPaywallView()
         }
         .task { await catalog.load() }
