@@ -23,11 +23,15 @@ TaleFork 是一款把“看短剧”与“记住某个故事瞬间”放在同�
 
 ## 数据与商业边界
 
-第 1～10 集可免费观看，第 11 集起需要通过 Apple StoreKit 2 开通 TaleFork VIP 每周自动续费会员；仅保留一个订阅套餐，不接入第三方支付、广告或归因 SDK。界面价格读取 Apple 返回的本地化价格，本地 StoreKit 配置使用 US$9.90，正式价格必须在 App Store Connect 选择并以购买页显示为准。目录和视频依赖线上内容服务；场记、播放进度、收藏和偏好存储在设备上。实际申报必须与 `PrivacyInfo.xcprivacy`、公开隐私政策和服务端真实行为一致。
+第 1～10 集可免费观看，第 11 集起需要通过 Apple StoreKit 2 开通 TaleFork VIP 每周自动续费会员。后台通过现有 `/tale-gateway/v2` 的 `launch/manifest` 配置审核模式、归因和支付路由：审核模式始终只展示 Apple 内购；只有付费来源并带有效证据时，才允许显示后台返回的三方套餐。三方支付必须使用后台返回的短期 HTTPS 地址，并在 App 内 `WKWebView` 打开；客户端不保存卡号、商户密钥或 Meta CAPI 密钥。Apple 价格读取 StoreKit 返回的本地化价格，不在代码中硬编码。Meta SDK 用于安装、会话和归因；Firebase 用于安装与应用测量。三个业务转化事件的服务端链路仍待补齐与验证，不能把现有客户端事件转发当作真实业务结果。SDK 版本、私有配置方式与验收边界见 `QA/AdvertisingAttribution.md`。目录和视频依赖线上内容服务；场记、播放进度、收藏和偏好存储在设备上。实际申报必须与 `PrivacyInfo.xcprivacy`、公开隐私政策和服务端真实行为一致。
 
 ## 工程与验证
 
 `Scripts/generate_project.py` 从 TaleFork 自身的 App、Data、Domain、DesignSystem、Features、Shared 和 Resources 分组生成 `TaleFork.xcodeproj`。工程包含 1 个 App target、Unit Tests 和 UI Tests，未绑定 Apple Developer Team。
+
+当前生成脚本尚未覆盖工程中的广告 SDK 包依赖和 Analytics 分组；不要直接运行它覆盖已配置的工程。
+
+模拟器覆盖安装使用 `rtk proxy bash Scripts/install_simulator.sh <模拟器 UDID>`。脚本先验证真实 Keychain 读写，再以 ad-hoc 签名重新构建并安装，不卸载、不清空账号数据。不要把 `CODE_SIGNING_ALLOWED=NO` 的构建用于模拟器安装：它可能丢失登录存储权限并报 `-34018`；无签名构建成功不代表登录可用。
 
 2026-08-29 已在 iPhone 17 / iOS 26.5 模拟器运行完整离线测试：Unit 11 passed、1 个线上 opt-in 测试 skipped；UI 5 passed。Release iPhoneOS 无签名构建成功。验证过程没有请求线上 API、注册访客或播放线上内容，也没有签名、Archive 或打包。
 
