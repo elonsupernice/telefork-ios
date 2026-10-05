@@ -30,7 +30,6 @@ ui_test_files = [(path, path.relative_to(ROOT / "TaleForkUITests").as_posix()) f
 resources = [
     ("Assets.xcassets", "Resources/Assets.xcassets", "folder.assetcatalog"),
     ("PrivacyInfo.xcprivacy", "Resources/PrivacyInfo.xcprivacy", "text.xml"),
-    ("privacy-policy.html", "Resources/Legal/privacy-policy.html", "text.html"),
     ("terms-of-use.html", "Resources/Legal/terms-of-use.html", "text.html"),
 ]
 
