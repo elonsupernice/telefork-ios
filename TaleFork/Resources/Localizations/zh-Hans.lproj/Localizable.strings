@@ -171,7 +171,8 @@
 "player.next" = "播放下一集";
 "player.series.complete" = "已看完整部短劇";
 "legal.unavailable.title" = "暫時無法開啟文件";
-"legal.unavailable.body" = "無法讀取 App 內的文件，請重新安裝後再試。";
+"legal.loading" = "载入中…";
+"legal.unavailable.body" = "暂时无法读取文件，请稍后重试。";
 "service.session.expired" = "登录状态已过期，请重试。";
 "membership.presentation.loading" = "正在加载支付方案…";
 "membership.hosted.loading" = "載入中…";
