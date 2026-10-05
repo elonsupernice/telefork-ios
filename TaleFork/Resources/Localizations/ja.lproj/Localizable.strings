@@ -171,7 +171,8 @@
 "player.next" = "次の話を再生";
 "player.series.complete" = "全話視聴しました";
 "legal.unavailable.title" = "文書を表示できません";
-"legal.unavailable.body" = "同梱された文書を開けませんでした。アプリを再インストールしてから、もう一度お試しください。";
+"legal.loading" = "読み込み中…";
+"legal.unavailable.body" = "文書を開けませんでした。しばらくしてから再試行してください。";
 "service.session.expired" = "セッションの有効期限が切れました。もう一度お試しください。";
 "membership.presentation.loading" = "支払い方法を読み込んでいます…";
 "membership.hosted.loading" = "読み込み中…";
