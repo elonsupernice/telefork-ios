@@ -314,12 +314,6 @@
 		5107D93F8D9D781F5FAED86D /* PrivacyInfo.xcprivacy in Resources */ = {
 			isa = PBXBuildFile; fileRef = 1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */;
 		};
-		2EE611779289671749418A19 /* privacy-policy.html */ = {
-			isa = PBXFileReference; lastKnownFileType = text.html; path = "Resources/Legal/privacy-policy.html"; sourceTree = "<group>";
-		};
-		F02C45815237D8895AEEB5DE /* privacy-policy.html in Resources */ = {
-			isa = PBXBuildFile; fileRef = 2EE611779289671749418A19 /* privacy-policy.html */;
-		};
 		C34C88A08FD8558D2EE86688 /* terms-of-use.html */ = {
 			isa = PBXFileReference; lastKnownFileType = text.html; path = "Resources/Legal/terms-of-use.html"; sourceTree = "<group>";
 		};
@@ -548,7 +542,6 @@
 				C0DEC0DE2026100300000103 /* GoogleService-Info.plist */,
 				60E0818503A7590D6EDF1D7E /* Assets.xcassets */,
 				1F5B784E32B59EAB3813F54E /* PrivacyInfo.xcprivacy */,
-				2EE611779289671749418A19 /* privacy-policy.html */,
 				C34C88A08FD8558D2EE86688 /* terms-of-use.html */,
 				D9A99A92A96E24DE1B0F23C7 /* TaleFork.storekit */,
 				DE31DD00C5CDDD7FAB35B978 /* Localizations */,
@@ -654,7 +647,6 @@
 				C0DEC0DE2026100300000104 /* GoogleService-Info.plist in Resources */,
 				26000CE808D0C33EB6F8054E /* Assets.xcassets in Resources */,
 				5107D93F8D9D781F5FAED86D /* PrivacyInfo.xcprivacy in Resources */,
-				F02C45815237D8895AEEB5DE /* privacy-policy.html in Resources */,
 				D14FB88F7924B991ABAC7091 /* terms-of-use.html in Resources */,
 				F11FAFAF4C3CDA40D56539B7 /* Localizable.strings in Resources */,
 				42ABAC958588B4B7E4AAF410 /* InfoPlist.strings in Resources */,
