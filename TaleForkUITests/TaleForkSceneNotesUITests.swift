@@ -7,6 +7,30 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    func testPrivacyPolicyLoadsWebsiteInsideApp() throws {
+        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "studio"
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
+        app.launchArguments = ["-AppleLanguages", "(zh-Hant)", "-AppleLocale", "zh_HK"]
+        app.launch()
+        defer { app.terminate() }
+
+        let privacy = app.buttons["隱私政策"]
+        XCTAssertTrue(privacy.waitForExistence(timeout: 10))
+        privacy.tap()
+        let document = app.webViews["privacy-policy-webview"]
+        XCTAssertTrue(document.waitForExistence(timeout: 10))
+        XCTAssertTrue(document.staticTexts["TaleFork Privacy Policy"].waitForExistence(timeout: 30))
+        XCTAssertNotEqual(XCUIApplication(bundleIdentifier: "com.apple.mobilesafari").state, .runningForeground)
+        keepScreenshot(app, name: "privacy-policy-public-website-inside-app")
+
+        app.navigationBars.buttons.firstMatch.tap()
+        app.buttons["使用條款"].tap()
+        let terms = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "TaleFork Terms of Use")).firstMatch
+        XCTAssertTrue(terms.waitForExistence(timeout: 10))
+        XCTAssertFalse(app.webViews.firstMatch.exists)
+    }
+
     /// Explicit live acceptance for an already-installed account. No local
     /// reset, checkout, refund, restore purchase or account deletion is used.
     func testLiveAccountAndCatalogSurviveRelaunch() throws {
