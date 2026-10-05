@@ -171,7 +171,8 @@
 "player.next" = "Play next episode";
 "player.series.complete" = "Series complete";
 "legal.unavailable.title" = "Document unavailable";
-"legal.unavailable.body" = "The bundled document could not be opened. Please try again after reinstalling the app.";
+"legal.loading" = "Loading…";
+"legal.unavailable.body" = "The document could not be opened. Please try again.";
 "service.session.expired" = "Your session expired. Please try again.";
 "membership.presentation.loading" = "Loading payment options…";
 "membership.hosted.loading" = "Loading…";
