@@ -683,6 +683,8 @@ final class CatalogStore {
 
     private let service: any CatalogServing
     private var hasLoaded = false
+    @ObservationIgnored private var loadTask: Task<Void, Never>?
+    private var loadAttempt = UUID()
     private var searchRequestID = UUID()
 
     init(service: any CatalogServing = TaleForkService.shared) {
@@ -696,12 +698,25 @@ final class CatalogStore {
     }
 
     func load(force: Bool = false) async {
+        if let loadTask { await loadTask.value; return }
         guard force || !hasLoaded else { return }
+        // Onboarding, startup prefetch and home entry share one request; a
+        // disappearing screen must not cancel work needed by the next screen.
+        let attempt = UUID()
+        loadAttempt = attempt
+        let task = Task { await performLoad(attempt: attempt) }
+        loadTask = task
+        await task.value
+        if loadAttempt == attempt { loadTask = nil }
+    }
+
+    private func performLoad(attempt: UUID) async {
         isLoading = true
         errorMessage = nil
-        defer { isLoading = false }
+        defer { if loadAttempt == attempt { isLoading = false } }
         do {
             let bootstrap = try await service.bootstrap()
+            guard !Task.isCancelled else { return }
             guard !bootstrap.dramas.isEmpty else { throw TaleForkServiceError.invalidResponse }
             dramas = bootstrap.dramas
             currentUserID = bootstrap.userID
@@ -710,6 +725,7 @@ final class CatalogStore {
             NSLog("[CatalogStore] Loaded %d dramas (%d with artwork)", dramas.count, dramas.filter { $0.coverURL != nil }.count)
             #endif
         } catch {
+            guard !Task.isCancelled else { return }
             #if DEBUG
             if let keychainError = error as? IdentityKeychainError {
                 NSLog("[CatalogStore] Identity access failed: OSStatus %d", keychainError.status)
@@ -733,6 +749,10 @@ final class CatalogStore {
             return false
         }
         currentUserID = ""
+        loadAttempt = UUID()
+        loadTask?.cancel()
+        loadTask = nil
+        isLoading = false
         dramas = []
         searchResults = []
         errorMessage = nil
