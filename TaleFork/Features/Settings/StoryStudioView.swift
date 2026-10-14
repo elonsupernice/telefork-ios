@@ -22,12 +22,12 @@ struct StoryStudioView: View {
                     SettingsCard(title: "settings.account", symbol: "person.crop.circle") {
                         ViewThatFits(in: .horizontal) {
                             HStack(spacing: 12) {
-                                Label("settings.user.id", systemImage: "number")
+                                Text("settings.user.id")
                                 Spacer(minLength: 12)
                                 userIDText
                             }
                             VStack(alignment: .leading, spacing: 10) {
-                                Label("settings.user.id", systemImage: "number")
+                                Text("settings.user.id")
                                 userIDText
                             }
                         }
