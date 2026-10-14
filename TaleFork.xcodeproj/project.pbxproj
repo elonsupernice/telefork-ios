@@ -4,6 +4,18 @@
 	classes = {};
 	objectVersion = 56;
 	objects = {
+		C0DEC0DE2026101300000001 /* ArtworkCache.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkCache.swift; sourceTree = "<group>";
+		};
+		C0DEC0DE2026101300000002 /* ArtworkCache.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = C0DEC0DE2026101300000001;
+		};
+		C0DEC0DE2026101300000003 /* MembershipPreviewPreloader.swift */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembershipPreviewPreloader.swift; sourceTree = "<group>";
+		};
+		C0DEC0DE2026101300000004 /* MembershipPreviewPreloader.swift in Sources */ = {
+			isa = PBXBuildFile; fileRef = C0DEC0DE2026101300000003;
+		};
 		C0DEC0DE2026100300000101 /* FirebaseAttribution.swift */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAttribution.swift; sourceTree = "<group>";
 		};
@@ -447,6 +459,7 @@
 				C0DEC0DE2026093000000003 /* MembershipCountdown.swift */,
 				C0DEC0DE2026093000000005 /* MembershipPrivacy.swift */,
 				C0DEC0DE2026093000000011 /* MembershipShowcase.swift */,
+				C0DEC0DE2026101300000003 /* MembershipPreviewPreloader.swift */,
 			);
 			path = "Membership";
 			sourceTree = "<group>";
@@ -507,6 +520,7 @@
 				F0A1D2E3C4B5468790AB12CD /* InstallIdentity.swift */,
 				F0A1D2E3C4B5468790AB12CF /* AppAttribution.swift */,
 				CBA64D03E55D4B362C91BA71 /* TaleForkService.swift */,
+				C0DEC0DE2026101300000001 /* ArtworkCache.swift */,
 				C0DEC0DE2026100200000011 /* MembershipPresentation.swift */,
 			);
 			path = "Data";
@@ -608,6 +622,8 @@
 				20CF4508D3374ECC3B08A359 /* OfflineCatalogService.swift in Sources */,
 				E20901596C4CD2C509ADBD4A /* ProgressStore.swift in Sources */,
 				8655129C5D68C61621AEB893 /* TaleForkService.swift in Sources */,
+				C0DEC0DE2026101300000002 /* ArtworkCache.swift in Sources */,
+				C0DEC0DE2026101300000004 /* MembershipPreviewPreloader.swift in Sources */,
 				C0DEC0DE2026100200000012 /* MembershipPresentation.swift in Sources */,
 				C0DEC0DE2026100200000014 /* MembershipPaywallLoader.swift in Sources */,
 				C0DEC0DE2026100200000016 /* HostedMembershipContent.swift in Sources */,
@@ -872,14 +888,14 @@
 				"CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=iphonesimulator*]" = NO;
 				CODE_SIGN_STYLE = Automatic;
 				"CODE_SIGN_STYLE[sdk=iphonesimulator*]" = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphonesimulator*]" = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TaleFork/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MARKETING_VERSION = 1.26.104;
+				MARKETING_VERSION = 1.26.105;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -901,13 +917,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TaleFork/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MARKETING_VERSION = 1.26.104;
+				MARKETING_VERSION = 1.26.105;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -927,11 +943,11 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.26.104;
+				MARKETING_VERSION = 1.26.105;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 6.0;
@@ -946,11 +962,11 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.26.104;
+				MARKETING_VERSION = 1.26.105;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 6.0;
@@ -964,11 +980,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.26.104;
+				MARKETING_VERSION = 1.26.105;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 6.0;
@@ -982,11 +998,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.26.104;
+				MARKETING_VERSION = 1.26.105;
 				PRODUCT_BUNDLE_IDENTIFIER = com.talefork.storypaths.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 6.0;
