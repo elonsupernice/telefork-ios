@@ -1,4 +1,5 @@
 "tab.showcase" = "上映台";
+"app.startup.loading" = "読み込み中…";
 "tab.scene.notes" = "シーンノート";
 "tab.collection" = "コレクション";
 "tab.studio" = "スタジオ";
@@ -115,6 +116,7 @@
 "player.unmute" = "ミュート解除";
 "player.video" = "ショートドラマ動画";
 "player.video.hint" = "ダブルタップで操作を表示または非表示、2本指のダブルタップで再生または一時停止";
+"player.previous" = "前のエピソード";
 "player.progress" = "再生位置";
 "player.restart.first" = "第1話から再生";
 "vault.eyebrow" = "MY LIBRARY";
@@ -180,12 +182,18 @@
 "membership.presentation.empty" = "現在利用できる会員プランはありません。後でもう一度お試しください。";
 "membership.presentation.unavailable" = "お支払い設定が変更されたか、利用できません。戻ってプランを再読み込みしてください。";
 "membership.promotion.reservation" = "期間限定価格を3分間確保";
-"membership.promotion.expired" = "特別価格の確保時間の表示が終了しました";
+"membership.promotion.badge" = "期間限定";
+"membership.countdown.hour" = "時";
+"membership.countdown.minute" = "分";
+"membership.countdown.second" = "秒";
+"membership.promotion.expired" = "お得な特典を引き続き確保しています";
 "membership.presentation.hero.exclusive" = "会員向け";
 "membership.presentation.feature.watch" = "続けて視聴";
 "membership.presentation.feature.episodes" = "全エピソード";
 "membership.presentation.feature.library" = "ライブラリ";
 "membership.presentation.feature.notes" = "シーンメモ";
+"membership.presentation.feature.hd" = "高画質で視聴";
+"membership.presentation.feature.early" = "人気作を先行視聴";
 "membership.presentation.plans.title" = "会員プランを選択";
 "membership.presentation.selected" = "選択中";
 "membership.presentation.option" = "選択可能";
@@ -203,8 +211,8 @@
 "membership.retention.leave" = "あとで見る";
 "membership.countdown.label" = "特典の保持時間";
 "membership.countdown.accessibility" = "この特典の残り時間";
-"membership.capture.hidden" = "会員コンテンツを一時的に非表示にしています";
-"membership.capture.screenshot.notice" = "スクリーンショットは完了しました。録画、ミラーリング、アプリ切替画面では機密ページを非表示にします。";
+"membership.capture.hidden" = "著作権保護のため画面を一時的に非表示にしています";
+"membership.capture.screenshot.notice" = "著作権保護のため、スクリーンショット、録画、画面ミラーリングは禁止されています。";
 "tracking.explanation.title" = "キャンペーンの効果測定にご協力ください";
 "tracking.explanation.body" = "許可すると、MetaがFacebook広告からTaleForkに訪れた人を測定できます。許可しなくても利用できます。";
 "tracking.explanation.continue" = "続ける";
