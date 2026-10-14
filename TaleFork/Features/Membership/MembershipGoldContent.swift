@@ -6,6 +6,7 @@ struct MembershipGoldContent<Plans: View>: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     var benefitsAccessibilityIdentifier = "membership-benefits-scroll"
     var isPaywallVisible = true
+    var usesFullWidthCheckoutFooter = false
     @ViewBuilder let plans: () -> Plans
 
     var body: some View {
@@ -36,9 +37,10 @@ struct MembershipGoldContent<Plans: View>: View {
                         Text("membership.presentation.plans.title")
                             .font(.title2.bold())
                             .accessibilityAddTraits(.isHeader)
+                            .padding(.horizontal, usesFullWidthCheckoutFooter ? 20 : 0)
                         plans()
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, usesFullWidthCheckoutFooter ? 0 : 20)
                     .padding(.top, 12)
                 }
                 .scrollBounceBehavior(.basedOnSize)
@@ -71,13 +73,13 @@ private struct MembershipBenefitsCard: View {
                     .accessibilityAddTraits(.isHeader)
                 if dynamicTypeSize.isAccessibilitySize {
                     benefit("membership.presentation.feature.watch")
-                    benefit("membership.presentation.feature.library")
-                    benefit("membership.presentation.feature.notes")
+                    benefit("membership.presentation.feature.hd")
+                    benefit("membership.presentation.feature.early")
                 } else {
                     HStack(spacing: 12) {
                         benefit("membership.presentation.feature.watch")
-                        benefit("membership.presentation.feature.library")
-                        benefit("membership.presentation.feature.notes")
+                        benefit("membership.presentation.feature.hd")
+                        benefit("membership.presentation.feature.early")
                     }
                 }
             }
@@ -124,58 +126,39 @@ struct MembershipOpenButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                if isBusy { ProgressView().tint(MembershipStyle.buttonInk) }
-                Text(LocalizedStringKey(isRetention ? "membership.retention.continue" : "membership.presentation.open"))
-                    .font(isRetention ? .title2.bold() : .title3.bold())
-                Image(systemName: "arrow.right")
-                    .font(isRetention ? .title2.weight(.semibold) : .title3.weight(.semibold))
-                    .accessibilityHidden(true)
-            }
-            .foregroundStyle(MembershipStyle.buttonInk)
-            .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, minHeight: isRetention ? 72 : 58)
-            .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(LinearGradient(colors: [MembershipStyle.lightGold, MembershipStyle.gold], startPoint: .top, endPoint: .bottom))
-                    .overlay {
-                        if shouldBreathe {
-                            // Sweep left to right, then pause before restarting.
-                            // Keep the beam behind the label for steady contrast.
-                            TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
-                                Canvas { context, size in
-                                    let cycle = timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 3.2)
-                                    guard cycle < 1.5 else { return }
-                                    let travel = min(cycle / 1.5, 1)
-                                    let beamWidth = size.width * 0.22
-                                    let beamX = -beamWidth + (size.width + beamWidth) * travel
-                                    context.opacity = sin(.pi * travel)
-                                    context.fill(Path(CGRect(x: beamX, y: 0, width: beamWidth, height: size.height)),
-                                                 with: .linearGradient(Gradient(colors: [.clear, .white.opacity(0.55), .clear]),
-                                                                       startPoint: CGPoint(x: beamX, y: 0),
-                                                                       endPoint: CGPoint(x: beamX + beamWidth, y: 0)))
-                                }
-                            }
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
+            // The reference's whole capsule breathes, while this transparent
+            // full-width label keeps edge taps and accessibility bounds stable.
+            Color.clear
+                .frame(maxWidth: .infinity, minHeight: isRetention ? 72 : 58)
+                .overlay {
+                    HStack(spacing: 10) {
+                        if isBusy { ProgressView().tint(MembershipStyle.buttonInk) }
+                        Text(LocalizedStringKey(isRetention ? "membership.retention.continue" : "membership.presentation.open"))
+                            .font(isRetention ? .title2.bold() : .title3.bold())
+                        Image(systemName: "arrow.right")
+                            .font(isRetention ? .title2.weight(.semibold) : .title3.weight(.semibold))
                     }
-                    .phaseAnimator(shouldBreathe ? [false, true] : [false]) { surface, illuminated in
-                        // Breathe through the gold surface and halo only;
-                        // keep the label, hit target and layout completely still.
+                    .foregroundStyle(MembershipStyle.buttonInk)
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, minHeight: isRetention ? 72 : 58)
+                    .background {
+                        Capsule().fill(LinearGradient(colors: [MembershipStyle.lightGold, MembershipStyle.gold],
+                                                     startPoint: .leading, endPoint: .trailing))
+                    }
+                    .phaseAnimator(shouldBreathe ? [false, true] : [true]) { surface, expanded in
                         surface
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(MembershipStyle.lightGold.opacity(illuminated ? 0.42 : 0))
-                            }
-                            .brightness(illuminated ? 0.12 : (shouldBreathe ? -0.12 : 0))
-                            .shadow(color: MembershipStyle.gold.opacity(illuminated ? 0.90 : 0.03),
-                                    radius: illuminated ? 24 : 3, x: 0, y: 4)
-                    } animation: { _ in .easeInOut(duration: 1.6) }
+                            .scaleEffect(shouldBreathe && !expanded ? 0.80 : 1)
+                            .brightness(shouldBreathe && expanded ? 0.06 : 0)
+                            .shadow(color: MembershipStyle.gold.opacity(shouldBreathe && expanded ? 0.55 : 0.12),
+                                    radius: shouldBreathe && expanded ? 22 : 6, x: 0, y: 4)
+                    } animation: { _ in shouldBreathe ? .easeInOut(duration: 0.8) : nil }
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
-            }
+                }
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(Text(LocalizedStringKey(isRetention ? "membership.retention.continue" : "membership.presentation.open")))
         .disabled(!isEnabled || isBusy)
         .opacity(isEnabled && !isBusy ? 1 : 0.65)
         .onAppear { isOnScreen = true }
@@ -212,21 +195,29 @@ struct MembershipPolicyLinks: View {
                     MembershipPurchaseDetailsView(details: purchaseDetails)
                 } label: {
                     Text("membership.purchase.details")
-                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .fixedSize()
                         .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity)
                 .accessibilityIdentifier("membership-purchase-details")
             }
             NavigationLink { LocalLegalView(document: .terms) } label: {
                 Text("settings.terms")
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .fixedSize()
                     .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity)
+            .accessibilityIdentifier("membership-terms-link")
             NavigationLink { LocalLegalView(document: .privacy) } label: {
                 Text("membership.privacy.short")
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .fixedSize()
                     .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity)
+            .accessibilityIdentifier("membership-privacy-link")
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(MembershipStyle.secondaryText)

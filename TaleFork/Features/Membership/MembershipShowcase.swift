@@ -19,6 +19,8 @@ enum MembershipStyle {
     static let secondaryText = Color(hex: "D5B89D")
     static let buttonInk = Color(hex: "301B08")
     static let title = Color(hex: "FFE6BE")
+    static let artworkPlaceholder = [Color(hex: "745B45"), Color(hex: "A38260")]
+    static let artworkPlaceholderTint = Color(hex: "F2DCC0")
 }
 
 struct MembershipShowcase: View {
@@ -30,7 +32,7 @@ struct MembershipShowcase: View {
     @State private var selectedDramaID: String?
 
     private var featuredDramas: [Drama] {
-        Array(dramas.filter { $0.availability == .available }.prefix(5))
+        MembershipPreviewSource.featuredDramas(in: dramas)
     }
 
     private var selectedIndex: Int {
@@ -113,8 +115,8 @@ struct MembershipShowcase: View {
 
     private func poster(_ drama: Drama, width: CGFloat, height: CGFloat) -> some View {
         BundleImage(assetName: drama.posterImageName, remoteURL: drama.coverURL,
-                    placeholderColors: [MembershipStyle.panel, MembershipStyle.selectedPanel],
-                    placeholderTint: MembershipStyle.gold)
+                    placeholderColors: MembershipStyle.artworkPlaceholder,
+                    placeholderTint: MembershipStyle.artworkPlaceholderTint)
             .scaledToFill()
             .frame(width: width, height: height)
             .clipped()
@@ -125,6 +127,10 @@ struct MembershipShowcase: View {
 /// Only a real, free episode is previewed. Never substitute synthetic fixture
 /// playback for a real player, or open a locked episode from the retention UI.
 enum MembershipPreviewSource {
+    static func featuredDramas(in dramas: [Drama]) -> [Drama] {
+        Array(dramas.filter { $0.availability == .available }.prefix(5))
+    }
+
     static func url(for drama: Drama) -> URL? {
         drama.episodes.sorted { $0.number < $1.number }.first {
             !MembershipAccess.requiresSubscription(forEpisodeNumber: $0.number)
@@ -133,9 +139,10 @@ enum MembershipPreviewSource {
     }
 }
 
-// Shared by membership and onboarding so both use the same real video and lifecycle policy.
+// Shared by the subscription and retention screens. Only the visible preview
+// owns playback; checkout and backgrounding must silence it.
 struct MembershipDramaPreview: View {
-    @Environment(ProgressStore.self) private var progress
+    @Environment(MembershipStore.self) private var membership
     @Environment(\.scenePhase) private var scenePhase
     let drama: Drama
     let isVisible: Bool
@@ -145,13 +152,14 @@ struct MembershipDramaPreview: View {
     @State private var isPlaying = false
     @State private var playbackSeconds = 0.0
     @State private var playbackAllowed = false
+    @State private var wasPreloaded = false
 
     var body: some View {
         GeometryReader { proxy in
             ZStack {
                 BundleImage(assetName: drama.posterImageName, remoteURL: drama.coverURL,
-                            placeholderColors: [MembershipStyle.panel, MembershipStyle.selectedPanel],
-                            placeholderTint: MembershipStyle.gold)
+                            placeholderColors: MembershipStyle.artworkPlaceholder,
+                            placeholderTint: MembershipStyle.artworkPlaceholderTint)
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: proxy.size.height)
                     .clipped()
@@ -170,21 +178,17 @@ struct MembershipDramaPreview: View {
         }
         .task(id: drama.id) {
             guard let url = MembershipPreviewSource.url(for: drama) else { return }
-            let item = AVPlayerItem(url: url)
-            item.preferredForwardBufferDuration = 2
-            let preview = AVPlayer(playerItem: item)
-            // Match the main drama player's startup policy for remote MP4s.
-            preview.automaticallyWaitsToMinimizeStalling = false
-            preview.isMuted = true
+            let prepared = MembershipPreviewPreloader.shared.acquire(url)
+            let preview = prepared.player
+            wasPreloaded = prepared.wasPreloaded
             player = preview
             updatePlayback()
             defer {
-                preview.pause()
-                preview.replaceCurrentItem(with: nil)
+                MembershipPreviewPreloader.shared.release(preview, url: url)
                 if player === preview { player = nil; isReady = false; isPlaying = false }
             }
-            // Cancellation owns cleanup; no retained KVO/time observer or
-            // audio-session changes leak into the main drama player.
+            // Cancellation owns cleanup. Do not deactivate the shared audio
+            // session here: the main drama player uses the same category.
             while !Task.isCancelled {
                 isReady = preview.currentItem?.status == .readyToPlay
                 isPlaying = preview.timeControlStatus == .playing
@@ -194,12 +198,12 @@ struct MembershipDramaPreview: View {
                 if let duration = preview.currentItem?.duration.seconds,
                    duration.isFinite, duration > 0, seconds >= duration - 0.2, playbackAllowed {
                     await preview.seek(to: .zero)
-                    preview.play()
+                    if !Task.isCancelled && playbackAllowed { preview.play() }
                 }
                 // Keep the control-free preview aligned with playback intent,
-                // without overriding visibility, preferences or background state.
-                if isReady && playbackAllowed && preview.timeControlStatus == .paused {
-                    preview.play()
+                // including readiness after returning from checkout/background.
+                if isReady && canPlay && preview.timeControlStatus == .paused {
+                    updatePlayback()
                 }
                 do { try await Task.sleep(for: .milliseconds(250)) }
                 catch { break }
@@ -207,26 +211,45 @@ struct MembershipDramaPreview: View {
         }
         .onChange(of: scenePhase) { _, _ in updatePlayback() }
         .onChange(of: isVisible) { _, _ in updatePlayback() }
-        .onChange(of: progress.preferences.autoplayEnabled) { _, _ in updatePlayback() }
+        .onChange(of: membership.isPresentingCheckout) { _, _ in updatePlayback() }
         .onDisappear { playbackAllowed = false; player?.pause() }
     }
 
     private var canPlay: Bool {
-        isVisible && scenePhase == .active && progress.preferences.autoplayEnabled
+        // The preference controls autoplay of the next full episode, not VIP previews.
+        isVisible && scenePhase == .active && !membership.isPresentingCheckout
     }
 
     private var playbackAccessibilityValue: Text {
 #if DEBUG
         // Diagnostic value derives from the real AVPlayer clock, not a fixture.
-        Text(verbatim: "\(isPlaying ? "playing" : "paused"):\(String(format: "%.1f", playbackSeconds));allowed=\(playbackAllowed)")
+        Text(verbatim: "\(isPlaying ? "playing" : "paused"):\(String(format: "%.1f", playbackSeconds));allowed=\(playbackAllowed);muted=\(player?.isMuted ?? true);volume=\(player?.volume ?? 0);preloaded=\(wasPreloaded);audio=\(AVAudioSession.sharedInstance().category.rawValue);mode=\(AVAudioSession.sharedInstance().mode.rawValue)")
 #else
         Text(isPlaying ? "membership.preview.playing" : "membership.preview.paused")
 #endif
     }
 
     private func updatePlayback() {
-        playbackAllowed = canPlay
-        if playbackAllowed { player?.play() } else { player?.pause() }
+        guard let player else { return }
+        guard canPlay, player.currentItem?.status == .readyToPlay else {
+            playbackAllowed = false
+            player.pause()
+            return
+        }
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .moviePlayback)
+            try audioSession.setActive(true)
+            player.isMuted = false
+            playbackAllowed = true
+            player.play()
+        } catch {
+            playbackAllowed = false
+            player.pause()
+#if DEBUG
+            print("TaleFork membership preview audio session failed: \(error.localizedDescription)")
+#endif
+        }
     }
 }
 

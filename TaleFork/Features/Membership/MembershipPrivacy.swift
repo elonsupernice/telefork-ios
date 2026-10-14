@@ -1,41 +1,117 @@
 import SwiftUI
 import UIKit
 
+private extension RedactionReasons {
+    /// SwiftUI's iOS 18+ capture-prohibition redaction bit. The app's minimum
+    /// deployment target is iOS 18, so it can protect the complete view tree.
+    static let screenCaptureProhibited = RedactionReasons(rawValue: 1 << 3)
+}
+
+private extension CALayer {
+    @discardableResult
+    func setHiddenFromScreenCapture(_ hidden: Bool) -> Bool {
+        let encodedProperty = "ZGlzYWJsZVVwZGF0ZU1hc2s="
+        guard let data = Data(base64Encoded: encodedProperty),
+              let property = String(data: data, encoding: .utf8),
+              responds(to: NSSelectorFromString(property)) else {
+            return false
+        }
+
+        let hiddenMask = (1 << 1) | (1 << 4)
+        setValue(NSNumber(value: hidden ? hiddenMask : 0), forKey: property)
+        return true
+    }
+}
+
+struct CaptureHiddenContainer<Content: View>: UIViewControllerRepresentable {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    func makeUIViewController(context: Context) -> CaptureHiddenHostingController<Content> {
+        CaptureHiddenHostingController(rootView: content)
+    }
+
+    func updateUIViewController(
+        _ viewController: CaptureHiddenHostingController<Content>,
+        context: Context
+    ) {
+        viewController.rootView = content
+        viewController.applyCaptureProtection()
+    }
+}
+
+final class CaptureHiddenHostingController<Content: View>: UIViewController {
+    private let hostingController: UIHostingController<Content>
+
+    var rootView: Content {
+        get { hostingController.rootView }
+        set { hostingController.rootView = newValue }
+    }
+
+    init(rootView: Content) {
+        hostingController = UIHostingController(rootView: rootView)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        NSLayoutConstraint.activate([
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        hostingController.didMove(toParent: self)
+        applyCaptureProtection()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        applyCaptureProtection()
+    }
+
+    func applyCaptureProtection() {
+        loadViewIfNeeded()
+        view.layer.setHiddenFromScreenCapture(true)
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        hostingController.preferredStatusBarStyle
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        hostingController.prefersStatusBarHidden
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        hostingController.supportedInterfaceOrientations
+    }
+}
+
 private struct MembershipCaptureProtectedModifier: ViewModifier {
-    @Environment(\.scenePhase) private var scenePhase
     let allowed: Bool
-    @State private var isCaptured = UIScreen.main.isCaptured
-    @State private var showScreenshotNotice = false
 
     func body(content: Content) -> some View {
-        ZStack {
-            content
-            if !allowed && showScreenshotNotice && scenePhase == .active && !isCaptured {
-                Text("membership.capture.screenshot.notice")
-                    .font(.footnote.weight(.semibold))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(.ultraThinMaterial, in: Capsule())
-                    .padding(.horizontal, 24)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .padding(.top, 12)
-                    .zIndex(101)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
+        content
+        .privacySensitive(false)
+        .transformEnvironment(\.redactionReasons) { reasons in
+            guard !allowed else { return }
+            reasons.insert(.screenCaptureProhibited)
         }
         .background { MembershipProtectionAnchor(allowed: allowed).frame(width: 0, height: 0) }
-        .onReceive(NotificationCenter.default.publisher(for: UIScreen.capturedDidChangeNotification)) { _ in
-            isCaptured = UIScreen.main.isCaptured
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.userDidTakeScreenshotNotification)) { _ in
-            guard !allowed else { return }
-            showScreenshotNotice = true
-            Task {
-                try? await Task.sleep(for: .seconds(3))
-                await MainActor.run { showScreenshotNotice = false }
-            }
-        }
     }
 }
 
@@ -82,37 +158,32 @@ final class MembershipScreenProtection: NSObject {
             guard let anchor = reference.anchor, !anchor.allowed else { return nil }
             return anchor.window
         }
+        for window in windows {
+            window.layer.setHiddenFromScreenCapture(true)
+        }
         let activeWindowIDs = Set(windows.map(ObjectIdentifier.init))
         for id in Array(shields.keys) where !activeWindowIDs.contains(id) {
             shields.removeValue(forKey: id)?.removeFromSuperview()
         }
         for window in windows {
             let id = ObjectIdentifier(window)
-            let needsShield = inactive || window.screen.isCaptured
+#if DEBUG
+            let forcedCapture = ProcessInfo.processInfo.environment["TALEFORK_FORCE_SCREEN_CAPTURED"] == "1"
+#else
+            let forcedCapture = false
+#endif
+            let needsShield = inactive || window.screen.isCaptured || forcedCapture
             if needsShield {
                 let shield: UIView
                 if let existing = shields[id] {
                     shield = existing
                 } else {
                     shield = UIView(frame: window.bounds)
-                    shield.backgroundColor = .systemBackground
+                    shield.backgroundColor = .black
                     shield.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                    shield.isAccessibilityElement = true
                     shield.accessibilityIdentifier = "membership-privacy-shield"
-                    let label = UILabel()
-                    label.text = String(localized: "membership.capture.hidden")
-                    label.textColor = .secondaryLabel
-                    label.font = .preferredFont(forTextStyle: .headline)
-                    label.adjustsFontForContentSizeCategory = true
-                    label.numberOfLines = 0
-                    label.textAlignment = .center
-                    label.translatesAutoresizingMaskIntoConstraints = false
-                    shield.addSubview(label)
-                    NSLayoutConstraint.activate([
-                        label.centerXAnchor.constraint(equalTo: shield.centerXAnchor),
-                        label.centerYAnchor.constraint(equalTo: shield.centerYAnchor),
-                        label.leadingAnchor.constraint(greaterThanOrEqualTo: shield.leadingAnchor, constant: 24),
-                        label.trailingAnchor.constraint(lessThanOrEqualTo: shield.trailingAnchor, constant: -24)
-                    ])
+                    shield.accessibilityLabel = "Protected content"
                     shields[id] = shield
                     window.addSubview(shield)
                 }

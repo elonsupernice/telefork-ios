@@ -10,26 +10,47 @@ struct HostedMembershipContent: View {
     @State private var requestIDs: [String: String] = [:]
     @State private var errorMessage: String?
     @State private var isOpening = false
+    @State private var confirmedCheckoutID: String?
+    @State private var closingCheckoutID: String?
     let offers: [HostedMembershipOffer]
     let isPaywallVisible: Bool
     let checkoutTrigger: UUID
 
     var body: some View {
-        MembershipGoldContent(benefitsAccessibilityIdentifier: "hosted-membership-content", isPaywallVisible: isPaywallVisible && page == nil) {
+        MembershipGoldContent(benefitsAccessibilityIdentifier: "hosted-membership-content", isPaywallVisible: isPaywallVisible && page == nil,
+                              usesFullWidthCheckoutFooter: true) {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(spacing: 12) { offerCards }
+                    .padding(.horizontal, 20)
             } else {
                 HStack(alignment: .top, spacing: 10) { offerCards }
+                    .padding(.horizontal, 20)
             }
-            MembershipOpenButton(isBusy: isOpening, isEnabled: membership.selectedHostedOffer != nil,
-                                 isVisible: isPaywallVisible && page == nil, action: beginCheckout)
+            VStack(spacing: 0) {
+                if let deadline = membership.promotionDeadline {
+                    MembershipCountdownBanner(expiresAt: deadline)
+                        .accessibilityIdentifier("membership-promotion-countdown")
+                        .padding(.horizontal, 20)
+                }
+                HStack(spacing: 0) {
+                    checkoutSpace.frame(width: 20)
+                    MembershipOpenButton(isBusy: isOpening, isEnabled: membership.selectedHostedOffer != nil,
+                                         isVisible: isPaywallVisible && page == nil, action: beginCheckout)
+                        .accessibilityIdentifier("hosted-membership-open")
+                    checkoutSpace.frame(width: 20)
+                }
                 .padding(.top, 8)
-                .accessibilityIdentifier("hosted-membership-open")
-            MembershipPolicyLinks(purchaseDetails: membership.selectedHostedOffer?.trailDesc ?? "")
+                checkoutSpace.frame(height: 8)
+                MembershipPolicyLinks(purchaseDetails: membership.selectedHostedOffer?.trailDesc ?? "")
+                    .padding(.horizontal, 20)
+                    .background { checkoutSpace }
+            }
+            .padding(.top, 8)
         }
         .onChange(of: checkoutTrigger) { _, _ in beginCheckout() }
         .fullScreenCover(item: $page, onDismiss: pageClosed) { page in
-            HostedPageView(url: page.payDetail, reservationExpiresAt: membership.promotionDeadline)
+            HostedPageView(url: page.payDetail, checkoutID: page.checkoutID,
+                           onConfirmed: { confirmedCheckoutID = page.checkoutID })
         }
         .alert("membership.purchase.status", isPresented: Binding(
             get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }
@@ -59,6 +80,17 @@ struct HostedMembershipContent: View {
         }
     }
 
+    private var checkoutSpace: some View {
+        // Blank footer space shares the CTA action but never overlaps the
+        // main button, so one tap cannot submit the same request twice.
+        Button(action: beginCheckout) {
+            Color.clear.contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(isOpening || membership.selectedHostedOffer == nil)
+        .accessibilityHidden(true)
+    }
+
     private func beginCheckout() {
         guard !isOpening, page == nil, let offer = membership.selectedHostedOffer else { return }
         // A retry of the same offer reuses the request ID, preventing duplicate
@@ -76,6 +108,8 @@ struct HostedMembershipContent: View {
                 let response = try await TaleForkService.shared.hostedMembershipPage(
                     offerID: offer.id, clientRequestID: requestID)
                 guard !Task.isCancelled else { return }
+                confirmedCheckoutID = nil
+                closingCheckoutID = response.checkoutID
                 page = response
             } catch {
                 guard !Task.isCancelled else { return }
@@ -87,7 +121,21 @@ struct HostedMembershipContent: View {
     private func pageClosed() {
         requestIDs.removeAll()
         membership.setCheckoutPresented(false)
-        membership.preparePaywall()
-        Task { await membership.refreshEntitlements() }
+        let checkoutID = closingCheckoutID
+        closingCheckoutID = nil
+        if let confirmedCheckoutID {
+            self.confirmedCheckoutID = nil
+            membership.completeHostedCheckout(confirmedCheckoutID)
+            return
+        }
+        Task {
+            // Also cover a user closing H5 just as the callback arrives.
+            if let checkoutID, await membership.confirmHostedMembership() {
+                membership.completeHostedCheckout(checkoutID)
+            } else {
+                membership.preparePaywall()
+                await membership.refreshEntitlements()
+            }
+        }
     }
 }

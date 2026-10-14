@@ -29,6 +29,10 @@ struct AppleMembershipContent: View {
             }
             VStack(alignment: .leading, spacing: dynamicTypeSize.isAccessibilitySize ? 8 : 0) {
                 if !membership.isLoadingAppleProducts && !membership.appleProducts.isEmpty {
+                    if let deadline = membership.promotionDeadline {
+                        MembershipCountdownBanner(expiresAt: deadline)
+                            .accessibilityIdentifier("membership-promotion-countdown")
+                    }
                     MembershipOpenButton(isBusy: isPurchasing, isEnabled: membership.appleProduct != nil && !isRestoring, isVisible: isPaywallVisible, action: beginPurchase)
                         .accessibilityIdentifier("apple-membership-purchase")
                         .padding(.top, dynamicTypeSize.isAccessibilitySize ? 0 : 8)

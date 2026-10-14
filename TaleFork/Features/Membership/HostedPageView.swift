@@ -3,12 +3,15 @@ import WebKit
 
 /// A standard, full-screen web container, not a wallet/payment SDK.
 struct HostedPageView: View {
+    @Environment(MembershipStore.self) private var membership
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var errorMessage: String?
     @State private var reloadID = UUID()
     @State private var isLoading = true
     let url: URL
-    var reservationExpiresAt: Date? = nil
+    var checkoutID: String? = nil
+    var onConfirmed: () -> Void = {}
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -48,14 +51,23 @@ struct HostedPageView: View {
                     .accessibilityIdentifier("hosted-page-close")
             }
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if let reservationExpiresAt {
-                MembershipCountdownBanner(expiresAt: reservationExpiresAt, isCashier: true)
-            }
-        }
         .background(Color.white.ignoresSafeArea())
         .preferredColorScheme(.light)
         .interactiveDismissDisabled()
+        .task(id: scenePhase == .active ? checkoutID : nil) {
+            guard let checkoutID else { return }
+            // Poll only while this checkout is visible and foregrounded.
+            // The provider callback can arrive after its H5 success screen.
+            while !Task.isCancelled {
+                if await membership.confirmHostedMembership() {
+                    guard !Task.isCancelled, self.checkoutID == checkoutID else { return }
+                    onConfirmed()
+                    dismiss()
+                    return
+                }
+                do { try await Task.sleep(for: .seconds(2)) } catch { return }
+            }
+        }
     }
 }
 
@@ -129,7 +141,8 @@ struct HostedWebPage: UIViewRepresentable {
         context.coordinator.reloadID = reloadID
         context.coordinator.startLoading()
 #if DEBUG
-        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "hosted-result-check" {
+        if ProcessInfo.processInfo.environment["TALEFORK_UI_SCREEN"] == "hosted-result-check"
+            || ProcessInfo.processInfo.environment["TALEFORK_UI_HOSTED_RESULT_FIXTURE"] == "1" {
             // Offline UI fixture: no order/session or provider request is ever created.
             let waitsForReady = ProcessInfo.processInfo.environment["TALEFORK_UI_HOSTED_WAIT_FOR_READY"] == "1"
             let content = waitsForReady

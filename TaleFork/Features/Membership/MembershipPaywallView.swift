@@ -59,12 +59,6 @@ struct MembershipPaywallView: View {
                     )
                 }
             }
-            .safeAreaInset(edge: .top, spacing: 0) {
-                if let deadline = membership.promotionDeadline {
-                    MembershipCountdownBanner(expiresAt: deadline)
-                        .accessibilityIdentifier("membership-promotion-countdown")
-                }
-            }
             .navigationTitle("membership.navigation.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(MembershipStyle.background, for: .navigationBar)
@@ -106,7 +100,11 @@ struct MembershipPaywallView: View {
             }
         }
         .onChange(of: membership.isSubscribed) { _, isSubscribed in
+            // Let the hosted cover dismiss first; its completion then resets
+            // the root to home, including paywalls opened from player/settings.
             guard isSubscribed else { return }
+            if membership.paywall.snapshot?.configuration.route == .hostedPage,
+               membership.isPresentingCheckout { return }
             closePaywall()
         }
         .alert("membership.purchase.status", isPresented: purchaseMessageBinding) {

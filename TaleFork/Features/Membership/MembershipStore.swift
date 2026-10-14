@@ -10,6 +10,7 @@ final class MembershipStore {
     private(set) var selectedAppleProductID = MembershipAccess.weeklyProductID
     private(set) var isLoadingAppleProducts = false
     private(set) var isPresentingCheckout = false
+    private(set) var completedHostedCheckoutID: String?
     private var appleProductAttempt = UUID()
     let paywall = MembershipPaywallLoader()
     private(set) var selectedHostedOfferID: String?
@@ -118,6 +119,26 @@ final class MembershipStore {
     }
 
     func setCheckoutPresented(_ presented: Bool) { isPresentingCheckout = presented }
+
+    /// Only the authenticated server status proves activation. Web text,
+    /// return URLs and closing the page are not payment/signing evidence.
+    func confirmHostedMembership(using loadStatus: () async throws -> MembershipStatusContent = {
+        try await TaleForkService.shared.refreshMembershipStatus()
+    }) async -> Bool {
+        let audienceKey = TaleForkService.shared.currentAudienceKey
+        guard let status = try? await loadStatus(), !Task.isCancelled,
+              audienceKey == TaleForkService.shared.currentAudienceKey,
+              status.isCurrentlyValid else { return false }
+        cachedServerMembership = status
+        membershipAudienceKey = audienceKey
+        isSubscribed = true
+        return true
+    }
+
+    func completeHostedCheckout(_ checkoutID: String) {
+        guard isSubscribed, !checkoutID.isEmpty else { return }
+        completedHostedCheckoutID = checkoutID
+    }
 
     func loadAppleProducts() async {
         guard !isLoadingAppleProducts else { return }
