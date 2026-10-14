@@ -1,4 +1,5 @@
 "tab.showcase" = "Showcase";
+"app.startup.loading" = "Loading…";
 "tab.scene.notes" = "Scene Notes";
 "tab.collection" = "Collection";
 "tab.studio" = "Studio";
@@ -115,6 +116,7 @@
 "player.unmute" = "Unmute";
 "player.video" = "Short drama video";
 "player.video.hint" = "Double tap to show or hide controls; two-finger double tap to play or pause";
+"player.previous" = "Previous episode";
 "player.progress" = "Playback progress";
 "player.restart.first" = "Play from Episode 1";
 "vault.eyebrow" = "MY LIBRARY";
@@ -180,12 +182,18 @@
 "membership.presentation.empty" = "No membership plans are available right now. Please try again later.";
 "membership.presentation.unavailable" = "Payment settings have changed or are unavailable. Please return and reload the plans.";
 "membership.promotion.reservation" = "Special offer reserved for 3 minutes";
-"membership.promotion.expired" = "Offer reservation reminder ended";
+"membership.promotion.badge" = "Limited offer";
+"membership.countdown.hour" = "h";
+"membership.countdown.minute" = "m";
+"membership.countdown.second" = "s";
+"membership.promotion.expired" = "Great benefits, still reserved for you";
 "membership.presentation.hero.exclusive" = "For members";
 "membership.presentation.feature.watch" = "Keep watching";
 "membership.presentation.feature.episodes" = "Full episodes";
 "membership.presentation.feature.library" = "Your library";
 "membership.presentation.feature.notes" = "Scene notes";
+"membership.presentation.feature.hd" = "Watch in HD";
+"membership.presentation.feature.early" = "Watch hits first";
 "membership.presentation.plans.title" = "Choose a membership plan";
 "membership.presentation.selected" = "Selected";
 "membership.presentation.option" = "Available";
@@ -203,8 +211,8 @@
 "membership.retention.leave" = "Maybe later";
 "membership.countdown.label" = "Offer held for";
 "membership.countdown.accessibility" = "Time remaining for this offer";
-"membership.capture.hidden" = "Membership content is temporarily hidden";
-"membership.capture.screenshot.notice" = "The screenshot was completed. Sensitive pages are hidden while recording, mirroring, or in the app switcher.";
+"membership.capture.hidden" = "Content is hidden to protect copyright";
+"membership.capture.screenshot.notice" = "To protect copyright, screenshots, recording, and screen mirroring are not permitted.";
 "tracking.explanation.title" = "Help us measure campaign performance";
 "tracking.explanation.body" = "If you allow tracking, Meta can help us understand which Facebook campaigns bring people to TaleFork. You can continue without allowing it.";
 "tracking.explanation.continue" = "Continue";
