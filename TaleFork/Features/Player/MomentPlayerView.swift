@@ -24,6 +24,7 @@ struct MomentPlayerView: View {
     @State private var durationSeconds = 1.0
     @State private var pendingResumeSeconds: Double?
     @State private var lastPersistedSecond = -1
+    @State private var pendingAutoplay: Task<Void, Never>?
 #if DEBUG
     @State private var usesOfflinePreviewMedia = false
 #endif
@@ -43,10 +44,15 @@ struct MomentPlayerView: View {
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture { toggleControls() }
+                .gesture(episodeSwipeGesture)
                 .accessibilityElement()
+                .accessibilityIdentifier("player-video")
                 .accessibilityLabel(Text("player.video"))
+                .accessibilityValue(Text(String(format: String(localized: "player.episode.format"), episode?.number ?? 1)))
                 .accessibilityHint(Text("player.video.hint"))
                 .accessibilityAction(.magicTap) { togglePlayback() }
+                .accessibilityAction(named: Text("player.previous")) { shiftEpisode(by: -1) }
+                .accessibilityAction(named: Text("player.next")) { shiftEpisode(by: 1) }
 
             if controlsVisible && !showCompletion && !playbackFailed { controlOverlay.transition(.opacity) }
             if playbackFailed { failureOverlay }
@@ -60,11 +66,13 @@ struct MomentPlayerView: View {
             loadCurrentEpisode()
         }
         .onDisappear {
+            pendingAutoplay?.cancel()
             persistPlaybackPosition()
             player.pause()
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase != .active else { return }
+            pendingAutoplay?.cancel()
             player.pause()
             isPlaying = false
             controlsVisible = true
@@ -76,16 +84,23 @@ struct MomentPlayerView: View {
                   MembershipAccess.requiresSubscription(forEpisodeNumber: episode.number) else { return }
             loadCurrentEpisode()
         }
+        .onChange(of: showEpisodePicker || showSceneMarkComposer || showMembership) { _, presented in
+            if presented { pendingAutoplay?.cancel() }
+        }
         .onReceive(playbackClock) { _ in refreshPlaybackState() }
         .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)) { notification in
             guard notification.object as? AVPlayerItem === player.currentItem else { return }
             playbackSeconds = 0
             isPlaying = false
             store.watch(drama: drama, episodeID: currentEpisodeID, position: 0, completed: true)
+            pendingAutoplay?.cancel()
             if let nextEpisode, store.preferences.autoplayEnabled {
                 controlsVisible = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.65) {
-                    guard currentEpisodeID != nextEpisode.id else { return }
+                let finishedEpisodeID = currentEpisodeID
+                pendingAutoplay = Task { @MainActor in
+                    do { try await Task.sleep(for: .milliseconds(650)) }
+                    catch { return }
+                    guard !Task.isCancelled, currentEpisodeID == finishedEpisodeID else { return }
                     selectEpisode(nextEpisode.id)
                 }
             } else {
@@ -123,6 +138,25 @@ struct MomentPlayerView: View {
         return drama.episodes.indices.contains(nextIndex) ? drama.episodes[nextIndex] : nil
     }
 
+    private var episodeSwipeGesture: some Gesture {
+        DragGesture(minimumDistance: 30)
+            .onEnded { value in
+                let vertical = value.translation.height
+                guard abs(vertical) >= 60,
+                      abs(vertical) > abs(value.translation.width) * 1.5 else { return }
+                shiftEpisode(by: vertical < 0 ? 1 : -1)
+            }
+    }
+
+    private func shiftEpisode(by offset: Int) {
+        guard scenePhase == .active,
+              !showEpisodePicker, !showSceneMarkComposer, !showMembership,
+              let index = drama.episodes.firstIndex(where: { $0.id == currentEpisodeID }) else { return }
+        let destination = index + offset
+        guard drama.episodes.indices.contains(destination) else { return }
+        selectEpisode(drama.episodes[destination].id)
+    }
+
     private var controlOverlay: some View {
         GeometryReader { proxy in
             let topScrimHeight = max(proxy.safeAreaInsets.top + 150, 190)
@@ -144,6 +178,7 @@ struct MomentPlayerView: View {
                 .frame(height: bottomScrimHeight)
             }
             .ignoresSafeArea()
+            .allowsHitTesting(false)
 
             VStack(spacing: 0) {
                 topControlBar
@@ -204,6 +239,7 @@ struct MomentPlayerView: View {
                     in: 0...max(durationSeconds, 1)
                 )
                 .tint(TaleForkTheme.coral)
+                .accessibilityIdentifier("player-progress")
                 .accessibilityLabel(Text("player.progress"))
                 .accessibilityValue(Text("(formatTime(playbackSeconds)) / (formatTime(durationSeconds))"))
                 Text("-\(formatTime(max(durationSeconds - playbackSeconds, 0)))")
@@ -244,6 +280,7 @@ struct MomentPlayerView: View {
             }
             .padding(20)
             .background(.black.opacity(0.38), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .allowsHitTesting(false)
         } else {
             HStack(spacing: 28) {
                 transportButton("gobackward.10", label: "player.rewind") { seekRelative(-10) }
@@ -291,6 +328,7 @@ struct MomentPlayerView: View {
     private var completionOverlay: some View {
         ZStack {
             Color.black.opacity(0.9).ignoresSafeArea()
+                .gesture(episodeSwipeGesture)
             VStack(spacing: 18) {
                 HStack {
                     backButton
@@ -322,6 +360,7 @@ struct MomentPlayerView: View {
     private var failureOverlay: some View {
         ZStack {
             Color.black.opacity(0.92).ignoresSafeArea()
+                .gesture(episodeSwipeGesture)
             VStack(spacing: 18) {
                 HStack {
                     backButton
@@ -363,6 +402,7 @@ struct MomentPlayerView: View {
     }
 
     private func exitPlayer() {
+        pendingAutoplay?.cancel()
         persistPlaybackPosition()
         player.pause()
         if let onExit {
@@ -433,6 +473,7 @@ struct MomentPlayerView: View {
     }
 
     private func selectEpisode(_ episodeID: String) {
+        pendingAutoplay?.cancel()
         guard let selectedEpisode = drama.episode(id: episodeID),
               membership.canAccess(episodeNumber: selectedEpisode.number) else {
             requestMembership()
