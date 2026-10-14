@@ -1,4 +1,5 @@
 "tab.showcase" = "放映台";
+"app.startup.loading" = "加载中…";
 "tab.scene.notes" = "場記";
 "tab.collection" = "片單";
 "tab.studio" = "偏好";
@@ -80,7 +81,7 @@
 "drama.episodes.title" = "選集";
 "drama.episode.accessibility" = "第 %d 集，%@";
 "drama.episode.open.hint" = "播放這一集";
-"membership.navigation.title" = "VIP 会员";
+"membership.navigation.title" = "VIP 会籍";
 "membership.title" = "解锁完整剧情";
 "membership.subtitle" = "第 1～10 集免费。开通 TaleFork VIP 后可观看第 11 集及之后的全部剧集。";
 "membership.hero.eyebrow" = "TaleFork VIP 放映权";
@@ -115,6 +116,7 @@
 "player.unmute" = "恢復聲音";
 "player.video" = "短劇影片";
 "player.video.hint" = "點兩下顯示或隱藏控制；雙指點兩下可播放或暫停";
+"player.previous" = "上一集";
 "player.progress" = "播放進度";
 "player.restart.first" = "改從第 1 集播放";
 "vault.eyebrow" = "MY LIBRARY";
@@ -180,13 +182,19 @@
 "membership.presentation.empty" = "暂时没有可用的会员方案，请稍后重试。";
 "membership.presentation.unavailable" = "支付设置已更新或暂时不可用，请返回并重新加载方案。";
 "membership.promotion.reservation" = "限时优惠价，为你保留 3 分钟";
-"membership.promotion.expired" = "本次优惠保留提示已结束";
+"membership.promotion.badge" = "限时优惠";
+"membership.countdown.hour" = "时";
+"membership.countdown.minute" = "分";
+"membership.countdown.second" = "秒";
+"membership.promotion.expired" = "好权益，继续为你保留";
 "membership.presentation.hero.exclusive" = "会员专享";
 "membership.presentation.feature.watch" = "连续观看";
 "membership.presentation.feature.episodes" = "完整剧集";
 "membership.presentation.feature.library" = "片单收藏";
 "membership.presentation.feature.notes" = "个人场记";
-"membership.presentation.plans.title" = "选择会员方案";
+"membership.presentation.feature.hd" = "高清看剧";
+"membership.presentation.feature.early" = "热剧抢先看";
+"membership.presentation.plans.title" = "选择会籍计划";
 "membership.presentation.selected" = "已选择";
 "membership.presentation.option" = "可选方案";
 "membership.presentation.open" = "立即开通";
@@ -203,14 +211,14 @@
 "membership.retention.leave" = "暂不开通";
 "membership.countdown.label" = "本次开通权益保留";
 "membership.countdown.accessibility" = "本次开通权益剩余时间";
-"membership.capture.hidden" = "会员内容已暂时隐藏";
-"membership.capture.screenshot.notice" = "系统已完成截图；敏感页面会在录屏、投屏和后台预览时隐藏。";
+"membership.capture.hidden" = "为保护内容版权，画面已暂时隐藏";
+"membership.capture.screenshot.notice" = "为保护内容版权，请勿截图、录屏或投屏。";
 "tracking.explanation.title" = "帮助我们衡量广告效果";
 "tracking.explanation.body" = "允许后，Meta 可以帮助我们了解哪些 Facebook 广告带来了 TaleFork 用户。不允许也可以继续使用。";
 "tracking.explanation.continue" = "继续";
 "tracking.explanation.skip" = "暂不允许";
 // Shared membership subscription plans. StoreKit supplies the actual prices.
-"membership.gold.benefits" = "VIP 会员权益";
+"membership.gold.benefits" = "VIP 会员礼遇";
 "membership.apple.weekly" = "每周会员";
 "membership.apple.monthly" = "每月会员";
 "membership.apple.quarterly" = "季度会员";
