@@ -1,10 +1,49 @@
 import Foundation
+import UIKit
 import XCTest
 
 @MainActor
 final class TaleForkSceneNotesUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    func testWholeAppIsBlackInSystemCapture() throws {
+        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
+        app.launchArguments = ["-AppleLanguages", "(zh-Hant)", "-AppleLocale", "zh_HK"]
+        defer { app.terminate() }
+
+        for screen in ["membership", "studio"] {
+            app.launchEnvironment["TALEFORK_UI_SCREEN"] = screen
+            app.launch()
+            if screen == "membership" {
+                XCTAssertTrue(app.buttons["membership-close"].waitForExistence(timeout: 15))
+            } else {
+                XCTAssertTrue(app.tabBars.buttons["偏好"].waitForExistence(timeout: 15))
+            }
+            let screenshot = XCUIScreen.main.screenshot()
+            let attachment = XCTAttachment(screenshot: screenshot)
+            attachment.name = "\(screen)-system-capture-must-be-black"
+            attachment.lifetime = .keepAlways
+            add(attachment)
+            XCTAssertTrue(screenshot.image.isCaptureBlack, "System capture exposed \(screen) App content")
+            app.terminate()
+        }
+    }
+
+    func testActiveScreenRecordingUsesAnOpaqueBlackShield() throws {
+        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
+        app.launchEnvironment["TALEFORK_FORCE_SCREEN_CAPTURED"] = "1"
+        app.launch()
+        defer { app.terminate() }
+
+        let shield = app.otherElements["membership-privacy-shield"]
+        XCTAssertTrue(shield.waitForExistence(timeout: 15))
+        XCTAssertEqual(shield.frame, app.windows.firstMatch.frame)
+        XCTAssertTrue(XCUIScreen.main.screenshot().image.isCaptureBlack)
     }
 
     func testPrivacyPolicyLoadsWebsiteInsideApp() throws {
@@ -20,7 +59,7 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         privacy.tap()
         let document = app.webViews["privacy-policy-webview"]
         XCTAssertTrue(document.waitForExistence(timeout: 10))
-        XCTAssertTrue(document.staticTexts["TaleFork Privacy Policy"].waitForExistence(timeout: 30))
+        XCTAssertTrue(document.staticTexts["1. 儲存在裝置上的資料"].waitForExistence(timeout: 30))
         XCTAssertNotEqual(XCUIApplication(bundleIdentifier: "com.apple.mobilesafari").state, .runningForeground)
         keepScreenshot(app, name: "privacy-policy-public-website-inside-app")
 
@@ -65,7 +104,7 @@ final class TaleForkSceneNotesUITests: XCTestCase {
     }
 
     func testHostedPageShowsLoadingUntilReady() throws {
-        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+        let app = routingFixtureApp()
         app.launchEnvironment["TALEFORK_UI_SCREEN"] = "hosted-result-check"
         app.launchEnvironment["TALEFORK_UI_HOSTED_WAIT_FOR_READY"] = "1"
         app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
@@ -77,6 +116,8 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertTrue(loading.waitForExistence(timeout: 10))
         XCTAssertEqual(loading.label, "載入中…")
         XCTAssertTrue(app.buttons["hosted-page-close"].isHittable)
+        XCTAssertFalse(app.descendants(matching: .any)["membership-reservation-countdown"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["membership-promotion-countdown"].exists)
         keepScreenshot(app, name: "hosted-page-loading-traditional")
 
         let ready = app.webViews.buttons["完成測試載入"]
@@ -84,6 +125,7 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         ready.tap()
         XCTAssertTrue(loading.waitForNonExistence(timeout: 5))
         XCTAssertTrue(app.buttons["hosted-page-close"].isHittable)
+        XCTAssertFalse(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "為你保留 3 分鐘")).firstMatch.exists)
         keepScreenshot(app, name: "hosted-page-ready-loading-hidden")
     }
 
@@ -101,6 +143,56 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
         XCTAssertFalse(app.webViews.firstMatch.exists)
         app.terminate()
+    }
+
+    /// Local server and HTML only. Never authorizes a wallet or pays money.
+    func testHostedActivationAutomaticallyReturnsHomeWithoutSearch() async throws {
+        for screen in ["membership", "studio"] {
+            try await configureRoutingFixture(review: false, allowFixtureCheckout: true)
+            let app = routingFixtureApp()
+            app.launchEnvironment["TALEFORK_UI_SCREEN"] = screen
+            app.launchEnvironment["TALEFORK_UI_HOSTED_RESULT_FIXTURE"] = "1"
+            app.launch()
+            if screen == "studio" {
+                let open = app.buttons["profile-membership-open"]
+                XCTAssertTrue(open.waitForExistence(timeout: 15))
+                open.tap()
+            }
+            let purchase = app.buttons["hosted-membership-open"]
+            XCTAssertTrue(purchase.waitForExistence(timeout: 25))
+            purchase.tap()
+            XCTAssertTrue(app.webViews.staticTexts["付款成功"].waitForExistence(timeout: 10))
+            // Mere H5 success text must NOT activate VIP or dismiss checkout.
+            XCTAssertTrue(app.buttons["hosted-page-close"].exists)
+            try await configureRoutingFixture(review: false, vip: true,
+                                              vipEndDate: "2099-01-01T00:00:00Z",
+                                              allowFixtureCheckout: true)
+            XCTAssertTrue(app.webViews.firstMatch.waitForNonExistence(timeout: 12))
+            let home = app.tabBars.buttons["放映台"]
+            XCTAssertTrue(home.waitForExistence(timeout: 10))
+            XCTAssertTrue(home.isSelected, "Successful checkout must select home even when opened from preferences")
+            XCTAssertFalse(app.buttons["hosted-membership-open"].exists)
+            XCTAssertFalse(app.textFields.firstMatch.exists, "Home search must be removed")
+            XCTAssertFalse(app.searchFields.firstMatch.exists)
+            app.terminate()
+        }
+        try await configureRoutingFixture(review: false)
+    }
+
+    func testClosingUnpaidHostedCheckoutDoesNotCompleteMembership() async throws {
+        try await configureRoutingFixture(review: false, allowFixtureCheckout: true)
+        let app = routingFixtureApp()
+        app.launchEnvironment["TALEFORK_UI_HOSTED_RESULT_FIXTURE"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        let purchase = app.buttons["hosted-membership-open"]
+        XCTAssertTrue(purchase.waitForExistence(timeout: 25))
+        purchase.tap()
+        XCTAssertTrue(app.webViews.staticTexts["付款成功"].waitForExistence(timeout: 10))
+        app.buttons["hosted-page-close"].tap()
+        XCTAssertTrue(purchase.waitForExistence(timeout: 12), "Closing without confirmed membership must preserve the paywall")
+        XCTAssertFalse(app.webViews.firstMatch.exists)
+        try await configureRoutingFixture(review: false)
     }
 
     /// Both route changes use the production manifest/network/offer decoding
@@ -201,16 +293,115 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
         app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
         app.launchEnvironment["TALEFORK_TEST_APPLE_PAYWALL"] = "0"
+        app.launchEnvironment["TALEFORK_ANALYTICS_DISABLED"] = "1"
         app.launchEnvironment["TALEFORK_SERVICE_BASE_URL"] = "http://127.0.0.1:18642/"
         app.launchArguments = ["-AppleLanguages", "(zh-Hant)", "-AppleLocale", "zh_HK"]
         return app
     }
 
-    private func configureRoutingFixture(review: Bool, delay: Int = 0) async throws {
+    /// The loopback fixture rejects checkout: these taps cannot create a real order.
+    func testMembershipWholeButtonRespondsAndCountdownSitsAboveIt() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
+        app.launch()
+        defer { app.terminate() }
+        let action = app.buttons["hosted-membership-open"]
+        XCTAssertTrue(action.waitForExistence(timeout: 30))
+        XCTAssertTrue(action.isHittable)
+        let countdown = app.descendants(matching: .any)["membership-promotion-countdown"].firstMatch
+        XCTAssertTrue(countdown.exists)
+        XCTAssertGreaterThanOrEqual(countdown.frame.minY, app.buttons["hosted-offer-2019"].frame.maxY)
+        XCTAssertLessThanOrEqual(countdown.frame.maxY, action.frame.minY)
+        XCTAssertEqual(countdown.frame.maxX, action.frame.maxX, accuracy: 1)
+        keepScreenshot(app, name: "membership-countdown-above-action-trailing")
+
+        let (beforeData, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+        let before = try XCTUnwrap(JSONSerialization.jsonObject(with: beforeData) as? [String: Any])
+        let initialRequests = try XCTUnwrap(before["checkoutRequests"] as? Int)
+        for x in [0.05, 0.95, 0.5] {
+            action.coordinate(withNormalizedOffset: CGVector(dx: x, dy: 0.5)).tap()
+            let alert = app.alerts.firstMatch
+            XCTAssertTrue(alert.waitForExistence(timeout: 8), "The whole visible gold button must invoke checkout, not just its text")
+            alert.buttons.firstMatch.tap()
+        }
+        let (afterData, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+        let after = try XCTUnwrap(JSONSerialization.jsonObject(with: afterData) as? [String: Any])
+        XCTAssertEqual(after["checkoutRequests"] as? Int, initialRequests + 3, "Each tap invokes the existing action exactly once")
+    }
+
+    func testFooterLegalTextOnlyNavigatesAndEmptySpaceOpensCheckout() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
+        app.launch()
+        defer { app.terminate() }
+        let action = app.buttons["hosted-membership-open"]
+        XCTAssertTrue(action.waitForExistence(timeout: 25))
+
+        func requestCount() async throws -> Int {
+            let (data, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+            let state = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+            return try XCTUnwrap(state["checkoutRequests"] as? Int)
+        }
+        let initial = try await requestCount()
+        for id in ["membership-purchase-details", "membership-terms-link", "membership-privacy-link"] {
+            let link = app.buttons[id]
+            XCTAssertTrue(link.isHittable)
+            link.tap()
+            XCTAssertFalse(app.alerts.firstMatch.exists)
+            XCTAssertFalse(app.webViews["hosted-membership-page"].exists)
+            let legalRequests = try await requestCount()
+            XCTAssertEqual(legalRequests, initial, "Protocol text must never invoke checkout")
+            app.navigationBars.buttons.firstMatch.tap()
+            XCTAssertTrue(action.waitForExistence(timeout: 5))
+        }
+
+        let terms = app.buttons["membership-terms-link"].frame
+        let points = [CGPoint(x: terms.midX, y: terms.minY - 5),
+                      CGPoint(x: terms.midX, y: terms.maxY + 5),
+                      // Stay inside the physical screen's rounded corners.
+                      CGPoint(x: action.frame.minX + 3, y: terms.midY),
+                      CGPoint(x: action.frame.maxX - 3, y: terms.midY),
+                      CGPoint(x: terms.minX - 8, y: terms.midY)]
+        for point in points {
+            app.coordinate(withNormalizedOffset: .zero)
+                .withOffset(CGVector(dx: point.x, dy: point.y)).tap()
+            let alert = app.alerts.firstMatch
+            XCTAssertTrue(alert.waitForExistence(timeout: 8), "Blank footer taps must invoke the checkout, not a protocol")
+            alert.buttons.firstMatch.tap()
+        }
+        let footerRequests = try await requestCount()
+        XCTAssertEqual(footerRequests, initial + points.count)
+    }
+
+    /// Wait for the real three-minute deadline; no shortened production timer or checkout.
+    func testCountdownExpiryKeepsBenefitsReservedCopy() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
+        app.launch()
+        defer { app.terminate() }
+        let action = app.buttons["hosted-membership-open"]
+        XCTAssertTrue(action.waitForExistence(timeout: 30))
+        let countdown = app.descendants(matching: .any)["membership-promotion-countdown"].firstMatch
+        XCTAssertTrue(countdown.exists)
+        XCTAssertEqual(countdown.label, "限時優惠價，為你保留 3 分鐘")
+
+        let expired = NSPredicate(format: "label == %@ AND value == %@", "好權益，繼續為你保留", "00:00")
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation(for: expired, evaluatedWith: countdown)], timeout: 185), .completed)
+        XCTAssertTrue(action.isHittable)
+        XCTAssertTrue(action.isEnabled)
+        XCTAssertLessThanOrEqual(countdown.frame.maxY, action.frame.minY)
+        keepScreenshot(app, name: "membership-expired-benefits-still-reserved")
+        try await assertFixtureNeverOrdered()
+    }
+
+    private func configureRoutingFixture(review: Bool, delay: Int = 0, vip: Bool = false, vipEndDate: String? = nil,
+                                         allowFixtureCheckout: Bool = false) async throws {
         var request = URLRequest(url: URL(string: "http://127.0.0.1:18642/fixture")!)
         request.httpMethod = "POST"
         request.timeoutInterval = 3
-        request.httpBody = try JSONSerialization.data(withJSONObject: ["review": review, "delay": delay, "fail": false])
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["review": review, "delay": delay, "fail": false,
+                                                                      "vip": vip, "vipEndDate": vipEndDate as Any? ?? NSNull(),
+                                                                      "allowFixtureCheckout": allowFixtureCheckout])
         let (_, response) = try await URLSession.shared.data(for: request)
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
@@ -221,10 +412,138 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertEqual(result["checkoutRequests"] as? Int, 0, "Viewing or switching plans must never create an order")
     }
 
+    /// No UI-screen shortcut: exercise the regular root's process-local startup path.
+    func testStartupBufferHidesHomeUntilVIPRoutingResolves() async throws {
+        try await configureRoutingFixture(review: false, delay: 8)
+        let app = routingFixtureApp()
+        app.launchEnvironment.removeValue(forKey: "TALEFORK_UI_SCREEN")
+        app.launchEnvironment["TALEFORK_UI_PREVIEW"] = "1"
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "0"
+        app.launchEnvironment["TALEFORK_RESET_LOCAL_STATE"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        let loading = app.descendants(matching: .any)["startup-loading-screen"].firstMatch
+        XCTAssertTrue(loading.waitForExistence(timeout: 5))
+        let spinner = app.descendants(matching: .any)["startup-spinner"].firstMatch
+        XCTAssertTrue(spinner.exists)
+        XCTAssertFalse(app.staticTexts["載入中…"].exists)
+        XCTAssertTrue(app.staticTexts["TaleFork"].exists)
+        XCTAssertEqual(spinner.frame.midX, app.windows.firstMatch.frame.midX, accuracy: 2)
+        XCTAssertGreaterThan(spinner.frame.midY, app.windows.firstMatch.frame.height * 0.85)
+        XCTAssertFalse(app.tabBars.firstMatch.exists, "Home must not be constructed during startup routing")
+        keepScreenshot(app, name: "startup-buffer-before-vip-no-home-flash")
+        for _ in 0..<5 {
+            XCTAssertFalse(app.tabBars.firstMatch.exists)
+            try await Task.sleep(for: .milliseconds(200))
+        }
+        XCTAssertTrue(app.buttons["hosted-membership-open"].waitForExistence(timeout: 35))
+        XCTAssertFalse(app.tabBars.firstMatch.exists)
+        XCTAssertTrue(app.staticTexts["VIP 會員禮遇"].exists)
+        XCTAssertTrue(app.staticTexts["選擇會籍計劃"].exists)
+        keepScreenshot(app, name: "startup-direct-vip-hong-kong-copy")
+        app.buttons["membership-close"].tap()
+        app.buttons["membership-retention-close"].tap()
+        XCTAssertTrue(app.tabBars.buttons["放映台"].waitForExistence(timeout: 5))
+        try await configureRoutingFixture(review: false)
+        try await assertFixtureNeverOrdered()
+    }
+
+    func testColdLaunchReturnsToVIPButForegroundDoesNotRepeatIt() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
+        app.launchEnvironment.removeValue(forKey: "TALEFORK_UI_SCREEN")
+        app.launchEnvironment["TALEFORK_UI_PREVIEW"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        let action = app.buttons["hosted-membership-open"]
+        XCTAssertTrue(action.waitForExistence(timeout: 35))
+        keepScreenshot(app, name: "cold-launch-nonmember-vip")
+        app.buttons["membership-close"].tap()
+        app.buttons["membership-retention-close"].tap()
+        XCTAssertTrue(action.waitForNonExistence(timeout: 5))
+
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertFalse(action.waitForExistence(timeout: 3), "Returning from background must not repeat the paywall")
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(action.waitForExistence(timeout: 35), "A new app process must present VIP again")
+        keepScreenshot(app, name: "relaunch-nonmember-vip")
+    }
+
+    func testColdLaunchSkipsActiveVIPButShowsExpiredVIP() async throws {
+        try await configureRoutingFixture(review: false, vip: true, vipEndDate: "2099-01-01T00:00:00Z")
+        let app = routingFixtureApp()
+        app.launchEnvironment.removeValue(forKey: "TALEFORK_UI_SCREEN")
+        app.launchEnvironment["TALEFORK_UI_PREVIEW"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        let preferences = app.tabBars.buttons["偏好"]
+        XCTAssertTrue(preferences.waitForExistence(timeout: 35))
+        preferences.tap()
+        XCTAssertTrue(app.staticTexts["VIP 已生效"].waitForExistence(timeout: 35), "Wait for the confirmed server entitlement")
+        XCTAssertFalse(app.buttons["hosted-membership-open"].exists)
+        keepScreenshot(app, name: "cold-launch-active-vip-skipped")
+
+        app.terminate()
+        try await configureRoutingFixture(review: false, vip: true, vipEndDate: "2000-01-01T00:00:00Z")
+        app.launch()
+        XCTAssertTrue(app.buttons["hosted-membership-open"].waitForExistence(timeout: 35))
+        keepScreenshot(app, name: "cold-launch-expired-vip-presented")
+        try await configureRoutingFixture(review: false)
+    }
+
+    func testFirstLaunchKeepsOnboardingBeforeStartupVIP() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
+        app.launchEnvironment.removeValue(forKey: "TALEFORK_UI_SCREEN")
+        app.launchEnvironment["TALEFORK_RESET_LOCAL_STATE"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        let page = app.staticTexts["onboarding-page-count"]
+        XCTAssertTrue(page.waitForExistence(timeout: 10))
+        XCTAssertEqual(page.label, "1 / 4")
+        XCTAssertFalse(app.buttons["hosted-membership-open"].exists)
+        for expected in 2...4 {
+            app.buttons["onboarding-next"].tap()
+            XCTAssertEqual(page.label, "\(expected) / 4")
+        }
+        app.buttons["onboarding-begin"].tap()
+        XCTAssertTrue(app.buttons["hosted-membership-open"].waitForExistence(timeout: 35))
+        app.buttons["membership-close"].tap()
+        app.buttons["membership-retention-close"].tap()
+        XCTAssertFalse(app.buttons["hosted-membership-open"].waitForExistence(timeout: 3), "Onboarding completion must not enqueue two paywalls")
+    }
+
+    /// Deliberately slow local startup requests cannot expose home after onboarding.
+    func testOnboardingEntersVIPImmediatelyWhileManifestIsSlow() async throws {
+        try await configureRoutingFixture(review: false, delay: 8)
+        let app = routingFixtureApp()
+        app.launchEnvironment.removeValue(forKey: "TALEFORK_UI_SCREEN")
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "0"
+        app.launchEnvironment["TALEFORK_RESET_LOCAL_STATE"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        XCTAssertTrue(app.buttons["onboarding-next"].waitForExistence(timeout: 10))
+        for _ in 0..<3 { app.buttons["onboarding-next"].tap() }
+        app.buttons["onboarding-begin"].tap()
+        XCTAssertTrue(app.navigationBars["VIP 會籍"].waitForExistence(timeout: 2),
+                      "VIP must open immediately, before slow startup requests finish")
+        XCTAssertFalse(app.tabBars.firstMatch.isHittable, "Home must not be the next usable screen")
+        keepScreenshot(app, name: "onboarding-direct-vip-hk-title-slow-network")
+        XCTAssertTrue(app.buttons["hosted-membership-open"].waitForExistence(timeout: 35))
+        app.buttons["membership-close"].tap()
+        app.buttons["membership-retention-close"].tap()
+        XCTAssertTrue(app.tabBars.buttons["放映台"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["hosted-membership-open"].waitForExistence(timeout: 3))
+        try await configureRoutingFixture(review: false)
+    }
+
     /// Real StoreKit products exercise the production Product rendering path.
     /// No purchase, credentials, or App Store Connect setting is changed.
-    func testGoldAppleThreePortraitPlansAndRetention() throws {
-        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+    func testGoldAppleThreePortraitPlansAndRetention() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
         app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
         app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
         app.launchEnvironment["TALEFORK_TEST_APPLE_PAYWALL"] = "1"
@@ -258,8 +577,17 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertEqual(restore.frame.midY, terms.frame.midY, accuracy: 1)
         XCTAssertTrue(app.buttons["apple-membership-purchase"].isHittable)
         let action = app.buttons["apple-membership-purchase"]
+        let countdown = app.descendants(matching: .any)["membership-promotion-countdown"].firstMatch
+        XCTAssertTrue(countdown.exists)
+        XCTAssertLessThanOrEqual(countdown.frame.maxY, action.frame.minY)
+        XCTAssertEqual(countdown.frame.maxX, action.frame.maxX, accuracy: 1)
         let renewal = app.staticTexts["apple-membership-renewal"]
         XCTAssertTrue(renewal.isHittable)
+        let benefits = app.otherElements["membership-benefits-card"]
+        XCTAssertTrue(benefits.staticTexts["高清睇劇"].exists)
+        XCTAssertTrue(benefits.staticTexts["熱劇搶先睇"].exists)
+        XCTAssertFalse(benefits.staticTexts["片單收藏"].exists)
+        XCTAssertFalse(benefits.staticTexts["個人場記"].exists)
         XCTAssertGreaterThanOrEqual(renewal.frame.minY - action.frame.maxY, 7)
         XCTAssertLessThanOrEqual(renewal.frame.minY - action.frame.maxY, 9)
         XCTAssertEqual(restore.frame.minY, renewal.frame.maxY, accuracy: 1,
@@ -309,8 +637,9 @@ final class TaleForkSceneNotesUITests: XCTestCase {
     }
 
     /// Isolate the gold CTA animation from media/network changes. Never purchase.
-    func testMembershipOpenButtonBreathesWithoutMoving() throws {
-        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+    func testMembershipOpenButtonBreathesWithoutMoving() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
         app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
         app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
         app.launchEnvironment["TALEFORK_TEST_APPLE_PAYWALL"] = "1"
@@ -327,10 +656,10 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [expectation(for: ready, evaluatedWith: action)], timeout: 15), .completed)
         let originalFrame = action.frame
         let frameOne = action.screenshot()
-        Thread.sleep(forTimeInterval: 0.8)
+        try await Task.sleep(for: .milliseconds(800))
         let frameTwo = action.screenshot()
         XCTAssertNotEqual(frameOne.pngRepresentation, frameTwo.pngRepresentation,
-                          "The gold surface must brighten and dim")
+                          "The capsule and label must visibly breathe while the full-width tap target stays fixed")
         XCTAssertEqual(action.frame, originalFrame, "Breathing must not move or resize the button")
         for (index, frame) in [frameOne, frameTwo].enumerated() {
             let attachment = XCTAttachment(screenshot: frame)
@@ -338,14 +667,13 @@ final class TaleForkSceneNotesUITests: XCTestCase {
             attachment.lifetime = .keepAlways
             add(attachment)
         }
-        // Sample a complete light cycle so the left-to-right beam and the
-        // whole-button breathing can both be inspected, without purchasing.
+        // Sample two full 1.6-second reference-style scale cycles, without purchasing.
         for index in 0..<8 {
             let attachment = XCTAttachment(screenshot: action.screenshot())
             attachment.name = "membership-breathing-and-sheen-\(index)"
             attachment.lifetime = .keepAlways
             add(attachment)
-            Thread.sleep(forTimeInterval: 0.4)
+            try await Task.sleep(for: .milliseconds(400))
         }
         XCTAssertEqual(action.frame, originalFrame)
         keepScreenshot(app, name: "membership-breathing-paywall")
@@ -355,12 +683,172 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertTrue(retentionAction.isHittable)
         let retentionFrame = retentionAction.frame
         let retentionOne = retentionAction.screenshot()
-        Thread.sleep(forTimeInterval: 0.8)
+        try await Task.sleep(for: .milliseconds(800))
         let retentionTwo = retentionAction.screenshot()
         XCTAssertNotEqual(retentionOne.pngRepresentation, retentionTwo.pngRepresentation)
         XCTAssertEqual(retentionAction.frame, retentionFrame)
         keepScreenshot(app, name: "membership-breathing-retention")
         app.terminate()
+    }
+
+    func testMembershipBreathingStopsForReducedMotionPreference() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "studio"
+        app.launch()
+        defer { app.terminate() }
+        let setting = app.switches["減少裝飾動畫"]
+        reveal(setting, in: app.scrollViews.firstMatch)
+        XCTAssertTrue(setting.exists)
+        let original = setting.value as? String
+        if original != "1" { setting.tap() }
+        app.terminate()
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
+        app.launch()
+        let action = app.buttons["hosted-membership-open"]
+        XCTAssertTrue(action.waitForExistence(timeout: 30))
+        let still = action.screenshot()
+        try await Task.sleep(for: .milliseconds(800))
+        XCTAssertEqual(still.pngRepresentation, action.screenshot().pngRepresentation,
+                       "Reduced decorative motion must leave a steady, full-size button")
+        keepScreenshot(app, name: "membership-reduced-motion-steady-action")
+        app.terminate()
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "studio"
+        app.launch()
+        reveal(setting, in: app.scrollViews.firstMatch)
+        if setting.value as? String != original { setting.tap() }
+    }
+
+    /// Requires the loopback audio-fixture.py and its certificate in the QA
+    /// simulator. Plays a real MP4 with an audio track, never a live order.
+    func testMembershipPreviewAutoplaysAudiblyAndPausesForCheckout() throws {
+        let app = routingFixtureApp()
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "studio"
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "0"
+        app.launch()
+        defer { app.terminate() }
+
+        let nextEpisode = app.switches["自動播放下一集"]
+        reveal(nextEpisode, in: app.scrollViews.firstMatch)
+        XCTAssertTrue(nextEpisode.exists)
+        if nextEpisode.value as? String == "1" { nextEpisode.tap() }
+        XCTAssertEqual(nextEpisode.value as? String, "0")
+        app.terminate()
+        app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
+        app.launch()
+
+        let video = app.descendants(matching: .any)["membership-paywall-video"].firstMatch
+        assertAudiblePreview(video)
+        let carousel = app.otherElements["membership-exclusive-carousel"]
+        let firstTitle = carousel.label
+        carousel.swipeLeft()
+        let changed = NSPredicate { _, _ in carousel.label != firstTitle }
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation(for: changed, evaluatedWith: carousel)], timeout: 5), .completed)
+        assertAudiblePreview(video)
+
+        app.buttons["hosted-membership-open"].tap()
+        let paused = NSPredicate { _, _ in
+            let value = video.value as? String ?? ""
+            return value.hasPrefix("paused:") && value.contains("allowed=false")
+        }
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation(for: paused, evaluatedWith: video)], timeout: 4), .completed)
+        let done = app.alerts.buttons["完成"]
+        XCTAssertTrue(done.waitForExistence(timeout: 10))
+        done.tap()
+        assertAudiblePreview(video)
+
+        app.buttons["membership-close"].tap()
+        let retention = app.descendants(matching: .any)["membership-retention-video"].firstMatch
+        assertAudiblePreview(retention)
+        XCTAssertFalse(video.exists, "The hidden VIP preview must not remain exposed or own playback")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        assertAudiblePreview(retention)
+        keepScreenshot(app, name: "membership-audible-retention-local-media")
+        app.buttons["membership-retention-close"].tap()
+        XCTAssertTrue(retention.waitForNonExistence(timeout: 5))
+        XCTAssertFalse(video.exists)
+    }
+
+    func testAppleMembershipPreviewAutoplaysAudibly() throws {
+        let app = routingFixtureApp()
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "0"
+        app.launchEnvironment["TALEFORK_TEST_APPLE_PAYWALL"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        assertAudiblePreview(app.descendants(matching: .any)["membership-paywall-video"].firstMatch)
+        app.buttons["membership-close"].tap()
+        assertAudiblePreview(app.descendants(matching: .any)["membership-retention-video"].firstMatch)
+    }
+
+    /// Local HTTPS fixture proves media/artwork requests occur during bundled
+    /// onboarding, then the visible preview reuses the prepared AVPlayer.
+    func testOnboardingPreloadsVIPVideoAndHomeArtwork() async throws {
+        let (baselineData, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+        let baseline = try XCTUnwrap(JSONSerialization.jsonObject(with: baselineData) as? [String: Any])
+        let initialMedia = baseline["mediaRequests"] as? Int ?? 0
+        let initialArtwork = baseline["artworkRequests"] as? Int ?? 0
+        let initialLineup = baseline["lineupRequests"] as? Int ?? 0
+        let app = routingFixtureApp()
+        app.launchEnvironment.removeValue(forKey: "TALEFORK_UI_SCREEN")
+        app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "0"
+        app.launchEnvironment["TALEFORK_RESET_LOCAL_STATE"] = "1"
+        app.launch()
+        defer { app.terminate() }
+        XCTAssertTrue(app.buttons["onboarding-next"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.descendants(matching: .any)["membership-promotion-countdown"].exists)
+        var before: [String: Any] = [:]
+        for _ in 0..<100 {
+            let (data, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+            before = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+            if (before["artworkRequests"] as? Int ?? 0) >= initialArtwork + 3
+                && (before["mediaRequests"] as? Int ?? 0) >= initialMedia + 2 { break }
+            try await Task.sleep(for: .milliseconds(200))
+        }
+        XCTAssertGreaterThanOrEqual(before["mediaRequests"] as? Int ?? 0, initialMedia + 2)
+        XCTAssertEqual(before["artworkRequests"] as? Int, initialArtwork + 3)
+        XCTAssertEqual(before["lineupRequests"] as? Int, initialLineup + 1, "Concurrent startup/onboarding loads must coalesce")
+        let events = before["events"] as? [[String: Any]] ?? []
+        let initialEvents = (baseline["events"] as? [[String: Any]] ?? []).count
+        XCTAssertEqual(events.dropFirst(initialEvents).first?["kind"] as? String, "media", "VIP media must start before artwork")
+        // Give the real preroll its bounded six-second preparation window.
+        try await Task.sleep(for: .seconds(2))
+        keepScreenshot(app, name: "onboarding-while-next-screen-media-preloads")
+        for _ in 0..<3 { app.buttons["onboarding-next"].tap() }
+        app.buttons["onboarding-begin"].tap()
+        let video = app.descendants(matching: .any)["membership-paywall-video"].firstMatch
+        assertAudiblePreview(video)
+        XCTAssertTrue((video.value as? String ?? "").contains("preloaded=true"))
+        let (data, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+        let after = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(after["artworkRequests"] as? Int, initialArtwork + 3, "VIP/home must consume the same artwork cache")
+        XCTAssertEqual(after["lineupRequests"] as? Int, initialLineup + 1)
+        XCTAssertEqual(after["checkoutRequests"] as? Int, baseline["checkoutRequests"] as? Int)
+        let evidence = XCTAttachment(data: data, uniformTypeIdentifier: "public.json")
+        evidence.name = "startup-prefetch-local-request-counts"
+        evidence.lifetime = .keepAlways
+        add(evidence)
+        keepScreenshot(app, name: "vip-reuses-onboarding-preloaded-player")
+        app.buttons["membership-close"].tap()
+        app.buttons["membership-retention-close"].tap()
+        XCTAssertTrue(app.tabBars.buttons["放映台"].waitForExistence(timeout: 5))
+        keepScreenshot(app, name: "home-reuses-onboarding-prefetched-artwork")
+        let (homeData, _) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:18642/fixture")!)
+        let home = try XCTUnwrap(JSONSerialization.jsonObject(with: homeData) as? [String: Any])
+        XCTAssertEqual(home["artworkRequests"] as? Int, initialArtwork + 3)
+    }
+
+    private func assertAudiblePreview(_ video: XCUIElement) {
+        assertVideoAdvances(video, minimum: 1, timeout: 20)
+        let value = video.value as? String ?? ""
+        XCTAssertTrue(value.contains("muted=false"), value)
+        XCTAssertTrue(value.contains("volume=1.0"), value)
+        XCTAssertTrue(value.contains("audio=AVAudioSessionCategoryPlayback"), value)
+        XCTAssertTrue(value.contains("mode=AVAudioSessionModeMoviePlayback"), value)
+        let evidence = XCTAttachment(string: value)
+        evidence.name = "audible-preview-player-clock-and-audio-session"
+        evidence.lifetime = .keepAlways
+        add(evidence)
     }
 
     /// Real HTTPS media and AVPlayer's clock, not an animated poster or mock.
@@ -472,8 +960,9 @@ final class TaleForkSceneNotesUITests: XCTestCase {
                        "Actual AVPlayer clock/status must advance: \(video.value ?? "missing")")
     }
 
-    func testGoldMembershipAccessibilityLayout() throws {
-        let app = XCUIApplication(bundleIdentifier: "com.talefork.storypaths")
+    func testGoldMembershipAccessibilityLayout() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = routingFixtureApp()
         app.launchEnvironment["TALEFORK_UI_SCREEN"] = "membership"
         app.launchEnvironment["TALEFORK_OFFLINE_CATALOG"] = "1"
         app.launchEnvironment["TALEFORK_TEST_APPLE_PAYWALL"] = "1"
@@ -481,6 +970,9 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         app.launch()
         let weekly = app.buttons["apple-offer-com.talefork.storypaths.vip.weekly"]
         XCTAssertTrue(weekly.waitForExistence(timeout: 75))
+        let benefits = app.otherElements["membership-benefits-card"]
+        XCTAssertTrue(benefits.staticTexts["高清睇劇"].exists)
+        XCTAssertTrue(benefits.staticTexts["熱劇搶先睇"].exists)
         keepScreenshot(app, name: "gold-membership-accessibility-top")
         let dock = app.scrollViews["membership-plans-scroll"]
         let purchase = app.buttons["apple-membership-purchase"]
@@ -534,7 +1026,7 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         XCTAssertTrue(benefits.waitForExistence(timeout: 10))
         XCTAssertGreaterThanOrEqual(benefits.frame.minY, carousel.frame.maxY)
         XCTAssertLessThanOrEqual(benefits.frame.maxY, dock.frame.minY, "The plan dock must not cover membership benefits")
-        for label in ["連續觀看", "片單收藏", "個人場記"] {
+        for label in ["連續觀看", "高清睇劇", "熱劇搶先睇"] {
             let benefit = benefits.staticTexts[label]
             XCTAssertTrue(benefit.exists)
             XCTAssertTrue(benefit.isHittable)
@@ -547,6 +1039,131 @@ final class TaleForkSceneNotesUITests: XCTestCase {
 
     /// Opt-in live UI acceptance: opens an unpaid checkout only. Never enters
     /// wallet credentials, confirms a payment, or clears the existing visitor.
+
+    /// Gesture QA uses offline episodes and a loopback entitlement service.
+    /// No production account, video download or payment is involved.
+    func testPlayerVerticalSwipesAndControlsWithOfflineEpisodes() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = launchGesturePlayer(episodeNumber: 1)
+        defer { app.terminate() }
+        assertPlayerEpisode(1, in: app)
+        swipePlayer(in: app, upward: false)
+        assertPlayerEpisode(1, in: app) // First episode must not wrap.
+        swipePlayer(in: app, upward: true)
+        assertPlayerEpisode(2, in: app)
+        swipePlayer(in: app, upward: true)
+        assertPlayerEpisode(3, in: app)
+        swipePlayer(in: app, upward: false)
+        assertPlayerEpisode(2, in: app)
+
+        // Horizontal scrubbing and small movements are not episode swipes.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.32))
+            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.33)))
+        assertPlayerEpisode(2, in: app)
+        let shortStart = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.32))
+        shortStart.press(forDuration: 0.05, thenDragTo: shortStart.withOffset(CGVector(dx: 0, dy: -20)))
+        assertPlayerEpisode(2, in: app)
+        // A sub-threshold movement can remain a tap and hide controls.
+        if !app.buttons["scene-mark-player-action"].exists {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28)).tap()
+        }
+        XCTAssertTrue(app.buttons["scene-mark-player-action"].waitForExistence(timeout: 3))
+        let progress = app.sliders["player-progress"]
+        XCTAssertTrue(progress.isHittable)
+        progress.adjust(toNormalizedSliderPosition: 0.65)
+        assertPlayerEpisode(2, in: app)
+
+        // Controls can still be hidden by a tap; swiping also works when hidden.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28)).tap()
+        XCTAssertTrue(app.buttons["scene-mark-player-action"].waitForNonExistence(timeout: 3))
+        swipePlayer(in: app, upward: true)
+        assertPlayerEpisode(3, in: app)
+        XCTAssertTrue(app.buttons["scene-mark-player-action"].waitForExistence(timeout: 3))
+        app.buttons["Pause"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["Play"].firstMatch.waitForExistence(timeout: 3))
+        app.buttons["Episodes"].firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["Episodes"].waitForExistence(timeout: 3))
+        app.swipeUp() // Scroll the sheet; it must not change the episode behind it.
+        app.buttons["Done"].tap()
+        assertPlayerEpisode(3, in: app)
+        keepScreenshot(app, name: "player-vertical-swipes-controls-preserved")
+        try await assertFixtureNeverOrdered()
+    }
+
+    func testPlayerSwipeToLockedEpisodePreservesVIPGate() async throws {
+        try await configureRoutingFixture(review: false)
+        let app = launchGesturePlayer(episodeNumber: 10)
+        defer { app.terminate() }
+        assertPlayerEpisode(10, in: app)
+        swipePlayer(in: app, upward: true)
+        XCTAssertTrue(app.buttons["membership-close"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.buttons["hosted-offer-2019"].waitForExistence(timeout: 15))
+        keepScreenshot(app, name: "player-swipe-episode-eleven-vip-gate")
+        app.buttons["membership-close"].tap()
+        XCTAssertTrue(app.buttons["membership-retention-close"].waitForExistence(timeout: 5))
+        app.buttons["membership-retention-close"].tap()
+        assertPlayerEpisode(10, in: app)
+        swipePlayer(in: app, upward: false)
+        assertPlayerEpisode(9, in: app)
+        try await assertFixtureNeverOrdered()
+    }
+
+    func testPlayerVIPLastEpisodeSwipeDoesNotWrap() async throws {
+        try await configureRoutingFixture(review: false, vip: true,
+                                          vipEndDate: "2099-12-31T23:59:59Z")
+        let app = launchGesturePlayer(episodeNumber: 12, activeVIP: true)
+        defer { app.terminate() }
+        assertPlayerEpisode(12, in: app)
+        swipePlayer(in: app, upward: true)
+        assertPlayerEpisode(12, in: app)
+        XCTAssertFalse(app.buttons["membership-close"].exists)
+        swipePlayer(in: app, upward: false)
+        assertPlayerEpisode(11, in: app)
+        swipePlayer(in: app, upward: true)
+        assertPlayerEpisode(12, in: app)
+        keepScreenshot(app, name: "player-swipe-last-episode-no-wrap")
+        try await assertFixtureNeverOrdered()
+    }
+
+    private func launchGesturePlayer(episodeNumber: Int, activeVIP: Bool = false) -> XCUIApplication {
+        let app = configuredApp(screen: activeVIP ? "studio" : "showcase", resetLocalState: true)
+        app.launchEnvironment["TALEFORK_ANALYTICS_DISABLED"] = "1"
+        app.launchEnvironment["TALEFORK_SERVICE_BASE_URL"] = "http://127.0.0.1:18642/"
+        app.launch()
+        if activeVIP {
+            XCTAssertTrue(app.staticTexts["VIP active"].waitForExistence(timeout: 30))
+            app.tabBars.buttons["Showcase"].tap()
+        }
+        let story = app.buttons["The Lantern Room"].firstMatch
+        XCTAssertTrue(story.waitForExistence(timeout: 8))
+        story.tap()
+        if episodeNumber == 1 {
+            let start = app.buttons["Start Episode 1"]
+            XCTAssertTrue(start.waitForExistence(timeout: 5))
+            start.tap()
+        } else {
+            let episode = app.buttons["episode-\(episodeNumber)-button"]
+            for _ in 0..<10 where !episode.isHittable { app.swipeUp() }
+            XCTAssertTrue(episode.isHittable)
+            episode.tap()
+        }
+        return app
+    }
+
+    private func swipePlayer(in app: XCUIApplication, upward: Bool) {
+        let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: upward ? 0.62 : 0.3))
+        let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: upward ? 0.3 : 0.62))
+        start.press(forDuration: 0.05, thenDragTo: end)
+    }
+
+    private func assertPlayerEpisode(_ number: Int, in app: XCUIApplication,
+                                     file: StaticString = #filePath, line: UInt = #line) {
+        let video = app.descendants(matching: .any)["player-video"].firstMatch
+        XCTAssertTrue(video.waitForExistence(timeout: 5), file: file, line: line)
+        let expected = NSPredicate(format: "value == %@", "Episode \(number)")
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation(for: expected, evaluatedWith: video)], timeout: 3),
+                       .completed, "Expected episode \(number), got \(video.value ?? "missing")", file: file, line: line)
+    }
 
     func testSceneMarkCanBeSavedAndResumedWithOfflineCatalog() throws {
         var app = configuredApp(screen: "playback-check", resetLocalState: true)
@@ -847,5 +1464,37 @@ final class TaleForkSceneNotesUITests: XCTestCase {
         let elementFrame = element.frame
         XCTAssertGreaterThanOrEqual(elementFrame.minX, windowFrame.minX, file: file, line: line)
         XCTAssertLessThanOrEqual(elementFrame.maxX, windowFrame.maxX, file: file, line: line)
+    }
+}
+
+private extension UIImage {
+    var isCaptureBlack: Bool {
+        guard let cgImage else { return false }
+        let points = [
+            CGPoint(x: size.width * 0.25, y: size.height * 0.25),
+            CGPoint(x: size.width * 0.75, y: size.height * 0.25),
+            CGPoint(x: size.width * 0.5, y: size.height * 0.5),
+            CGPoint(x: size.width * 0.25, y: size.height * 0.75),
+            CGPoint(x: size.width * 0.75, y: size.height * 0.75)
+        ]
+        return points.allSatisfy { point in
+            let scaleX = CGFloat(cgImage.width) / size.width
+            let scaleY = CGFloat(cgImage.height) / size.height
+            let x = min(max(Int(point.x * scaleX), 0), cgImage.width - 1)
+            let y = min(max(Int(point.y * scaleY), 0), cgImage.height - 1)
+            var pixel: [UInt8] = [0, 0, 0, 0]
+            guard let context = CGContext(
+                data: &pixel,
+                width: 1,
+                height: 1,
+                bitsPerComponent: 8,
+                bytesPerRow: 4,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else { return false }
+            context.translateBy(x: CGFloat(-x), y: CGFloat(y - cgImage.height + 1))
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+            return pixel[0] <= 8 && pixel[1] <= 8 && pixel[2] <= 8
+        }
     }
 }
