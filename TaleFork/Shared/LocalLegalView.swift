@@ -108,7 +108,7 @@ private struct RemotePrivacyDocument: UIViewRepresentable {
     func updateUIView(_ view: WKWebView, context: Context) {
         guard context.coordinator.reloadID != reloadID else { return }
         context.coordinator.reloadID = reloadID
-        let url = URL(string: "https://elonsupernice.github.io/telefork-ios/privacy-policy.html")!
+        let url = URL(string: "https://app.duanjufafafa.fun/ios-privacy-policy.html")!
         view.load(URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20))
     }
 
