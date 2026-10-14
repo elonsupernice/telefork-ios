@@ -27,30 +27,37 @@ struct TaleForkApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView()
-                .environment(store)
-                .environment(catalog)
-                .environment(membership)
-                .preferredColorScheme(preferredScheme)
-                .task { await membership.refreshEntitlements() }
-                .onOpenURL { url in
-                    _ = appDelegate.application(UIApplication.shared, open: url)
+            ZStack {
+                Color.black.ignoresSafeArea()
+
+                CaptureHiddenContainer {
+                    AppRootView()
+                        .environment(store)
+                        .environment(catalog)
+                        .environment(membership)
+                        .membershipCaptureProtected(allowed: false)
+                        .preferredColorScheme(preferredScheme)
+                        .task { await membership.refreshEntitlements() }
+                        .onOpenURL { url in
+                            _ = appDelegate.application(UIApplication.shared, open: url)
+                        }
+                        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                            guard let url = activity.webpageURL else { return }
+                            _ = appDelegate.application(UIApplication.shared, open: url)
+                        }
+                        .task(id: scenePhase) {
+                            guard scenePhase == .active else { return }
+                            MetaAttribution.shared.activate()
+                            await MetaAttribution.shared.requestTrackingAuthorizationIfNeeded()
+                            guard !Task.isCancelled else { return }
+                            await TaleForkService.shared.bindSDKContextIfAvailable()
+                        }
+                        .onChange(of: scenePhase) { _, phase in
+                            guard phase == .active else { return }
+                            Task { await membership.refreshEntitlements() }
+                        }
                 }
-                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
-                    guard let url = activity.webpageURL else { return }
-                    _ = appDelegate.application(UIApplication.shared, open: url)
-                }
-                .task(id: scenePhase) {
-                    guard scenePhase == .active else { return }
-                    MetaAttribution.shared.activate()
-                    await MetaAttribution.shared.requestTrackingAuthorizationIfNeeded()
-                    guard !Task.isCancelled else { return }
-                    await TaleForkService.shared.bindSDKContextIfAvailable()
-                }
-                .onChange(of: scenePhase) { _, phase in
-                    guard phase == .active else { return }
-                    Task { await membership.refreshEntitlements() }
-                }
+            }
         }
     }
 
