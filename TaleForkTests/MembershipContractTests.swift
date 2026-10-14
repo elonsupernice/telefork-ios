@@ -109,6 +109,43 @@ struct MembershipContractTests {
         #expect(membership.promotionDeadline == nil)
     }
 
+    @MainActor @Test func hostedCompletionRequiresCurrentServerEntitlement() async {
+        let membership = MembershipStore()
+        membership.completeHostedCheckout("unconfirmed")
+        #expect(membership.completedHostedCheckoutID == nil)
+        for status in [MembershipStatusContent(vip: false, vipEndDate: nil),
+                       MembershipStatusContent(vip: true, vipEndDate: "2020-01-01T00:00:00Z")] {
+            #expect(await membership.confirmHostedMembership(using: { status }) == false)
+            #expect(!membership.isSubscribed)
+        }
+        #expect(await membership.confirmHostedMembership(using: { throw URLError(.timedOut) }) == false)
+        #expect(await membership.confirmHostedMembership(using: {
+            MembershipStatusContent(vip: true, vipEndDate: "2099-01-01T00:00:00Z")
+        }))
+        membership.completeHostedCheckout("confirmed-checkout")
+        #expect(membership.isSubscribed)
+        #expect(membership.completedHostedCheckoutID == "confirmed-checkout")
+        // Even a cached valid entitlement cannot prove a new checkout when
+        // the current server request fails or returns an inactive status.
+        #expect(await membership.confirmHostedMembership(using: { throw URLError(.notConnectedToInternet) }) == false)
+        #expect(await membership.confirmHostedMembership(using: {
+            MembershipStatusContent(vip: false, vipEndDate: nil)
+        }) == false)
+    }
+
+    @MainActor @Test func cancelledHostedConfirmationDoesNotActivateMembership() async {
+        let membership = MembershipStore()
+        let task = Task { @MainActor in
+            await membership.confirmHostedMembership(using: {
+                withUnsafeCurrentTask { $0?.cancel() }
+                return MembershipStatusContent(vip: true, vipEndDate: nil)
+            })
+        }
+        #expect(await task.value == false)
+        #expect(!membership.isSubscribed)
+        #expect(membership.completedHostedCheckoutID == nil)
+    }
+
     @MainActor @Test func windowShieldCoversNestedPagesAndRestoresWithoutAStateReset() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
         let root = UIViewController()
