@@ -4,7 +4,6 @@ struct ExploreView: View {
     @Environment(ProgressStore.self) private var store
     @Environment(CatalogStore.self) private var catalog
     @Environment(MembershipStore.self) private var membership
-    @State private var searchPhrase = ""
     @State private var playerDrama: Drama?
     @State private var showMembership = false
 
@@ -15,15 +14,11 @@ struct ExploreView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 26) {
                     header
-                    searchField
-
-                    if searchPhrase.isEmpty {
-                        featuredDrama(
-                            width: contentWidth,
-                            height: min(420, max(360, proxy.size.height * 0.58))
-                        )
-                        continueWatching
-                    }
+                    featuredDrama(
+                        width: contentWidth,
+                        height: min(420, max(360, proxy.size.height * 0.58))
+                    )
+                    continueWatching
 
                     if catalog.isLoading {
                         Label("discover.loading", systemImage: "antenna.radiowaves.left.and.right")
@@ -48,21 +43,12 @@ struct ExploreView: View {
                         .background(.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     }
 
-                    SectionHeading(eyebrow: "discover.collection.eyebrow", title: searchPhrase.isEmpty ? "discover.collection.title" : "discover.search.results")
-                    if !searchPhrase.isEmpty, let searchErrorMessage = catalog.searchErrorMessage {
-                        Label(searchErrorMessage, systemImage: "wifi.exclamationmark")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    if !searchPhrase.isEmpty, catalog.isSearching {
-                        ProgressView("discover.searching")
-                            .frame(maxWidth: .infinity, minHeight: 180)
-                    } else if filteredDramas.isEmpty {
+                    SectionHeading(eyebrow: "discover.collection.eyebrow", title: "discover.collection.title")
+                    if homeDramas.isEmpty {
                         ContentUnavailableView(
-                            searchPhrase.isEmpty ? "discover.empty.title" : "discover.search.empty.title",
-                            systemImage: searchPhrase.isEmpty ? "film.stack" : "magnifyingglass",
-                            description: Text(searchPhrase.isEmpty ? "discover.empty.body" : "discover.search.empty.body")
+                            "discover.empty.title",
+                            systemImage: "film.stack",
+                            description: Text("discover.empty.body")
                         )
                         .frame(maxWidth: .infinity, minHeight: 220)
                     } else {
@@ -87,11 +73,6 @@ struct ExploreView: View {
             MembershipPaywallView()
         }
         .task { await catalog.load() }
-        .task(id: searchPhrase) {
-            if !searchPhrase.isEmpty { try? await Task.sleep(for: .milliseconds(320)) }
-            guard !Task.isCancelled else { return }
-            await catalog.search(keyword: searchPhrase)
-        }
     }
 
     private var header: some View {
@@ -109,21 +90,6 @@ struct ExploreView: View {
                 .background(TaleForkTheme.coral, in: Capsule())
         }
         .dynamicTypeSize(.xSmall ... .xxLarge)
-    }
-
-    private var searchField: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-            TextField("discover.search.placeholder", text: $searchPhrase)
-                .textInputAutocapitalization(.never)
-            if !searchPhrase.isEmpty {
-                Button { searchPhrase = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }
-                    .frame(minWidth: 44, minHeight: 44)
-                    .accessibilityLabel(Text("discover.search.clear"))
-            }
-        }
-        .padding(.horizontal, 16).frame(minHeight: 50)
-        .background(.background.opacity(0.86), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     @ViewBuilder
@@ -202,7 +168,7 @@ struct ExploreView: View {
 
     private func dramaGrid(width: CGFloat) -> some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: min(220, width), maximum: 360), spacing: 16)], spacing: 20) {
-            ForEach(filteredDramas) { drama in
+            ForEach(homeDramas) { drama in
                 NavigationLink(value: drama) { DramaPoster(drama: drama, height: 310) }
                     .buttonStyle(.plain)
                     .accessibilityLabel(Text(drama.title.resolved))
@@ -222,12 +188,6 @@ struct ExploreView: View {
         catalog.dramas.filter { $0.episodes.count > 1 }
     }
 
-    private var filteredDramas: [Drama] {
-        let source = searchPhrase.isEmpty ? homeDramas : catalog.searchResults
-        return source.filter { drama in
-            searchPhrase.isEmpty || drama.title.resolved.localizedCaseInsensitiveContains(searchPhrase)
-        }
-    }
 }
 
 struct DramaDetailView: View {
