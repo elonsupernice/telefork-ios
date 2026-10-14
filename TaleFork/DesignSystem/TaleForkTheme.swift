@@ -133,30 +133,65 @@ struct BundleImage: View {
     let assetName: String
     var remoteURL: URL? = nil
     // Callers may match a scoped surface without changing the app-wide theme.
-    var placeholderColors: [Color] = [TaleForkTheme.ink, TaleForkTheme.violet]
+    var placeholderColors: [Color] = [Color(hex: "EBD1A6"), Color(hex: "C99A5A")]
     var placeholderTint: Color? = nil
+    @State private var image: UIImage?
+    @State private var loadedURL: URL?
 
     @ViewBuilder
     var body: some View {
         if let remoteURL {
-            AsyncImage(url: remoteURL, transaction: Transaction(animation: .easeInOut(duration: 0.2))) { phase in
-                switch phase {
-                case let .success(image): image.resizable()
-                case .failure: artworkFallback
-                case .empty: artworkFallback.overlay { ProgressView().tint(placeholderTint ?? .white) }
-                @unknown default: artworkFallback
+            Group {
+                if let cached = ArtworkCache.shared.cachedImage(for: remoteURL) {
+                    Image(uiImage: cached).resizable()
+                } else if loadedURL == remoteURL, let image {
+                    Image(uiImage: image).resizable()
+                } else if loadedURL == remoteURL {
+                    artworkFallback()
+                } else {
+                    artworkFallback(isLoading: true)
                 }
+            }
+            .task(id: remoteURL) {
+                let result = await ArtworkCache.shared.image(for: remoteURL)
+                guard !Task.isCancelled else { return }
+                image = result
+                loadedURL = remoteURL
             }
         } else if let url = Bundle.main.url(forResource: assetName, withExtension: nil), let image = UIImage(contentsOfFile: url.path) {
             Image(uiImage: image).resizable()
         } else {
-            artworkFallback
+            artworkFallback()
         }
     }
 
-    private var artworkFallback: some View {
+    private func artworkFallback(isLoading: Bool = false) -> some View {
         Rectangle().fill(LinearGradient(colors: placeholderColors, startPoint: .topLeading, endPoint: .bottomTrailing))
-            .overlay { Image(systemName: "play.rectangle.fill").font(.largeTitle).foregroundStyle(placeholderTint ?? .white.opacity(0.35)) }
+            .overlay {
+                GeometryReader { proxy in
+                    let markSize = min(48, max(24, proxy.size.width * 0.2), proxy.size.height * 0.45)
+                    VStack(spacing: 10) {
+                        (placeholderTint ?? Color(hex: "7A4C24"))
+                            .frame(width: markSize, height: markSize)
+                            .mask {
+                                // Reuse the brand glyph without its dark app-icon tile.
+                                Image("TaleForkBrandMark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .saturation(0)
+                                    .contrast(2.5)
+                                    .luminanceToAlpha()
+                            }
+                        if isLoading {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(placeholderTint ?? Color(hex: "7A4C24"))
+                        }
+                    }
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                }
+                .accessibilityHidden(true)
+            }
     }
 }
 
